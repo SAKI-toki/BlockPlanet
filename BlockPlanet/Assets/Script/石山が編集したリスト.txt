@@ -1,0 +1,16 @@
+編集したファイル
+Field/FieldManager.cs
+Field/Player1.cs
+Field/Player2.cs
+
+Result/ResultManager.cs
+
+Select/Select.cs
+
+Title/Title.cs
+
+追加したこと
+DontDestroyObjectにSwitchInputを追加
+
+XXX.csの削除
+XInputを削除

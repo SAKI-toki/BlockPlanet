@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Player1
+  - FxTemporaire
+  - Cube
+  - Bomb
+  - DustBox
+  - Player2
+  - StrongCube
+  - Star
+  - Player3
+  - Player4
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - PostProcessing
+  - Bomb
+  - Cube
+  - NoColorCube
+  - Player1
+  - Player2
+  - Bomb1
+  - Bomb2
+  - Player3
+  - Player4
+  - Bomb3
+  - Bomb4
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
