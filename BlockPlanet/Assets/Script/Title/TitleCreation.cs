@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 
-public class TitleCreation : MonoBehaviour {
+public class TitleCreation : MonoBehaviour
+{
 
     /// <summary>
     /// タイトルのブロック生成
@@ -19,7 +18,7 @@ public class TitleCreation : MonoBehaviour {
     //CSVの全文字列を保存する
     string Str = "";
     //取り出した文字列を保存する
-    string Strget = ""; 
+    string Strget = "";
 
     //CSVデータの行数
     int Line = 52;
@@ -33,10 +32,11 @@ public class TitleCreation : MonoBehaviour {
     int Zcubepos = 0;
 
     //設置位置
-    Vector3 Position; 
+    Vector3 Position;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         Creation();
     }
 
@@ -51,11 +51,11 @@ public class TitleCreation : MonoBehaviour {
         {
             string line = reader.ReadLine();
             //真ん中の点が無いと12とか21が出るよ
-            Str = Str + "," + line; 
+            Str = Str + "," + line;
         }
 
         //最後に検索文字列の","を追記。最後を取りこぼす
-        Str = Str + ","; 
+        Str = Str + ",";
 
         for (int z = 0; z < Line; z++)
         {
@@ -74,7 +74,7 @@ public class TitleCreation : MonoBehaviour {
                 //文字列を数値型に変換  
                 iDat[3] = int.Parse(Strget);
                 //次のインデックスへ
-                iDat[0]++;              
+                iDat[0]++;
 
                 //透明
                 if (iDat[3] == 0)

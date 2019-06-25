@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
+﻿using UnityEngine;
 
 public class StageCreation : MonoBehaviour
 {
@@ -18,7 +15,7 @@ public class StageCreation : MonoBehaviour
         //どのマップを使うか設定
         stagenumber = Select.Stagenum();
         GameObject parent = new GameObject("FieldObject");
-        BlockCreater.GetInstance().CreateField("Stage" + stagenumber, parent.transform, blockMap);
+        BlockCreater.GetInstance().CreateField("Stage" + stagenumber, parent.transform, blockMap, true);
         parent.isStatic = true;
         blockMap.BlockRendererUpdate();
     }

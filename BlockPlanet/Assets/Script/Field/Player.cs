@@ -42,6 +42,9 @@ public class Player : MonoBehaviour
 
     GameObject bombObject = null;
 
+    int enemyNumber = int.MaxValue;
+    float destroyTime = 0.0f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -60,6 +63,10 @@ public class Player : MonoBehaviour
             FieldManeger.Instance.PlayerGameOvers[playerNumber] = true;
             //爆弾を持っていたら消す
             Destroy(ShootObject);
+            if (enemyNumber != int.MaxValue)
+            {
+                FieldManeger.Instance.PlayerDestroy(enemyNumber);
+            }
         }
 
         if (other.tag == "Bomb")
@@ -92,7 +99,8 @@ public class Player : MonoBehaviour
     {
         if (!GameOver && GameStart && !FieldManeger.Instance.Pause_Flg)
         {
-            if (Mathf.Abs(SwitchInput.GetVertical(playerNumber)) >= 0.4f || Mathf.Abs(SwitchInput.GetHorizontal(playerNumber)) >= 0.4f)
+            if (Mathf.Abs(SwitchInput.GetVertical(playerNumber)) >= 0.4f ||
+            Mathf.Abs(SwitchInput.GetHorizontal(playerNumber)) >= 0.4f)
             {
                 //=====移動=====
                 this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
@@ -108,7 +116,15 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-
+        if (enemyNumber != int.MaxValue)
+        {
+            destroyTime += Time.deltaTime;
+            if (destroyTime >= 1.0f)
+            {
+                enemyNumber = int.MaxValue;
+                destroyTime = 0.0f;
+            }
+        }
         if (Pad)
             Controller();
 

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TitleBomb : MonoBehaviour
 {
@@ -17,7 +15,7 @@ public class TitleBomb : MonoBehaviour
     //collision
     Collider[] BombColl;
     //rigidbody
-    Rigidbody Rb;     
+    Rigidbody Rb;
 
 
     // Use this for initialization

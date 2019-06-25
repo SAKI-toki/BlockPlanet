@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class DontDestroy : MonoBehaviour {
+public class DontDestroy : MonoBehaviour
+{
 
     /// <summary>
     /// スカイボックスの回転

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 {
@@ -41,8 +40,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     [SerializeField]
     Vector3 max_scale = new Vector3();
     float scale_time = 0.0f;
-
-    [SerializeField, Header("プレイヤーリスト")]
     public Player[] players = new Player[4];
 
     void Start()
@@ -126,11 +123,11 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             //消す
             image[count].SetActive(false);
         }
-
         //プレイヤーを動けるようにする
-        foreach (var player in players)
+        for (int i = 0; i < 4; ++i)
         {
-            player.GameStart = true;
+            players[i] = GameObject.Find("Player" + (i + 1) + "(Clone)").GetComponent<Player>();
+            players[i].GameStart = true;
         }
 
         //ゲームが開始された
@@ -287,5 +284,10 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         yield return new WaitForSeconds(1);
         //タイトル画面に遷移
         SceneManager.LoadScene("Title");
+    }
+
+    public void PlayerDestroy(int index)
+    {
+        //PlayerPoints[index] += 1;
     }
 }

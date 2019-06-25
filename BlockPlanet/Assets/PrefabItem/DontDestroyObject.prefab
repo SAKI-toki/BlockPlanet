@@ -380,6 +380,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba0a6ec78aaf7744822579670ddf84c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Players:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   StageCubes:
   - {fileID: 1626818043717834, guid: 835257f30c6c333448b250f9c6d2d315, type: 3}
   - {fileID: 1763899405082200, guid: 1461742e459a446458e07f0578a7bbb7, type: 3}

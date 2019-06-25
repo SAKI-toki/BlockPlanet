@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : SingletonMonoBehaviour<SoundManager> {
+public class SoundManager : SingletonMonoBehaviour<SoundManager>
+{
 
     /// <summary>
     /// 音再生の管理
     /// </summary>
 
-   AudioSource Sounds;
+    AudioSource Sounds;
 
     [SerializeField]
     List<AudioClip> audioClip = new List<AudioClip>();

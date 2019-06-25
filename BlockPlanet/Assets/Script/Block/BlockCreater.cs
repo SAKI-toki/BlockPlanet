@@ -3,6 +3,8 @@ using System.IO;
 
 public class BlockCreater : Singleton<BlockCreater>
 {
+    [SerializeField]
+    GameObject[] Players = new GameObject[4];
     //ブロック
     [SerializeField]
     GameObject[] StageCubes = new GameObject[7];
@@ -17,7 +19,7 @@ public class BlockCreater : Singleton<BlockCreater>
     //設置位置
     Vector3 position;
 
-    public void CreateField(string CsvName, Transform parent, BlockMap block_map)
+    public void CreateField(string CsvName, Transform parent, BlockMap blockMap, bool isGame = false)
     {
         //文字検索用
         int[] iDat = new int[4];
@@ -64,7 +66,18 @@ public class BlockCreater : Singleton<BlockCreater>
                 iDat[0]++;
 
                 position.Set(Xcubepos, 0, Zcubepos);
-
+                //プレイヤーの位置
+                if (iDat[3] >= 100)
+                {
+                    int playerNumber = iDat[3] / 100;
+                    //プレイヤーを出現する
+                    if (isGame)
+                    {
+                        position.y = 20;
+                        GeneratePlayer(playerNumber - 1, position);
+                    }
+                    iDat[3] -= playerNumber * 100;
+                }
                 if (iDat[3] < 10)
                 {
                     for (int i = 1; i <= iDat[3]; ++i)
@@ -72,7 +85,7 @@ public class BlockCreater : Singleton<BlockCreater>
                         position.y = i - 1;
                         cube = Instantiate(StageCubes[i - 1], position, Quaternion.identity);
                         cube.transform.parent = parent;
-                        block_map.SetBlock(Zcubepos, Xcubepos, i - 1, cube);
+                        blockMap.SetBlock(Zcubepos, Xcubepos, i - 1, cube);
                     }
                 }
                 //壊れないブロック
@@ -81,7 +94,7 @@ public class BlockCreater : Singleton<BlockCreater>
                     position.y = iDat[3] - 11;
                     cube = Instantiate(StrongCube, position, Quaternion.identity);
                     cube.transform.parent = parent;
-                    block_map.SetBlock(Zcubepos, Xcubepos, iDat[3] - 11, cube);
+                    blockMap.SetBlock(Zcubepos, Xcubepos, iDat[3] - 11, cube);
                 }
                 //配置位置を(カメラから見て)右に移動
                 Xcubepos++;
@@ -89,5 +102,12 @@ public class BlockCreater : Singleton<BlockCreater>
             //配置位置を(カメラから見て)縦に移動
             Zcubepos++;
         }
+    }
+
+    void GeneratePlayer(int playerNumber, Vector3 position)
+    {
+        GameObject player = Instantiate(Players[playerNumber], position, Quaternion.identity);
+        Vector3 lookatPos = new Vector3(row_n / 2.0f, position.y, line_n / 2.0f);
+        player.transform.LookAt(lookatPos);
     }
 }

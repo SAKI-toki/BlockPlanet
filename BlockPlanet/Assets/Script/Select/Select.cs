@@ -1,10 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.IO;
-using UnityEngine.EventSystems;
 
 public class Select : SingletonMonoBehaviour<Select>
 {
@@ -13,7 +10,9 @@ public class Select : SingletonMonoBehaviour<Select>
     /// </summary>
 
     [SerializeField]
-    RectTransform[] UiRectTransforms = new RectTransform[7];
+    SelectChoice CurrentSelectChoice = null;
+    RectTransform currentChoiceRectTransform = null;
+    const int StageNum = 6;
     Vector2Int select_index = new Vector2Int();
     Vector3 init_scale = new Vector3();
     Vector3 increment_scale = new Vector3();
@@ -21,15 +20,16 @@ public class Select : SingletonMonoBehaviour<Select>
     Vector3 max_scale = new Vector3();
     float scale_time = 0.0f;
 
-    [SerializeField]
+    [System.NonSerialized]
     private List<GameObject> list = new List<GameObject>();
 
     private GameObject holdobject;
 
-    public static int stagenumber = 1;
+    public static int stagenumber = 0;
     private bool Push = false;
 
     BlockMap[] blockMaps = new BlockMap[6];
+
 
     void Start()
     {
@@ -37,10 +37,11 @@ public class Select : SingletonMonoBehaviour<Select>
         Fade.Instance.FadeOut(1.0f);
         stagenumber = 0;
         //6個のステージ
-        for (int i = 0; i < UiRectTransforms.Length - 1; ++i)
+        for (int i = 0; i < StageNum; ++i)
         {
             //空のオブジェクト
-            GameObject field = GameObject.Find("field" + (i + 1));
+            GameObject field = new GameObject("field" + (i + 1));
+            field.transform.position = new Vector3(25, 0, 25);
             //リストに追加
             list.Add(field);
             blockMaps[i] = new BlockMap();
@@ -51,16 +52,13 @@ public class Select : SingletonMonoBehaviour<Select>
             list[i].SetActive(false);
         }
         list[0].SetActive(true);
-        init_scale = UiRectTransforms[0].localScale;
+        currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
+        init_scale = currentChoiceRectTransform.localScale;
     }
 
     void Update()
     {
-        if (stagenumber != UiRectTransforms.Length - 1)
-        {
-            //後ろのマップを回転させる
-            list[stagenumber].transform.Rotate(0, 5.0f * Time.deltaTime, 0);
-        }
+        list[stagenumber].transform.Rotate(Vector3.up * Time.deltaTime * 10);
 
         if (Push) return;
         if (!Fade.Instance.IsEnd) return;
@@ -73,58 +71,63 @@ public class Select : SingletonMonoBehaviour<Select>
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
             //ロード処理に入る
-            StartCoroutine("Loadscene");
+            StartCoroutine("Loadscene", false);
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel) && !Push)
+        {
+            Push = true;
+            //プッシュの音を鳴らす
+            SoundManager.Instance.Push();
+            //ロード処理に入る
+            StartCoroutine("Loadscene", true);
         }
     }
 
     void SelectUpdate()
     {
-        Vector2Int prev_index = select_index;
+        var prev = CurrentSelectChoice;
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickRight))
         {
-            ++select_index.x;
+            if (CurrentSelectChoice.Right)
+            {
+                CurrentSelectChoice = CurrentSelectChoice.Right;
+            }
         }
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickLeft))
+        if (SwitchInput.GetButtonDown(0, SwitchButton.StickLeft))
         {
-            --select_index.x;
+            if (CurrentSelectChoice.Left)
+            {
+                CurrentSelectChoice = CurrentSelectChoice.Left;
+            }
         }
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
         {
-            ++select_index.y;
-        }
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
-        {
-            --select_index.y;
-        }
-        select_index.y = Mathf.Clamp(select_index.y, 0, 2);
-        select_index.x = Mathf.Clamp(select_index.x, 0, 2);
-        if (select_index.y == 2)
-        {
-            select_index.x = 0;
-        }
-        if (select_index.y == 1 && prev_index.y == 2)
-        {
-            select_index.x = 1;
-        }
-        if (prev_index != select_index)
-        {
-            UiRectTransforms[stagenumber].localScale = init_scale;
-            if (stagenumber != UiRectTransforms.Length - 1)
+            if (CurrentSelectChoice.Down)
             {
-                list[stagenumber].SetActive(false);
+                CurrentSelectChoice = CurrentSelectChoice.Down;
             }
+        }
+        if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
+        {
+            if (CurrentSelectChoice.Up)
+            {
+                CurrentSelectChoice = CurrentSelectChoice.Up;
+            }
+        }
+        if (prev != CurrentSelectChoice)
+        {
+            currentChoiceRectTransform.localScale = init_scale;
+            list[stagenumber].SetActive(false);
             SoundManager.Instance.Stick();
             increment_scale.Set(0, 0, 0);
             scale_time = 0.0f;
-            stagenumber = select_index.y * 3 + select_index.x;
-            if (stagenumber != UiRectTransforms.Length - 1)
-            {
-                list[stagenumber].SetActive(true);
-            }
+            stagenumber = CurrentSelectChoice.stageNumber - 1;
+            list[stagenumber].SetActive(true);
+            currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         }
         scale_time += Time.deltaTime * 6;
         increment_scale = (max_scale - init_scale) * ((Mathf.Sin(scale_time) + 1) / 2);
-        UiRectTransforms[stagenumber].localScale = init_scale + increment_scale;
+        currentChoiceRectTransform.localScale = init_scale + increment_scale;
     }
 
     public static int Stagenum()
@@ -132,17 +135,19 @@ public class Select : SingletonMonoBehaviour<Select>
         return stagenumber + 1;
     }
 
-    private IEnumerator Loadscene()
+    private IEnumerator Loadscene(bool next_is_title)
     {
         //フェード
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
         yield return new WaitForSeconds(1.0f);
         //シーン遷移
-        if (stagenumber == UiRectTransforms.Length - 1)
+        if (next_is_title)
             SceneManager.LoadScene("Title");
         else
+        {
             SceneManager.LoadScene("Field");
+        }
     }
 
 }
