@@ -10,10 +10,19 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     /// フィールド内のフラグやUIを管理する
     /// </summary>
 
+    [SerializeField]
+    Text[] points;
+    [System.NonSerialized]
     //リザルトに受け渡す情報
     public bool[] PlayerGameOvers = new bool[4];
+    int[] PlayerWin = new int[3];
+    int winIndex = 0;
     //プレイヤーのポイント。スタティックにしないといけない
     static public int[] PlayerPoints = new int[4];
+    const int WinPoint = 20;
+    [SerializeField]
+    int[] WinPoints = new int[4];
+    const int DestroyPoint = 1;
     static public int WinPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
     private bool GameOver;
@@ -30,9 +39,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     //ポーズ画面のパネル
     [SerializeField]
     Image Panel;
-
-    //勝ち星
-    [SerializeField] List<GameObject> Star = new List<GameObject>();
     [SerializeField]
     RectTransform[] UiRectTransforms = new RectTransform[3];
     int select_index = 0;
@@ -40,6 +46,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     [SerializeField]
     Vector3 max_scale = new Vector3();
     float scale_time = 0.0f;
+    [System.NonSerialized]
     public Player[] players = new Player[4];
 
     void Start()
@@ -53,36 +60,55 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     void Update()
     {
-        if (PlayerPoints[0] == 1)
-            Star[0].SetActive(true);
-        if (PlayerPoints[1] == 1)
-            Star[2].SetActive(true);
-        if (PlayerPoints[2] == 1)
-            Star[4].SetActive(true);
-        if (PlayerPoints[3] == 1)
-            Star[6].SetActive(true);
-
-
+        for (int i = 0; i < 4; ++i)
+        {
+            points[i].text = PlayerPoints[i].ToString();
+        }
         if (!GameOver)
         {
-            int survivePlayerNumber = 0;
-            int deathCount = 0;
-            for (int i = 0; i < PlayerGameOvers.Length; ++i)
-            {
-                if (PlayerGameOvers[i]) ++deathCount;
-                else survivePlayerNumber = i;
-            }
-            if (deathCount == PlayerGameOvers.Length - 1)
+            if (winIndex == PlayerWin.Length)
             {
                 GameOver = true;
-                ++PlayerPoints[survivePlayerNumber];
-                if (PlayerPoints[survivePlayerNumber] == 2)
+                bool[] flg = new bool[4];
+                bool[] winFlgs = new bool[4];
+                bool winFlg = false;
+                for (int i = 0; i < PlayerWin.Length; ++i)
                 {
+                    PlayerPoints[PlayerWin[i]] += WinPoints[WinPoints.Length - i - 1];
+                    flg[PlayerWin[i]] = true;
+                    if (PlayerPoints[PlayerWin[i]] >= WinPoint)
+                    {
+                        winFlgs[PlayerWin[i]] = true;
+                        winFlg = true;
+                    }
+                    Debug.Log(PlayerWin[i]);
+                }
+                for (int i = 0; i < flg.Length; ++i)
+                {
+                    if (!flg[i])
+                    {
+                        PlayerPoints[i] += WinPoints[0];
+                        if (PlayerPoints[i] >= WinPoint)
+                        {
+                            winFlgs[i] = true;
+                            winFlg = true;
+                        }
+                        Debug.Log(i);
+                    }
+                }
+                if (winFlg)
+                {
+                    int maxPoint = WinPoint - 1;
+                    for (int i = 0; i < winFlgs.Length; ++i)
+                    {
+                        if (PlayerPoints[i] > maxPoint)
+                        {
+                            WinPlayerNumber = i;
+                            maxPoint = PlayerPoints[i];
+                        }
+                    }
                     //ゲームオーバー時の処理に入る
                     StartCoroutine("Gameover");
-                    //星生成
-                    Star[survivePlayerNumber * 2 + 1].SetActive(true);
-                    WinPlayerNumber = survivePlayerNumber;
                 }
                 else
                 {
@@ -286,8 +312,10 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         SceneManager.LoadScene("Title");
     }
 
-    public void PlayerDestroy(int index)
+    public void PlayerDestroy(int index, int enemy)
     {
-        //PlayerPoints[index] += 1;
+        if (enemy != int.MaxValue)
+            PlayerPoints[enemy] += DestroyPoint;
+        PlayerWin[winIndex++] = index;
     }
 }

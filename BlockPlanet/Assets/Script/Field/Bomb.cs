@@ -7,6 +7,8 @@ public class Bomb : MonoBehaviour
     /// 爆弾💣
     /// </summary>
 
+    [SerializeField]
+    int playerNumber = 0;
     //デストロイ
     private bool Destroy_Flg = false;
     //爆弾が消滅するまでの時間
@@ -72,7 +74,10 @@ public class Bomb : MonoBehaviour
         for (int i = 1; i <= 4; ++i)
         {
             if (other.CompareTag("Player" + i))
+            {
                 other.GetComponent<Player>().bombimpact = Bombimpact;
+                other.GetComponent<Player>().enemyNumber = playerNumber;
+            }
         }
 
         //フィールド外に落ちた場合

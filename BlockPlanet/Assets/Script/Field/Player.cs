@@ -16,8 +16,6 @@ public class Player : MonoBehaviour
     private bool Pad = false;
     float Timer = 0.5f;
     public bool GameStart = false;
-    //ゲームオーバーのフラグ
-    public bool GameOver = false;
 
     //プレイヤーの頭上
     private Vector3 HoldPosition;
@@ -42,14 +40,14 @@ public class Player : MonoBehaviour
 
     GameObject bombObject = null;
 
-    int enemyNumber = int.MaxValue;
+    [System.NonSerialized]
+    public int enemyNumber = int.MaxValue;
     float destroyTime = 0.0f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         Charge = transform.GetChild(0).GetComponent<ParticleSystem>();
-        GameOver = false;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -58,17 +56,12 @@ public class Player : MonoBehaviour
         {
             //フラグ関連
             Hold = false;
-            GameOver = true;
             //フィールドマネージャー情報を渡す
-            FieldManeger.Instance.PlayerGameOvers[playerNumber] = true;
+            FieldManeger.Instance.PlayerDestroy(playerNumber, enemyNumber);
             //爆弾を持っていたら消す
             Destroy(ShootObject);
-            if (enemyNumber != int.MaxValue)
-            {
-                FieldManeger.Instance.PlayerDestroy(enemyNumber);
-            }
+            Destroy(gameObject);
         }
-
         if (other.tag == "Bomb")
         {
             //爆弾の位置
@@ -97,7 +90,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!GameOver && GameStart && !FieldManeger.Instance.Pause_Flg)
+        if (GameStart && !FieldManeger.Instance.Pause_Flg)
         {
             if (Mathf.Abs(SwitchInput.GetVertical(playerNumber)) >= 0.4f ||
             Mathf.Abs(SwitchInput.GetHorizontal(playerNumber)) >= 0.4f)
@@ -128,7 +121,7 @@ public class Player : MonoBehaviour
         if (Pad)
             Controller();
 
-        if (!GameOver && GameStart && !FieldManeger.Instance.Pause_Flg)
+        if (GameStart && !FieldManeger.Instance.Pause_Flg)
         {
             RaycastHit hit;
 
@@ -151,10 +144,6 @@ public class Player : MonoBehaviour
 
             //===爆弾関連===
             PlayerBomb();
-        }
-        else if (GameOver) //ゲームオーバーになった場合
-        {
-            this.transform.position = new Vector3(-10.0f, 0.0f, -10.0f);
         }
     }
 
