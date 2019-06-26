@@ -50,7 +50,8 @@ public class Select : SingletonMonoBehaviour<Select>
             //見えなくする
             list[i].SetActive(false);
         }
-        list[0].SetActive(true);
+        stagenumber = CurrentSelectChoice.stageNumber - 1;
+        list[stagenumber].SetActive(true);
         currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         init_scale = currentChoiceRectTransform.localScale;
     }
