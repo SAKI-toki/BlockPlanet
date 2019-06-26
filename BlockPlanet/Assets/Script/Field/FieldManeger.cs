@@ -19,7 +19,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     int winIndex = 0;
     //プレイヤーのポイント。スタティックにしないといけない
     static public int[] PlayerPoints = new int[4];
-    const int WinPoint = 20;
+    const int WinPoint = 4;
     [SerializeField]
     int[] WinPoints = new int[4];
     const int DestroyPoint = 1;
@@ -64,57 +64,9 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         {
             points[i].text = PlayerPoints[i].ToString();
         }
-        if (!GameOver)
+        if (!GameOver && winIndex == PlayerWin.Length)
         {
-            if (winIndex == PlayerWin.Length)
-            {
-                GameOver = true;
-                bool[] flg = new bool[4];
-                bool[] winFlgs = new bool[4];
-                bool winFlg = false;
-                for (int i = 0; i < PlayerWin.Length; ++i)
-                {
-                    PlayerPoints[PlayerWin[i]] += WinPoints[WinPoints.Length - i - 1];
-                    flg[PlayerWin[i]] = true;
-                    if (PlayerPoints[PlayerWin[i]] >= WinPoint)
-                    {
-                        winFlgs[PlayerWin[i]] = true;
-                        winFlg = true;
-                    }
-                    Debug.Log(PlayerWin[i]);
-                }
-                for (int i = 0; i < flg.Length; ++i)
-                {
-                    if (!flg[i])
-                    {
-                        PlayerPoints[i] += WinPoints[0];
-                        if (PlayerPoints[i] >= WinPoint)
-                        {
-                            winFlgs[i] = true;
-                            winFlg = true;
-                        }
-                        Debug.Log(i);
-                    }
-                }
-                if (winFlg)
-                {
-                    int maxPoint = WinPoint - 1;
-                    for (int i = 0; i < winFlgs.Length; ++i)
-                    {
-                        if (PlayerPoints[i] > maxPoint)
-                        {
-                            WinPlayerNumber = i;
-                            maxPoint = PlayerPoints[i];
-                        }
-                    }
-                    //ゲームオーバー時の処理に入る
-                    StartCoroutine("Gameover");
-                }
-                else
-                {
-                    StartCoroutine("Restart");
-                }
-            }
+            GameEnd();
         }
         if (Pause_Flg)
         {
@@ -127,6 +79,56 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             //ポーズ画面
             if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Flg && Game_Start)
                 Pause_Flg = true;
+        }
+    }
+
+    void GameEnd()
+    {
+        GameOver = true;
+        bool[] flg = new bool[4];
+        bool[] winFlgs = new bool[4];
+        bool winFlg = false;
+        //順位に応じた点数を取得
+        for (int i = 0; i < PlayerWin.Length; ++i)
+        {
+            PlayerPoints[PlayerWin[i]] += WinPoints[WinPoints.Length - i - 1];
+            flg[PlayerWin[i]] = true;
+            if (PlayerPoints[PlayerWin[i]] >= WinPoint)
+            {
+                winFlgs[PlayerWin[i]] = true;
+                winFlg = true;
+            }
+        }
+        for (int i = 0; i < flg.Length; ++i)
+        {
+            if (!flg[i])
+            {
+                PlayerPoints[i] += WinPoints[0];
+                if (PlayerPoints[i] >= WinPoint)
+                {
+                    winFlgs[i] = true;
+                    winFlg = true;
+                }
+            }
+        }
+        //特定の得点に達してるプレイヤーがいたら終了
+        if (winFlg)
+        {
+            int maxPoint = WinPoint - 1;
+            for (int i = 0; i < winFlgs.Length; ++i)
+            {
+                if (PlayerPoints[i] > maxPoint)
+                {
+                    WinPlayerNumber = i;
+                    maxPoint = PlayerPoints[i];
+                }
+            }
+            //ゲームオーバー時の処理に入る
+            StartCoroutine("Gameover");
+        }
+        else
+        {
+            StartCoroutine("Restart");
         }
     }
 
@@ -314,6 +316,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     public void PlayerDestroy(int index, int enemy)
     {
+        Debug.Log(index);
+        Debug.Log(enemy);
         if (enemy != int.MaxValue)
             PlayerPoints[enemy] += DestroyPoint;
         PlayerWin[winIndex++] = index;

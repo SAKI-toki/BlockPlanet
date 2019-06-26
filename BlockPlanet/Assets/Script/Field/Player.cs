@@ -26,8 +26,7 @@ public class Player : MonoBehaviour
 
     //爆弾を持っている状態
     private bool Hold = false;
-
-    public float bombimpact;
+    float bombimpact;
 
     //投げる場所
     private Vector3 Target;
@@ -39,9 +38,7 @@ public class Player : MonoBehaviour
     private ParticleSystem Charge;
 
     GameObject bombObject = null;
-
-    [System.NonSerialized]
-    public int enemyNumber = int.MaxValue;
+    int enemyNumber = int.MaxValue;
     float destroyTime = 0.0f;
 
     void Start()
@@ -112,7 +109,7 @@ public class Player : MonoBehaviour
         if (enemyNumber != int.MaxValue)
         {
             destroyTime += Time.deltaTime;
-            if (destroyTime >= 1.0f)
+            if (destroyTime >= 3.0f)
             {
                 enemyNumber = int.MaxValue;
                 destroyTime = 0.0f;
@@ -303,6 +300,13 @@ public class Player : MonoBehaviour
         Vector3 force = i_shootVector * rigidbody.mass;
         //速さ*重さ(瞬時に速度変化)
         rigidbody.AddForce(force, ForceMode.Impulse);
+    }
+
+    public void HitBomb(float impact, int enemyNum)
+    {
+        destroyTime = 0.0f;
+        bombimpact = impact;
+        enemyNumber = enemyNum;
     }
 }
 

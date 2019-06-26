@@ -13,7 +13,6 @@ public class Select : SingletonMonoBehaviour<Select>
     SelectChoice CurrentSelectChoice = null;
     RectTransform currentChoiceRectTransform = null;
     const int StageNum = 6;
-    Vector2Int select_index = new Vector2Int();
     Vector3 init_scale = new Vector3();
     Vector3 increment_scale = new Vector3();
     [SerializeField]

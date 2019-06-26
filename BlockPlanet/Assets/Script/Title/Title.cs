@@ -20,7 +20,6 @@ public class Title : SingletonMonoBehaviour<Title>
     private bool Check = false;
     private bool Flg = false;
     bool START = false;
-    bool EXIT = false;
     bool Credit = false;
     private float Timer = 2.0f;
     //BGM
@@ -37,7 +36,7 @@ public class Title : SingletonMonoBehaviour<Title>
 
     void Update()
     {
-        if (START || EXIT) return;
+        if (START) return;
         if (!Flg)
             Timer -= Time.deltaTime;
         if (!Fade.Instance.IsEnd) return;
@@ -87,26 +86,20 @@ public class Title : SingletonMonoBehaviour<Title>
 
     private void UIActive()
     {
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && Flg && !START && !EXIT && !Credit)
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && Flg && !START && !Credit)
         {
             switch (select_index)
             {
                 case 0:
-                    Credit = true;
-                    Credit_Image.SetActive(true);
-                    //音再生
-                    SoundManager.Instance.Push();
-                    break;
-                case 1:
                     START = true;
                     //ロードする時の処理
                     StartCoroutine("Loadscene");
                     //音再生
                     SoundManager.Instance.Push();
                     break;
-                case 2:
-                    EXIT = true;
-                    StartCoroutine("End");
+                case 1:
+                    Credit = true;
+                    Credit_Image.SetActive(true);
                     //音再生
                     SoundManager.Instance.Push();
                     break;

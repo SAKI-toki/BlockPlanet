@@ -75,8 +75,7 @@ public class Bomb : MonoBehaviour
         {
             if (other.CompareTag("Player" + i))
             {
-                other.GetComponent<Player>().bombimpact = Bombimpact;
-                other.GetComponent<Player>().enemyNumber = playerNumber;
+                other.GetComponent<Player>().HitBomb(Bombimpact, playerNumber);
             }
         }
 
