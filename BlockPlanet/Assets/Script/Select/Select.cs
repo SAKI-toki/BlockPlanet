@@ -12,7 +12,7 @@ public class Select : SingletonMonoBehaviour<Select>
     [SerializeField]
     SelectChoice CurrentSelectChoice = null;
     RectTransform currentChoiceRectTransform = null;
-    const int StageNum = 6;
+    const int StageNum = 8;
     Vector3 init_scale = new Vector3();
     Vector3 increment_scale = new Vector3();
     [SerializeField]
@@ -113,6 +113,7 @@ public class Select : SingletonMonoBehaviour<Select>
                 CurrentSelectChoice = CurrentSelectChoice.Up;
             }
         }
+        //カーソルが移動したら
         if (prev != CurrentSelectChoice)
         {
             currentChoiceRectTransform.localScale = init_scale;

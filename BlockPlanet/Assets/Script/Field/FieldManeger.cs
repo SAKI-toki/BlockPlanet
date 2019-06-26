@@ -211,7 +211,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         Time.timeScale = 0;
 
         //ボタンを見えるように
-        Panel.GetComponent<Image>().color = new Color32(0, 0, 0, 150);
+        Panel.GetComponent<Image>().color = new Color32(255, 255, 255, 150);
         for (int i = 0; i < Panel.transform.childCount; i++)
         {
             Panel.transform.transform.GetChild(i).GetComponent<Image>().color = Color.white;
