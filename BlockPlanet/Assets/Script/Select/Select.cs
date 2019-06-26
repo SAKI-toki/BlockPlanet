@@ -27,7 +27,7 @@ public class Select : SingletonMonoBehaviour<Select>
     public static int stagenumber = 0;
     private bool Push = false;
 
-    BlockMap[] blockMaps = new BlockMap[6];
+    BlockMap[] blockMaps = new BlockMap[StageNum];
 
 
     void Start()
