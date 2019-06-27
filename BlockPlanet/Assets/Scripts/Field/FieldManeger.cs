@@ -45,6 +45,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     [SerializeField]
     Image[] OnTheWayImages;
     [SerializeField]
+    Image BackgroundImage;
+    [SerializeField]
     RectTransform[] PlayerRectTransforms;
     [SerializeField]
     RectTransform[] PlayerWinRectTransforms;
@@ -168,7 +170,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //ゲーム終了のSE
         SoundManager.Instance.F_GameSet();
         //少し待つ
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+        yield return StartCoroutine("OnTheWayCoroutine");
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
@@ -179,7 +182,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     IEnumerator OnTheWayCoroutine()
     {
-        Time.timeScale = 0;
         Vector3 pos;
         //初期位置
         for (int i = 0; i < PlayerPoints.Length; ++i)
@@ -200,13 +202,16 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //フェード
         while (alpha < 1.0f)
         {
-            alpha += Time.unscaledDeltaTime;
+            alpha += Time.deltaTime;
             foreach (var image in OnTheWayImages)
             {
                 color = image.color;
                 color.a = alpha;
                 image.color = color;
             }
+            color = BackgroundImage.color;
+            color.a = alpha * 0.8f;
+            BackgroundImage.color = color;
             yield return null;
         }
         //移動
@@ -217,15 +222,14 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         while (PlayerRectTransforms[WinPlayerNumber].position.x <
         PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x)
         {
-            timeCount += Time.unscaledDeltaTime;
-            pos.x += moveSpeed * Time.unscaledDeltaTime / 3;
+            timeCount += Time.deltaTime;
+            pos.x += moveSpeed * Time.deltaTime / 3;
             PlayerRectTransforms[WinPlayerNumber].position = pos;
-            PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount) * Mathf.Rad2Deg / 2);
+            PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount * 2) * Mathf.Rad2Deg / 4);
             yield return null;
         }
         PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.identity;
         yield return new WaitForSeconds(0.5f);
-        Time.timeScale = 1;
     }
 
     //ポーズ画面展開

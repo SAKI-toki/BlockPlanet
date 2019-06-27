@@ -16,7 +16,8 @@ public class TitleBomb : MonoBehaviour
     Collider[] BombColl;
     //rigidbody
     Rigidbody Rb;
-
+    [SerializeField]
+    Material rainbowMat;
 
     // Use this for initialization
     void Start()
@@ -65,11 +66,17 @@ public class TitleBomb : MonoBehaviour
     {
         //フィールドにある破壊するキューブを検索
         GameObject[] tagobjs = GameObject.FindGameObjectsWithTag("Cube");
+        //フィールドにある破壊するキューブを検索
+        GameObject[] strongCubes = GameObject.FindGameObjectsWithTag("StrongCube");
 
         //キューブを消す
         foreach (GameObject obj in tagobjs)
         {
             Destroy(obj);
+        }
+        foreach (GameObject obj in strongCubes)
+        {
+            obj.GetComponent<MeshRenderer>().material = rainbowMat;
         }
 
         //爆発音

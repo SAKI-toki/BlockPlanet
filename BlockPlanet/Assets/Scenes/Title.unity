@@ -1326,6 +1326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e542c58891f788b4dac1cf3bfd408771, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rainbowMat: {fileID: 2100000, guid: 41ee01adb4d9fb342aee9bd47252395f, type: 2}
 --- !u!135 &135161553151334911
 SphereCollider:
   m_ObjectHideFlags: 0
