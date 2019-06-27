@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.IO;
 
+/// <summary>
+/// ブロックを生成する
+/// </summary>
 public class BlockCreater : Singleton<BlockCreater>
 {
     [SerializeField]
@@ -19,7 +22,16 @@ public class BlockCreater : Singleton<BlockCreater>
     //設置位置
     Vector3 position;
 
-    public void CreateField(string CsvName, Transform parent, BlockMap blockMap, bool isGame = false)
+    public enum SceneEnum { Game, Other };
+
+    /// <summary>
+    /// フィールドの生成
+    /// </summary>
+    /// <param name="CsvName">読み込むCSVの名前</param>
+    /// <param name="parent">生成したブロックの親オブジェクト</param>
+    /// <param name="blockMap">ブロックマップ</param>
+    /// <param name="currentScene">現在のシーン</param>   
+    public void CreateField(string CsvName, Transform parent, BlockMap blockMap, SceneEnum currentScene = SceneEnum.Other)
     {
         //文字検索用
         int[] iDat = new int[4];
@@ -71,13 +83,14 @@ public class BlockCreater : Singleton<BlockCreater>
                 {
                     int playerNumber = iDat[3] / 100;
                     //プレイヤーを出現する
-                    if (isGame)
+                    if (currentScene == SceneEnum.Game)
                     {
                         position.y = 20;
                         GeneratePlayer(playerNumber - 1, position);
                     }
                     iDat[3] -= playerNumber * 100;
                 }
+                //壊れるブロック
                 if (iDat[3] < 10)
                 {
                     for (int i = 1; i <= iDat[3]; ++i)
@@ -104,10 +117,15 @@ public class BlockCreater : Singleton<BlockCreater>
         }
     }
 
+    /// <summary>
+    /// プレイヤーの生成
+    /// </summary>
+    /// <param name="playerNumber">プレイヤーの番号</param>
+    /// <param name="position">生成位置</param>
     void GeneratePlayer(int playerNumber, Vector3 position)
     {
         GameObject player = Instantiate(Players[playerNumber], position, Quaternion.identity);
-        Vector3 lookatPos = new Vector3(row_n / 2.0f, position.y, line_n / 2.0f);
-        player.transform.LookAt(lookatPos);
+        //マップの中心を向かせる
+        player.transform.LookAt(new Vector3(row_n / 2.0f, position.y, line_n / 2.0f));
     }
 }

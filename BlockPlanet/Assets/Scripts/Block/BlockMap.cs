@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// ブロックの三次元配列
+/// </summary>
 public class BlockMap
 {
+    /// <summary>
+    /// ブロックの情報
+    /// </summary>
     struct BlockInfo
     {
         public GameObject obj;
@@ -12,7 +18,9 @@ public class BlockMap
     //サイズ分のマップを用意する
     BlockInfo[,,] BlockArray = new BlockInfo[BlockCreater.line_n, BlockCreater.row_n, 7];
 
-    //Rendererの更新
+    /// <summary>
+    /// Rendererの更新
+    /// </summary>
     public void BlockRendererUpdate()
     {
         for (int i = 1; i < BlockArray.GetLength(0) - 1; ++i)
@@ -31,7 +39,9 @@ public class BlockMap
         }
     }
 
-    //PhysicsをOffにする
+    /// <summary>
+    /// PhysicsをOffにする
+    /// </summary>
     public void BlockPhysicsOff()
     {
         for (int i = 0; i < BlockArray.GetLength(0); ++i)
@@ -47,14 +57,22 @@ public class BlockMap
         }
     }
 
-    //ブロックのセット
+    /// <summary>
+    /// ブロックのセット
+    /// </summary>
+    /// <param name="line">縦</param>
+    /// <param name="row">横</param>
+    /// <param name="height">高さ</param>
+    /// <param name="block">ブロックのオブジェクト</param>
     public void SetBlock(int line, int row, int height, GameObject block)
     {
+        //範囲外かどうかチェックする
         if (line < 0 || line >= BlockArray.GetLength(0) ||
         row < 0 || row >= BlockArray.GetLength(1) ||
         height < 0 || height >= BlockArray.GetLength(2))
         {
             Debug.LogError("範囲外");
+            return;
         }
         BlockArray[line, row, height].obj = block;
         BlockArray[line, row, height].renderer = block.GetComponent<MeshRenderer>();
@@ -63,7 +81,10 @@ public class BlockMap
         BlockArray[line, row, height].block_number.SetNum(line, row, height);
     }
 
-    //ブロックが壊れたときに実行する
+    /// <summary>
+    /// ブロックが壊れたときに実行する
+    /// </summary>
+    /// <param name="block_num">ブロックの番号</param>
     public void BreakBlock(BlockNumber block_num)
     {
         if (block_num.line < BlockArray.GetLength(0) - 1 &&
@@ -91,9 +112,16 @@ public class BlockMap
             BlockArray[block_num.line, block_num.row, block_num.height - 1].renderer.enabled = true;
     }
 
-    //囲み判定
+    /// <summary>
+    /// 囲み判定
+    /// </summary>
+    /// <param name="line">縦</param>
+    /// <param name="row">横</param>
+    /// <param name="height">高さ</param>
+    /// <returns>囲まれているかどうか</returns>
     bool IsSurround(int line, int row, int height)
     {
+        //範囲外チェック
         if (line == 0 || row == 0 || height == 0 ||
         line == BlockArray.GetLength(0) - 1 ||
         row == BlockArray.GetLength(1) - 1 ||
