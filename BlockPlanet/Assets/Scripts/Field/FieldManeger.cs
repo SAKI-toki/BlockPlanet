@@ -17,7 +17,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     const int WinPoint = 3;
     static public int WinPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
-    private bool GameOver = false;
+    public bool GameOver = false;
     //ボタンを押す
     private bool Pause_Push = false;
     //ポーズの表示非表示を管理
@@ -31,7 +31,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     bool Game_Start = false;
     //ポーズ画面のパネル
     [SerializeField]
-    Image Panel = null;
+    GameObject PauseObject = null;
     [SerializeField]
     RectTransform[] UiRectTransforms = new RectTransform[3];
     int select_index = 0;
@@ -50,6 +50,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     RectTransform[] PlayerRectTransforms;
     [SerializeField]
     RectTransform[] PlayerWinRectTransforms;
+    bool isHitStop = false;
+    float hitStopTime = 0.0f;
 
     void Start()
     {
@@ -91,7 +93,18 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
                 }
             }
         }
-        if (Pause_Flg)
+        else return;
+        if (isHitStop)
+        {
+            hitStopTime += Time.unscaledDeltaTime;
+            if (hitStopTime > 0.1f)
+            {
+                hitStopTime = 0;
+                isHitStop = false;
+                Time.timeScale = 1;
+            }
+        }
+        else if (Pause_Flg)
         {
             OnPause();
         }
@@ -163,8 +176,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     {
         //表示
         image[0].SetActive(true);
-        //スタティックなので値を0に
-        PlayerPoints = new int[4];
         //BGMを停止する
         Sound.Stop();
         //ゲーム終了のSE
@@ -176,6 +187,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
         yield return new WaitForSeconds(1);
+        //スタティックなので値を0に
+        PlayerPoints = new int[4];
         //リザルト画面に遷移
         SceneManager.LoadScene("Result");
     }
@@ -239,21 +252,19 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         Time.timeScale = 0;
 
         //ボタンを見えるように
-        Panel.GetComponent<Image>().color = new Color32(255, 255, 255, 150);
-        for (int i = 0; i < Panel.transform.childCount; i++)
+        PauseObject.transform.transform.GetChild(0).GetComponent<Image>().color = new Color32(0, 0, 0, 150);
+        for (int i = 1; i < PauseObject.transform.childCount; i++)
         {
-            Panel.transform.transform.GetChild(i).GetComponent<Image>().color = Color.white;
+            PauseObject.transform.GetChild(i).GetComponent<Image>().color = Color.white;
         }
         SelectUpdate();
         if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Push)
         {
             Pause_Push = true;
             Pause_Flg = false;
-            Panel.GetComponent<Image>().color = new Color32(0, 0, 0, 0);
-
-            for (int i = 0; i < Panel.transform.childCount; i++)
+            for (int i = 0; i < PauseObject.transform.childCount; i++)
             {
-                Panel.transform.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
+                PauseObject.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
             }
             select_index = 0;
             foreach (var obj in UiRectTransforms)
@@ -268,12 +279,11 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             switch (select_index)
             {
                 case 0:
-                    Panel.GetComponent<Image>().color = new Color32(0, 0, 0, 0);
-
-                    for (int i = 0; i < Panel.transform.childCount; i++)
+                    for (int i = 0; i < PauseObject.transform.childCount; i++)
                     {
-                        Panel.transform.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
+                        PauseObject.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
                     }
+                    select_index = 0;
                     foreach (var obj in UiRectTransforms)
                         obj.localScale = init_scale;
                     scale_time = 0;
@@ -339,5 +349,14 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         yield return new WaitForSeconds(1);
         //タイトル画面に遷移
         SceneManager.LoadScene("Title");
+    }
+
+    public void HitStop()
+    {
+        return;
+        if (Pause_Flg) return;
+        isHitStop = true;
+        hitStopTime = 0;
+        Time.timeScale = 0.2f;
     }
 }

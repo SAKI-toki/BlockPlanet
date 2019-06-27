@@ -74,6 +74,7 @@ public class Player : MonoBehaviour
             Pad = true;
             Timer = 0.5f;
             SwitchVibration.LowVibration(playerNumber, 0.3f);
+            FieldManeger.Instance.HitStop();
         }
     }
 
@@ -84,13 +85,16 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameStart && !FieldManeger.Instance.Pause_Flg)
+        if (GameStart && !FieldManeger.Instance.Pause_Flg && !FieldManeger.Instance.GameOver)
         {
-            if (Mathf.Abs(SwitchInput.GetVertical(playerNumber)) >= 0.4f ||
-            Mathf.Abs(SwitchInput.GetHorizontal(playerNumber)) >= 0.4f)
+            float vertical = SwitchInput.GetVertical(playerNumber);
+            float horizontal = SwitchInput.GetHorizontal(playerNumber);
+            if (Mathf.Abs(vertical) >= 0.4f ||
+            Mathf.Abs(horizontal) >= 0.4f)
             {
                 //=====移動=====
-                this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
+                this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime *
+                 Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2)));
                 //=====回転=====
                 this.transform.rotation = Quaternion.LookRotation(transform.position +
                 (Vector3.forward * SwitchInput.GetVertical(playerNumber)) +
@@ -106,7 +110,7 @@ public class Player : MonoBehaviour
         if (Pad)
             Controller();
 
-        if (GameStart && !FieldManeger.Instance.Pause_Flg)
+        if (GameStart && !FieldManeger.Instance.Pause_Flg && !FieldManeger.Instance.GameOver)
         {
             RaycastHit hit;
 

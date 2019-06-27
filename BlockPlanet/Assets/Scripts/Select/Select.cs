@@ -28,10 +28,16 @@ public class Select : SingletonMonoBehaviour<Select>
     private bool Push = false;
 
     BlockMap[] blockMaps = new BlockMap[StageNum];
-
+    [SerializeField]
+    GameObject CameraObject;
+    [SerializeField]
+    GameObject ui;
+    [SerializeField]
+    Material PostProcess;
 
     void Start()
     {
+        PostProcess.SetFloat("_Strength", 0);
         //フェード
         Fade.Instance.FadeOut(1.0f);
         stagenumber = 0;
@@ -138,17 +144,51 @@ public class Select : SingletonMonoBehaviour<Select>
 
     private IEnumerator Loadscene(bool next_is_title)
     {
-        //フェード
-        Fade.Instance.FadeIn(1.0f);
-        //少し待つ
-        yield return new WaitForSeconds(1.0f);
-        //シーン遷移
-        if (next_is_title)
-            SceneManager.LoadScene("Title");
+        ui.SetActive(false);
+        if (!next_is_title)
+        {
+            Vector3 initPosition = list[stagenumber].transform.position;
+            Vector3 endPosition = CameraObject.transform.position;
+            endPosition.y = initPosition.y;
+            endPosition.z += 15;
+            float timeCount = 0.0f;
+            while (list[stagenumber].transform.position != endPosition)
+            {
+                timeCount += Time.deltaTime;
+                list[stagenumber].transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
+                yield return null;
+            }
+            timeCount = 0.0f;
+            initPosition = CameraObject.transform.position;
+            endPosition = list[stagenumber].transform.position;
+            endPosition.y += 10;
+            Quaternion initRotation = CameraObject.transform.rotation;
+            Quaternion endRotation = Quaternion.Euler(90, 0, 0);
+            const float speed = 0.5f;
+            //フェード
+            Fade.Instance.FadeIn(1.0f / speed);
+            while (CameraObject.transform.position != endPosition)
+            {
+                timeCount += Time.deltaTime * speed;
+                PostProcess.SetFloat("_Strength", Mathf.Min(timeCount, 1));
+                CameraObject.transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
+                CameraObject.transform.rotation = Quaternion.Slerp(initRotation, endRotation, timeCount);
+                yield return null;
+            }
+            while (!Fade.Instance.IsEnd) yield return null;
+            SceneManager.LoadScene("Field");
+        }
         else
         {
-            SceneManager.LoadScene("Field");
+            Fade.Instance.FadeIn(1.0f);
+            //少し待つ
+            yield return new WaitForSeconds(1.0f);
+            SceneManager.LoadScene("Title");
         }
     }
 
+    void OnRenderImage(RenderTexture src, RenderTexture dest)
+    {
+        Graphics.Blit(src, dest, PostProcess);
+    }
 }
