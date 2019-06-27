@@ -42,6 +42,13 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     [System.NonSerialized]
     public Player[] players = new Player[4];
 
+    [SerializeField]
+    Image[] OnTheWayImages;
+    [SerializeField]
+    RectTransform[] PlayerRectTransforms;
+    [SerializeField]
+    RectTransform[] PlayerWinRectTransforms;
+
     void Start()
     {
         //ゲームスタート時
@@ -78,7 +85,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
                 }
                 else
                 {
-                    StartCoroutine("Restart");
+                    StartCoroutine("Restart", gameOverCount == PlayerGameOvers.Length);
                 }
             }
         }
@@ -131,7 +138,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     }
 
     //二ラウンド目以降
-    private IEnumerator Restart()
+    private IEnumerator Restart(bool isDraw = false)
     {
         //BGMを停止する
         Sound.Stop();
@@ -139,6 +146,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         SoundManager.Instance.F_GameSet();
         //少し待つ
         yield return new WaitForSeconds(1);
+        if (!isDraw)
+            yield return StartCoroutine("OnTheWayCoroutine");
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
@@ -166,6 +175,57 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         yield return new WaitForSeconds(1);
         //リザルト画面に遷移
         SceneManager.LoadScene("Result");
+    }
+
+    IEnumerator OnTheWayCoroutine()
+    {
+        Time.timeScale = 0;
+        Vector3 pos;
+        //初期位置
+        for (int i = 0; i < PlayerPoints.Length; ++i)
+        {
+            if (i == WinPlayerNumber)
+            {
+                pos = PlayerWinRectTransforms[PlayerPoints[i] - 1].position;
+            }
+            else
+            {
+                pos = PlayerWinRectTransforms[PlayerPoints[i]].position;
+            }
+            pos.y = PlayerRectTransforms[i].position.y;
+            PlayerRectTransforms[i].position = pos;
+        }
+        float alpha = 0.0f;
+        Color color;
+        //フェード
+        while (alpha < 1.0f)
+        {
+            alpha += Time.unscaledDeltaTime;
+            foreach (var image in OnTheWayImages)
+            {
+                color = image.color;
+                color.a = alpha;
+                image.color = color;
+            }
+            yield return null;
+        }
+        //移動
+        float moveSpeed = PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x -
+                            PlayerRectTransforms[WinPlayerNumber].position.x;
+        float timeCount = 0.0f;
+        pos = PlayerRectTransforms[WinPlayerNumber].position;
+        while (PlayerRectTransforms[WinPlayerNumber].position.x <
+        PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x)
+        {
+            timeCount += Time.unscaledDeltaTime;
+            pos.x += moveSpeed * Time.unscaledDeltaTime / 3;
+            PlayerRectTransforms[WinPlayerNumber].position = pos;
+            PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount) * Mathf.Rad2Deg / 2);
+            yield return null;
+        }
+        PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.identity;
+        yield return new WaitForSeconds(0.5f);
+        Time.timeScale = 1;
     }
 
     //ポーズ画面展開
