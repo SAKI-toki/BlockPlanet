@@ -38,8 +38,6 @@ public class Player : MonoBehaviour
     private ParticleSystem Charge;
 
     GameObject bombObject = null;
-    int enemyNumber = int.MaxValue;
-    float destroyTime = 0.0f;
 
     void Start()
     {
@@ -53,8 +51,7 @@ public class Player : MonoBehaviour
         {
             //フラグ関連
             Hold = false;
-            //フィールドマネージャー情報を渡す
-            FieldManeger.Instance.PlayerDestroy(playerNumber, enemyNumber);
+            FieldManeger.Instance.PlayerGameOvers[playerNumber] = true;
             //爆弾を持っていたら消す
             Destroy(ShootObject);
             Destroy(gameObject);
@@ -106,15 +103,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (enemyNumber != int.MaxValue)
-        {
-            destroyTime += Time.deltaTime;
-            if (destroyTime >= 3.0f)
-            {
-                enemyNumber = int.MaxValue;
-                destroyTime = 0.0f;
-            }
-        }
         if (Pad)
             Controller();
 
@@ -302,11 +290,9 @@ public class Player : MonoBehaviour
         rigidbody.AddForce(force, ForceMode.Impulse);
     }
 
-    public void HitBomb(float impact, int enemyNum)
+    public void HitBomb(float impact)
     {
-        destroyTime = 0.0f;
         bombimpact = impact;
-        enemyNumber = enemyNum;
     }
 }
 

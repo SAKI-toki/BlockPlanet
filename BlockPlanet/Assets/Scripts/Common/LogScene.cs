@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class LogScene : MonoBehaviour
 {
-    string currentSceneName;
+    string currentSceneName = "";
     string prevSceneName = "";
     void Update()
     {

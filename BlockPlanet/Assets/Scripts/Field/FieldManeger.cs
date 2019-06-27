@@ -4,41 +4,34 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// フィールド内のフラグやUIを管理する
+/// </summary>
 public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 {
-    /// <summary>
-    /// フィールド内のフラグやUIを管理する
-    /// </summary>
-
-    [SerializeField]
-    Text[] points;
     [System.NonSerialized]
-    //リザルトに受け渡す情報
     public bool[] PlayerGameOvers = new bool[4];
-    int[] PlayerWin = new int[3];
-    int winIndex = 0;
     //プレイヤーのポイント。スタティックにしないといけない
     static public int[] PlayerPoints = new int[4];
-    const int WinPoint = 4;
-    [SerializeField]
-    int[] WinPoints = new int[4];
-    const int DestroyPoint = 1;
+    //勝利ポイント
+    const int WinPoint = 3;
     static public int WinPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
-    private bool GameOver;
+    private bool GameOver = false;
     //ボタンを押す
     private bool Pause_Push = false;
     //ポーズの表示非表示を管理
+    [System.NonSerialized]
     public bool Pause_Flg = false;
     //BGM
-    AudioSource Sound;
+    AudioSource Sound = null;
     //カウントダウン
     [SerializeField] List<GameObject> image = new List<GameObject>();
 
     bool Game_Start = false;
     //ポーズ画面のパネル
     [SerializeField]
-    Image Panel;
+    Image Panel = null;
     [SerializeField]
     RectTransform[] UiRectTransforms = new RectTransform[3];
     int select_index = 0;
@@ -60,13 +53,34 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     void Update()
     {
-        for (int i = 0; i < 4; ++i)
+        if (!GameOver)
         {
-            points[i].text = PlayerPoints[i].ToString();
-        }
-        if (!GameOver && winIndex == PlayerWin.Length)
-        {
-            GameEnd();
+            int gameOverCount = 0;
+            for (int i = 0; i < PlayerGameOvers.Length; ++i)
+            {
+                if (PlayerGameOvers[i])
+                    ++gameOverCount;
+                else
+                    WinPlayerNumber = i;
+            }
+            if (gameOverCount >= PlayerGameOvers.Length - 1)
+            {
+                GameOver = true;
+                //勝者決定
+                if (gameOverCount == PlayerGameOvers.Length - 1)
+                {
+                    ++PlayerPoints[WinPlayerNumber];
+                }
+                //勝利ポイントに達したかどうか
+                if (PlayerPoints[WinPlayerNumber] == WinPoint)
+                {
+                    StartCoroutine("Gameover");
+                }
+                else
+                {
+                    StartCoroutine("Restart");
+                }
+            }
         }
         if (Pause_Flg)
         {
@@ -79,56 +93,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             //ポーズ画面
             if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Flg && Game_Start)
                 Pause_Flg = true;
-        }
-    }
-
-    void GameEnd()
-    {
-        GameOver = true;
-        bool[] flg = new bool[4];
-        bool[] winFlgs = new bool[4];
-        bool winFlg = false;
-        //順位に応じた点数を取得
-        for (int i = 0; i < PlayerWin.Length; ++i)
-        {
-            PlayerPoints[PlayerWin[i]] += WinPoints[WinPoints.Length - i - 1];
-            flg[PlayerWin[i]] = true;
-            if (PlayerPoints[PlayerWin[i]] >= WinPoint)
-            {
-                winFlgs[PlayerWin[i]] = true;
-                winFlg = true;
-            }
-        }
-        for (int i = 0; i < flg.Length; ++i)
-        {
-            if (!flg[i])
-            {
-                PlayerPoints[i] += WinPoints[0];
-                if (PlayerPoints[i] >= WinPoint)
-                {
-                    winFlgs[i] = true;
-                    winFlg = true;
-                }
-            }
-        }
-        //特定の得点に達してるプレイヤーがいたら終了
-        if (winFlg)
-        {
-            int maxPoint = WinPoint - 1;
-            for (int i = 0; i < winFlgs.Length; ++i)
-            {
-                if (PlayerPoints[i] > maxPoint)
-                {
-                    WinPlayerNumber = i;
-                    maxPoint = PlayerPoints[i];
-                }
-            }
-            //ゲームオーバー時の処理に入る
-            StartCoroutine("Gameover");
-        }
-        else
-        {
-            StartCoroutine("Restart");
         }
     }
 
@@ -246,7 +210,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
                     {
                         Panel.transform.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
                     }
-                    select_index = 0;
                     foreach (var obj in UiRectTransforms)
                         obj.localScale = init_scale;
                     scale_time = 0;
@@ -312,14 +275,5 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         yield return new WaitForSeconds(1);
         //タイトル画面に遷移
         SceneManager.LoadScene("Title");
-    }
-
-    public void PlayerDestroy(int index, int enemy)
-    {
-        Debug.Log(index);
-        Debug.Log(enemy);
-        if (enemy != int.MaxValue)
-            PlayerPoints[enemy] += DestroyPoint;
-        PlayerWin[winIndex++] = index;
     }
 }

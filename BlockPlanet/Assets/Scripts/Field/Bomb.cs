@@ -7,8 +7,6 @@ public class Bomb : MonoBehaviour
     /// 爆弾💣
     /// </summary>
 
-    [SerializeField]
-    int playerNumber = 0;
     //デストロイ
     private bool Destroy_Flg = false;
     //爆弾が消滅するまでの時間
@@ -19,11 +17,11 @@ public class Bomb : MonoBehaviour
     private float Bombimpact = 40.0f;
 
     //爆発のパーティクル、子オブジェクト
-    private ParticleSystem BOOM;
+    private ParticleSystem BOOM = null;
     Collider[] BombColl;
-    Rigidbody rb;
+    Rigidbody rb = null;
 
-    BlockMap block_map;
+    BlockMap block_map = null;
 
     void Start()
     {
@@ -75,7 +73,7 @@ public class Bomb : MonoBehaviour
         {
             if (other.CompareTag("Player" + i))
             {
-                other.GetComponent<Player>().HitBomb(Bombimpact, playerNumber);
+                other.GetComponent<Player>().HitBomb(Bombimpact);
             }
         }
 

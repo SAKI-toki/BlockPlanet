@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 音再生の管理
+/// </summary>
 public class SoundManager : SingletonMonoBehaviour<SoundManager>
 {
-
-    /// <summary>
-    /// 音再生の管理
-    /// </summary>
-
-    AudioSource Sounds;
+    AudioSource Sounds = null;
 
     [SerializeField]
     List<AudioClip> audioClip = new List<AudioClip>();
 
-    // Use this for initialization
     void Start()
     {
         Sounds = gameObject.GetComponent<AudioSource>();

@@ -6,7 +6,7 @@
 public class BlockNumber : MonoBehaviour
 {
     [System.NonSerialized]
-    public int _line, _row, _height;
+    public int _line = 0, _row = 0, _height = 0;
 
     public void SetNum(int line_n, int row_n, int height_n)
     { _line = line_n; _row = row_n; _height = height_n; }

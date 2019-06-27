@@ -12,7 +12,7 @@ public class BlockCreater : Singleton<BlockCreater>
     [SerializeField]
     GameObject[] StageCubes = new GameObject[7];
     [SerializeField]
-    GameObject StrongCube;
+    GameObject StrongCube = null;
 
     //CSVデータの行数
     public const int line_n = 52;
@@ -20,7 +20,7 @@ public class BlockCreater : Singleton<BlockCreater>
     public const int row_n = 52;
 
     //設置位置
-    Vector3 position;
+    Vector3 position = new Vector3();
 
     public enum SceneEnum { Game, Other };
 
