@@ -65,11 +65,13 @@ public class Player : MonoBehaviour
             //爆弾の方を向く
             transform.LookAt(BombPos);
             //吹っ飛ぶ力を設定 bombimpactは爆弾側で設定している
-            Vector3 force = transform.position - (transform.forward * bombimpact);
+            Vector3 force = transform.position - other.transform.position;
+            force.y = 0;
+            //Vector3 force = transform.position - (transform.forward * bombimpact);
             //後ろに吹っ飛ぶ
-            rb.AddForce(force, ForceMode.Impulse);
+            rb.AddForce(force * bombimpact, ForceMode.Impulse);
             //上に吹っ飛ぶ
-            rb.AddForce(Vector3.up * 300.0f);
+            rb.AddForce(Vector3.up * bombimpact * 10);
             //振動
             Pad = true;
             Timer = 0.5f;
@@ -182,13 +184,6 @@ public class Player : MonoBehaviour
     bool Namecheck()
     {
         return bombObject != null;
-        // GameObject mybomb;
-        // mybomb = GameObject.Find("Bomb" + playerNumber + "(Clone)");
-
-        // if (mybomb == null)
-        //     return false;
-        // else
-        //     return true;
     }
 
     void Controller()
@@ -295,9 +290,9 @@ public class Player : MonoBehaviour
         rigidbody.AddForce(force, ForceMode.Impulse);
     }
 
-    public void HitBomb(float impact)
+    public void HitBomb(float impact, float distance)
     {
-        bombimpact = impact;
+        bombimpact = impact / distance;
     }
 }
 

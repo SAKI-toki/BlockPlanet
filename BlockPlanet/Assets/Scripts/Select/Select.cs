@@ -144,9 +144,16 @@ public class Select : SingletonMonoBehaviour<Select>
 
     private IEnumerator Loadscene(bool next_is_title)
     {
-        ui.SetActive(false);
-        if (!next_is_title)
+        //次がタイトルかどうか
+        if (next_is_title)
         {
+            Fade.Instance.FadeIn(1.0f);
+            while (!Fade.Instance.IsEnd) yield return null;
+            SceneManager.LoadScene("Title");
+        }
+        else
+        {
+            ui.SetActive(false);
             Vector3 initPosition = list[stagenumber].transform.position;
             Vector3 endPosition = CameraObject.transform.position;
             endPosition.y = initPosition.y;
@@ -178,17 +185,5 @@ public class Select : SingletonMonoBehaviour<Select>
             while (!Fade.Instance.IsEnd) yield return null;
             SceneManager.LoadScene("Field");
         }
-        else
-        {
-            Fade.Instance.FadeIn(1.0f);
-            //少し待つ
-            yield return new WaitForSeconds(1.0f);
-            SceneManager.LoadScene("Title");
-        }
-    }
-
-    void OnRenderImage(RenderTexture src, RenderTexture dest)
-    {
-        Graphics.Blit(src, dest, PostProcess);
     }
 }

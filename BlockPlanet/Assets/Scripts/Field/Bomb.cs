@@ -14,11 +14,11 @@ public class Bomb : MonoBehaviour
     //プレイヤーに持たれているかどうか
     private bool Hold = false;
     //爆弾の威力
-    private float Bombimpact = 40.0f;
+    const float Bombimpact = 60.0f;
 
     //爆発のパーティクル、子オブジェクト
     private ParticleSystem BOOM = null;
-    Collider[] BombColl;
+    SphereCollider[] BombColl;
     Rigidbody rb = null;
 
     BlockMap block_map = null;
@@ -28,7 +28,7 @@ public class Bomb : MonoBehaviour
         //パーティクル
         BOOM = transform.GetChild(1).GetComponent<ParticleSystem>();
         //爆弾のコリジョン
-        BombColl = GetComponents<Collider>();
+        BombColl = GetComponents<SphereCollider>();
         BombColl[1].enabled = false;
         //rigidbody
         rb = this.GetComponent<Rigidbody>();
@@ -43,7 +43,10 @@ public class Bomb : MonoBehaviour
             if (collision.gameObject.CompareTag("Player" + i))
             {
                 if (!Hold)
+                {
                     Explosion(); //爆破処理
+                    BombColl[1].center = Vector3.up * -1;
+                }
                 return;
             }
         }
@@ -73,7 +76,7 @@ public class Bomb : MonoBehaviour
         {
             if (other.CompareTag("Player" + i))
             {
-                other.GetComponent<Player>().HitBomb(Bombimpact);
+                other.GetComponent<Player>().HitBomb(Bombimpact, Vector3.Distance(other.transform.position, this.transform.position));
             }
         }
 
@@ -130,6 +133,7 @@ public class Bomb : MonoBehaviour
         BOOM.Play();
         BOOM.transform.parent = null;
         //爆破の判定を出す
+        BombColl[0].enabled = false;
         BombColl[1].enabled = true;
         //デストロイするためのフラグ
         Destroy_Flg = true;

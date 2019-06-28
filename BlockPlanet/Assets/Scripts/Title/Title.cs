@@ -144,7 +144,7 @@ public class Title : SingletonMonoBehaviour<Title>
         //フェード
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(1.0f);
+        while (!Fade.Instance.IsEnd) yield return null;
         //シーン遷移
         SceneManager.LoadScene("Select");
     }
@@ -155,7 +155,7 @@ public class Title : SingletonMonoBehaviour<Title>
         //フェード
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(1.0f);
+        while (!Fade.Instance.IsEnd) yield return null;
         //ゲームを終了させる処理
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

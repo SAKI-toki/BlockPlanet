@@ -112,7 +112,7 @@ public class ResultManager : MonoBehaviour
     private IEnumerator Loadscene(string SceneName)
     {
         Fade.Instance.FadeIn(1.0f);
-        yield return new WaitForSeconds(1.0f);
+        while (!Fade.Instance.IsEnd) yield return null;
         SceneManager.LoadScene(SceneName);
     }
 }

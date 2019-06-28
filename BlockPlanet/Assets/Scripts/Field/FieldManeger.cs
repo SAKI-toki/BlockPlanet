@@ -124,7 +124,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //フェード開始
         Fade.Instance.FadeOut(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(0.5f);
+        while (!Fade.Instance.IsEnd) yield return null;
         //カウントダウンの音
         SoundManager.Instance.F_Start();
         //カウントダウン開始
@@ -166,7 +166,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(1);
+        while (!Fade.Instance.IsEnd) yield return null;
         //リザルト画面に遷移
         SceneManager.LoadScene("Field");
     }
@@ -186,7 +186,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(1);
+        while (!Fade.Instance.IsEnd) yield return null;
         //スタティックなので値を0に
         PlayerPoints = new int[4];
         //リザルト画面に遷移
@@ -337,7 +337,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(1);
+        while (!Fade.Instance.IsEnd) yield return null;
         //セレクト画面に遷移
         SceneManager.LoadScene("Select");
     }
@@ -346,7 +346,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
-        yield return new WaitForSeconds(1);
+        while (!Fade.Instance.IsEnd) yield return null;
         //タイトル画面に遷移
         SceneManager.LoadScene("Title");
     }

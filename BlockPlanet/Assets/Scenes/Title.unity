@@ -304,6 +304,7 @@ MonoBehaviour:
   - {fileID: 1843479093}
   max_scale: {x: 4.5, y: 4.5, z: 0}
   Credit_Image: {fileID: 8835050893810180974}
+  Check: 0
   sounds: {fileID: 0}
   rainbowMat: {fileID: 2100000, guid: 41ee01adb4d9fb342aee9bd47252395f, type: 2}
 --- !u!4 &990228128
@@ -449,7 +450,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1

@@ -93,21 +93,24 @@ public class BlockCreater : Singleton<BlockCreater>
                 //壊れるブロック
                 if (iDat[3] < 10)
                 {
-                    for (int i = 1; i <= iDat[3]; ++i)
+                    for (int i = 0; i < iDat[3]; ++i)
                     {
-                        position.y = i - 1;
-                        cube = Instantiate(StageCubes[i - 1], position, Quaternion.identity);
+                        position.y = i;
+                        cube = Instantiate(StageCubes[i], position, Quaternion.identity);
                         cube.transform.parent = parent;
-                        blockMap.SetBlock(Zcubepos, Xcubepos, i - 1, cube);
+                        blockMap.SetBlock(Zcubepos, Xcubepos, i, cube);
                     }
                 }
                 //壊れないブロック
                 else
                 {
-                    position.y = iDat[3] - 11;
-                    cube = Instantiate(StrongCube, position, Quaternion.identity);
-                    cube.transform.parent = parent;
-                    blockMap.SetBlock(Zcubepos, Xcubepos, iDat[3] - 11, cube);
+                    for (int i = 0; i < iDat[3] - 10; ++i)
+                    {
+                        position.y = i;
+                        cube = Instantiate(StrongCube, position, Quaternion.identity);
+                        cube.transform.parent = parent;
+                        blockMap.SetBlock(Zcubepos, Xcubepos, i, cube);
+                    }
                 }
                 //配置位置を(カメラから見て)右に移動
                 Xcubepos++;
