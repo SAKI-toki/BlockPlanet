@@ -75,6 +75,7 @@ public class Player : MonoBehaviour
             Timer = 0.5f;
             SwitchVibration.LowVibration(playerNumber, 0.3f);
             FieldManeger.Instance.HitStop();
+            CameraShake.Instance.Shake();
         }
     }
 

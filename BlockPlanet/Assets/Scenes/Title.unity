@@ -305,6 +305,7 @@ MonoBehaviour:
   max_scale: {x: 4.5, y: 4.5, z: 0}
   Credit_Image: {fileID: 8835050893810180974}
   sounds: {fileID: 0}
+  rainbowMat: {fileID: 2100000, guid: 41ee01adb4d9fb342aee9bd47252395f, type: 2}
 --- !u!4 &990228128
 Transform:
   m_ObjectHideFlags: 0

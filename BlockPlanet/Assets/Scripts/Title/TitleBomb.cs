@@ -34,6 +34,7 @@ public class TitleBomb : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Explosion(); //爆破処理
+        Title.Instance.Check = true;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -66,14 +67,13 @@ public class TitleBomb : MonoBehaviour
     {
         //フィールドにある破壊するキューブを検索
         GameObject[] tagobjs = GameObject.FindGameObjectsWithTag("Cube");
-        //フィールドにある破壊するキューブを検索
-        GameObject[] strongCubes = GameObject.FindGameObjectsWithTag("StrongCube");
 
         //キューブを消す
         foreach (GameObject obj in tagobjs)
         {
             Destroy(obj);
         }
+        GameObject[] strongCubes = GameObject.FindGameObjectsWithTag("StrongCube");
         foreach (GameObject obj in strongCubes)
         {
             obj.GetComponent<MeshRenderer>().material = rainbowMat;

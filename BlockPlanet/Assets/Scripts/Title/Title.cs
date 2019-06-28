@@ -17,13 +17,15 @@ public class Title : SingletonMonoBehaviour<Title>
     GameObject Credit_Image = null;
 
     private bool Push = false;
-    private bool Check = false;
+    public bool Check = false;
     private bool Flg = false;
     bool START = false;
     bool Credit = false;
     private float Timer = 2.0f;
     //BGM
     public AudioSource sounds = null;
+    [SerializeField]
+    Material rainbowMat;
 
     private void Start()
     {
@@ -47,7 +49,7 @@ public class Title : SingletonMonoBehaviour<Title>
             Timer = 0;
             Push = true;
             Check = true;
-
+            Debug.Log("ok");
 
             GameObject[] cubes = GameObject.FindGameObjectsWithTag("Cube");
 
@@ -58,6 +60,11 @@ public class Title : SingletonMonoBehaviour<Title>
 
             foreach (GameObject bomb in bombs)
                 Destroy(bomb);
+            GameObject[] strongCubes = GameObject.FindGameObjectsWithTag("StrongCube");
+            foreach (GameObject obj in strongCubes)
+            {
+                obj.GetComponent<MeshRenderer>().material = rainbowMat;
+            }
         }
         else
         {

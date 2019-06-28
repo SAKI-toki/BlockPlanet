@@ -354,9 +354,9 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     public void HitStop()
     {
         return;
-        if (Pause_Flg) return;
-        isHitStop = true;
-        hitStopTime = 0;
-        Time.timeScale = 0.2f;
+        // if (Pause_Flg) return;
+        // isHitStop = true;
+        // hitStopTime = 0;
+        // Time.timeScale = 0.2f;
     }
 }
