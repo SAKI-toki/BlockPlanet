@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
+using System.Collections.Generic;
 
 /// <summary>
 /// ブロックを生成する
@@ -30,7 +31,7 @@ public class BlockCreater : Singleton<BlockCreater>
     /// <param name="CsvName">読み込むCSVの名前</param>
     /// <param name="parent">生成したブロックの親オブジェクト</param>
     /// <param name="blockMap">ブロックマップ</param>
-    /// <param name="currentScene">現在のシーン</param>   
+    /// <param name="currentScene">現在のシーン</param>
     public void CreateField(string CsvName, Transform parent, BlockMap blockMap, SceneEnum currentScene = SceneEnum.Other)
     {
         //文字検索用

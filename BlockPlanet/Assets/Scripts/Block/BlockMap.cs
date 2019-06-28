@@ -40,6 +40,24 @@ public class BlockMap
         }
     }
 
+    public void MyCulling()
+    {
+        for (int i = 1; i < BlockArray.GetLength(0); ++i)
+        {
+            for (int j = 1; j < BlockArray.GetLength(1) - 1; ++j)
+            {
+                for (int k = 1; k < BlockArray.GetLength(2) - 1; ++k)
+                {
+                    //囲まれていたらRendererをOffにする
+                    if (IsSurround(i, j, k))
+                    {
+                        BlockArray[i, j, k].renderer.enabled = false;
+                    }
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// PhysicsをOffにする
     /// </summary>

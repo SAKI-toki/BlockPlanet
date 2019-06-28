@@ -66,36 +66,33 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     void Update()
     {
-        if (!GameOver)
+        if (GameOver) return;
+        int gameOverCount = 0;
+        for (int i = 0; i < PlayerGameOvers.Length; ++i)
         {
-            int gameOverCount = 0;
-            for (int i = 0; i < PlayerGameOvers.Length; ++i)
+            if (PlayerGameOvers[i])
+                ++gameOverCount;
+            else
+                WinPlayerNumber = i;
+        }
+        if (gameOverCount >= PlayerGameOvers.Length - 1)
+        {
+            GameOver = true;
+            //勝者決定
+            if (gameOverCount == PlayerGameOvers.Length - 1)
             {
-                if (PlayerGameOvers[i])
-                    ++gameOverCount;
-                else
-                    WinPlayerNumber = i;
+                ++PlayerPoints[WinPlayerNumber];
             }
-            if (gameOverCount >= PlayerGameOvers.Length - 1)
+            //勝利ポイントに達したかどうか
+            if (PlayerPoints[WinPlayerNumber] == WinPoint)
             {
-                GameOver = true;
-                //勝者決定
-                if (gameOverCount == PlayerGameOvers.Length - 1)
-                {
-                    ++PlayerPoints[WinPlayerNumber];
-                }
-                //勝利ポイントに達したかどうか
-                if (PlayerPoints[WinPlayerNumber] == WinPoint)
-                {
-                    StartCoroutine("Gameover");
-                }
-                else
-                {
-                    StartCoroutine("Restart", gameOverCount == PlayerGameOvers.Length);
-                }
+                StartCoroutine("Gameover");
+            }
+            else
+            {
+                StartCoroutine("Restart", gameOverCount == PlayerGameOvers.Length);
             }
         }
-        else return;
         if (isHitStop)
         {
             hitStopTime += Time.unscaledDeltaTime;
