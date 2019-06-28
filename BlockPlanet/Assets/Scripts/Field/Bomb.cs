@@ -60,10 +60,6 @@ public class Bomb : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //爆風に巻き込まれたら爆発
-        if (other.tag == "Bomb")
-            Explosion();
-
         //キューブを破壊
         if (other.tag == "Cube")
         {
