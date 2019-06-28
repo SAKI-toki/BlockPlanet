@@ -43,6 +43,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     public Player[] players = new Player[4];
 
     [SerializeField]
+    GameObject OnTheWayObject;
+    [SerializeField]
     Image[] OnTheWayImages;
     [SerializeField]
     Image BackgroundImage;
@@ -195,6 +197,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     IEnumerator OnTheWayCoroutine()
     {
+        OnTheWayObject.SetActive(true);
         Vector3 pos;
         //初期位置
         for (int i = 0; i < PlayerPoints.Length; ++i)
@@ -252,20 +255,13 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         Time.timeScale = 0;
 
         //ボタンを見えるように
-        PauseObject.transform.transform.GetChild(0).GetComponent<Image>().color = new Color32(0, 0, 0, 150);
-        for (int i = 1; i < PauseObject.transform.childCount; i++)
-        {
-            PauseObject.transform.GetChild(i).GetComponent<Image>().color = Color.white;
-        }
+        PauseObject.SetActive(true);
         SelectUpdate();
         if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Push)
         {
             Pause_Push = true;
             Pause_Flg = false;
-            for (int i = 0; i < PauseObject.transform.childCount; i++)
-            {
-                PauseObject.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
-            }
+            PauseObject.SetActive(false);
             select_index = 0;
             foreach (var obj in UiRectTransforms)
                 obj.localScale = init_scale;
@@ -279,10 +275,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             switch (select_index)
             {
                 case 0:
-                    for (int i = 0; i < PauseObject.transform.childCount; i++)
-                    {
-                        PauseObject.transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 0);
-                    }
+                    PauseObject.SetActive(false);
                     select_index = 0;
                     foreach (var obj in UiRectTransforms)
                         obj.localScale = init_scale;

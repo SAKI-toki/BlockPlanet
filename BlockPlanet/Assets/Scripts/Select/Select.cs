@@ -45,14 +45,17 @@ public class Select : SingletonMonoBehaviour<Select>
         for (int i = 0; i < StageNum; ++i)
         {
             //空のオブジェクト
-            GameObject field = new GameObject("field" + (i + 1));
-            field.transform.position = new Vector3(25, 0, 25);
-            //リストに追加
-            list.Add(field);
+            GameObject field = new GameObject("field");
             blockMaps[i] = new BlockMap();
             BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps[i]);
+            GameObject combineField = new GameObject("field" + (i + 1));
+            combineField.transform.position = new Vector3(25, 0, 25);
             blockMaps[i].BlockRendererUpdate();
-            blockMaps[i].BlockPhysicsOff();
+            //blockMaps[i].BlockPhysicsOff();
+            MeshCombine.Combine(field, combineField);
+            Destroy(field);
+            //リストに追加
+            list.Add(combineField);
             //見えなくする
             list[i].SetActive(false);
         }

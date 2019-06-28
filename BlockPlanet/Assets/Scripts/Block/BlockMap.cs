@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// ブロックの三次元配列
@@ -44,16 +45,10 @@ public class BlockMap
     /// </summary>
     public void BlockPhysicsOff()
     {
-        for (int i = 0; i < BlockArray.GetLength(0); ++i)
+        foreach (var block in BlockArray)
         {
-            for (int j = 0; j < BlockArray.GetLength(1); ++j)
-            {
-                for (int k = 0; k < BlockArray.GetLength(2); ++k)
-                {
-                    if (!BlockArray[i, j, k].obj) continue;
-                    BlockArray[i, j, k].collider.enabled = false;
-                }
-            }
+            if (!block.obj) continue;
+            block.collider.enabled = false;
         }
     }
 
