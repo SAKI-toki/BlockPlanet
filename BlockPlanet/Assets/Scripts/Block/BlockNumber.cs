@@ -6,12 +6,8 @@
 public class BlockNumber : MonoBehaviour
 {
     [System.NonSerialized]
-    public int _line = 0, _row = 0, _height = 0;
+    public int line = 0, row = 0, height = 0;
 
     public void SetNum(int line_n, int row_n, int height_n)
-    { _line = line_n; _row = row_n; _height = height_n; }
-
-    public int line { get { return _line; } }
-    public int row { get { return _row; } }
-    public int height { get { return _height; } }
+    { line = line_n; row = row_n; height = height_n; }
 }

@@ -37,14 +37,16 @@ public class TitleCreation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Creation();
+        GameObject obj = new GameObject("TitleField");
+        Creation(obj);
     }
 
-    void Creation()
+    void Creation(GameObject parent)
     {
         csvfile = Resources.Load("csv/title") as TextAsset;
         //文字列読み取る
         StringReader reader = new StringReader(csvfile.text);
+        GameObject obj;
 
         //戻り値:使用できる文字がないか、ストリームがシークをサポートしていない場合は -1
         while (reader.Peek() > -1)
@@ -80,13 +82,15 @@ public class TitleCreation : MonoBehaviour
                 if (iDat[3] == 0)
                 {
                     Position = new Vector3(Xcubepos, 0, Zcubepos);
-                    Instantiate(TitleCube, Position, Quaternion.Euler(0, 0, 0));
+                    obj = Instantiate(TitleCube, Position, Quaternion.Euler(0, 0, 0));
+                    obj.transform.parent = parent.transform;
                 }
                 //一段
                 if (iDat[3] == 1)
                 {
                     Position = new Vector3(Xcubepos, 0, Zcubepos);
-                    Instantiate(TitleStrongCube, Position, Quaternion.Euler(0, 0, 0));
+                    obj = Instantiate(TitleStrongCube, Position, Quaternion.Euler(0, 0, 0));
+                    obj.transform.parent = parent.transform;
                 }
 
                 //配置位置を(カメラから見て)右に移動

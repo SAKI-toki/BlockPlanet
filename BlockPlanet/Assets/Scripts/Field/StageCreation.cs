@@ -9,7 +9,8 @@ public class StageCreation : MonoBehaviour
     /// </summary>
     int stagenumber = 1;
 
-    public BlockMap blockMap = new BlockMap();
+    //public BlockMap blockMap = new BlockMap();
+    public DynamicBlockMeshCombine blockMap = new DynamicBlockMeshCombine();
 
     void Start()
     {
@@ -18,6 +19,12 @@ public class StageCreation : MonoBehaviour
         GameObject parent = new GameObject("FieldObject");
         BlockCreater.GetInstance().CreateField("Stage" + stagenumber, parent.transform, blockMap, BlockCreater.SceneEnum.Game);
         parent.isStatic = true;
-        blockMap.BlockRendererUpdate();
+        blockMap.BlockIsSurroundUpdate();
+        blockMap.BlockRendererOff();
+        blockMap.Initialize();
+    }
+    void Update()
+    {
+        blockMap.CreateMesh();
     }
 }

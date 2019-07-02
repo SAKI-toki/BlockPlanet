@@ -17,6 +17,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     const int WinPoint = 3;
     static public int WinPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
+    [System.NonSerialized]
     public bool GameOver = false;
     //ボタンを押す
     private bool Pause_Push = false;

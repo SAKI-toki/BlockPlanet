@@ -64,16 +64,13 @@ public class Bomb : MonoBehaviour
         if (other.tag == "Cube")
         {
             block_map.BreakBlock(other.GetComponent<BlockNumber>());
-            Destroy(other.gameObject);
+            other.gameObject.SetActive(false);
         }
 
         //爆弾の威力をプレイヤーに伝える
-        for (int i = 1; i <= 4; ++i)
+        if (other.CompareTag("Player1") || other.CompareTag("Player2") || other.CompareTag("Player3") || other.CompareTag("Player4"))
         {
-            if (other.CompareTag("Player" + i))
-            {
-                other.GetComponent<Player>().HitBomb(Bombimpact, Vector3.Distance(other.transform.position, this.transform.position));
-            }
+            other.GetComponent<Player>().HitBomb(Bombimpact, Vector3.Distance(other.transform.position, this.transform.position));
         }
 
         //フィールド外に落ちた場合

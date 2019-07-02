@@ -9,15 +9,34 @@ public class BlockMap
     /// <summary>
     /// ブロックの情報
     /// </summary>
-    struct BlockInfo
+    protected class BlockInfo
     {
-        public GameObject obj;
-        public MeshRenderer renderer;
-        public BoxCollider collider;
-        public BlockNumber block_number;
+        public bool isSurround = false;
+        public bool IsEnable = false;
+        public MeshRenderer renderer = null;
+        public MeshFilter meshFilter = null;
+        public BoxCollider collider = null;
+        public BlockNumber block_number = null;
+        public CombineInstance cmesh = new CombineInstance();
+        public int MaterialNumber = 0;
     }
     //サイズ分のマップを用意する
-    BlockInfo[,,] BlockArray = new BlockInfo[BlockCreater.line_n, BlockCreater.row_n, 7];
+    protected BlockInfo[,,] BlockArray = new BlockInfo[BlockCreater.line_n, BlockCreater.row_n, 7];
+    bool IsInit = false;
+    void Initialize()
+    {
+        for (int i = 0; i < BlockArray.GetLength(0); ++i)
+        {
+            for (int j = 0; j < BlockArray.GetLength(1); ++j)
+            {
+                for (int k = 0; k < BlockArray.GetLength(2); ++k)
+                {
+                    BlockArray[i, j, k] = new BlockInfo();
+                }
+            }
+        }
+        IsInit = true;
+    }
 
     /// <summary>
     /// Rendererの更新
@@ -40,24 +59,6 @@ public class BlockMap
         }
     }
 
-    public void MyCulling()
-    {
-        for (int i = 1; i < BlockArray.GetLength(0); ++i)
-        {
-            for (int j = 1; j < BlockArray.GetLength(1) - 1; ++j)
-            {
-                for (int k = 1; k < BlockArray.GetLength(2) - 1; ++k)
-                {
-                    //囲まれていたらRendererをOffにする
-                    if (IsSurround(i, j, k))
-                    {
-                        BlockArray[i, j, k].renderer.enabled = false;
-                    }
-                }
-            }
-        }
-    }
-
     /// <summary>
     /// PhysicsをOffにする
     /// </summary>
@@ -65,8 +66,17 @@ public class BlockMap
     {
         foreach (var block in BlockArray)
         {
-            if (!block.obj) continue;
+            if (!block.IsEnable) continue;
             block.collider.enabled = false;
+        }
+    }
+
+    public void BlockRendererOff()
+    {
+        foreach (var block in BlockArray)
+        {
+            if (!block.IsEnable) continue;
+            block.renderer.enabled = false;
         }
     }
 
@@ -79,18 +89,24 @@ public class BlockMap
     /// <param name="block">ブロックのオブジェクト</param>
     public void SetBlock(int line, int row, int height, GameObject block)
     {
+        if (!IsInit) Initialize();
         //範囲外かどうかチェックする
-        if (line < 0 || line >= BlockArray.GetLength(0) ||
-        row < 0 || row >= BlockArray.GetLength(1) ||
-        height < 0 || height >= BlockArray.GetLength(2))
+        if (!RangeCheck(line, row, height))
         {
             Debug.LogError("範囲外");
             return;
         }
-        BlockArray[line, row, height].obj = block;
+        if (block == null) return;
+        BlockArray[line, row, height] = new BlockInfo();
+        BlockArray[line, row, height].IsEnable = true;
         BlockArray[line, row, height].renderer = block.GetComponent<MeshRenderer>();
+        BlockArray[line, row, height].meshFilter = block.GetComponent<MeshFilter>();
         BlockArray[line, row, height].collider = block.GetComponent<BoxCollider>();
         BlockArray[line, row, height].block_number = block.GetComponent<BlockNumber>();
+        BlockArray[line, row, height].cmesh.transform = block.transform.localToWorldMatrix;
+        BlockArray[line, row, height].cmesh.mesh = BlockArray[line, row, height].meshFilter.sharedMesh;
+        BlockArray[line, row, height].MaterialNumber =
+            BlockCreater.GetInstance().GetMaterialNumber(BlockArray[line, row, height].renderer.sharedMaterial);
         BlockArray[line, row, height].block_number.SetNum(line, row, height);
     }
 
@@ -98,8 +114,9 @@ public class BlockMap
     /// ブロックが壊れたときに実行する
     /// </summary>
     /// <param name="block_num">ブロックの番号</param>
-    public void BreakBlock(BlockNumber block_num)
+    public virtual void BreakBlock(BlockNumber block_num)
     {
+        BlockArray[block_num.line, block_num.row, block_num.height].IsEnable = false;
         if (block_num.line < BlockArray.GetLength(0) - 1 &&
             BlockArray[block_num.line + 1, block_num.row, block_num.height].renderer)
             BlockArray[block_num.line + 1, block_num.row, block_num.height].renderer.enabled = true;
@@ -143,11 +160,18 @@ public class BlockMap
             return false;
         }
 
-        return BlockArray[line + 1, row, height].obj &&
-        BlockArray[line - 1, row, height].obj &&
-        BlockArray[line, row + 1, height].obj &&
-        BlockArray[line, row - 1, height].obj &&
-        BlockArray[line, row, height + 1].obj &&
-        BlockArray[line, row, height - 1].obj;
+        return BlockArray[line + 1, row, height].IsEnable &&
+        BlockArray[line - 1, row, height].IsEnable &&
+        BlockArray[line, row + 1, height].IsEnable &&
+        BlockArray[line, row - 1, height].IsEnable &&
+        BlockArray[line, row, height + 1].IsEnable &&
+        BlockArray[line, row, height - 1].IsEnable;
+    }
+
+    bool RangeCheck(int line, int row, int height)
+    {
+        return line >= 0 && line < BlockArray.GetLength(0) &&
+        row >= 0 && row < BlockArray.GetLength(1) &&
+        height >= 0 && height < BlockArray.GetLength(2);
     }
 }

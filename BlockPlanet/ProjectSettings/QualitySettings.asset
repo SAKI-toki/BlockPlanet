@@ -8,9 +8,9 @@ QualitySettings:
   m_QualitySettings:
   - serializedVersion: 2
     name: Very Low
-    pixelLightCount: 5
+    pixelLightCount: 1
     shadows: 1
-    shadowResolution: 3
+    shadowResolution: 2
     shadowProjection: 1
     shadowCascades: 2
     shadowDistance: 100
@@ -21,7 +21,7 @@ QualitySettings:
     blendWeights: 1
     textureQuality: 3
     anisotropicTextures: 0
-    antiAliasing: 2
+    antiAliasing: 0
     softParticles: 0
     softVegetation: 0
     realtimeReflectionProbes: 0

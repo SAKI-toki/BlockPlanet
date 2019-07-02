@@ -17,12 +17,14 @@ public class Title : SingletonMonoBehaviour<Title>
     GameObject Credit_Image = null;
 
     private bool Push = false;
+    [System.NonSerialized]
     public bool Check = false;
     private bool Flg = false;
     bool START = false;
     bool Credit = false;
     private float Timer = 2.0f;
     //BGM
+    [System.NonSerialized]
     public AudioSource sounds = null;
     [SerializeField]
     Material rainbowMat;

@@ -25,6 +25,10 @@ public class BlockCreater : Singleton<BlockCreater>
 
     public enum SceneEnum { Game, Other };
 
+#if UNITY_EDITOR
+    int BlockCount = 0;
+#endif
+
     /// <summary>
     /// フィールドの生成
     /// </summary>
@@ -36,7 +40,6 @@ public class BlockCreater : Singleton<BlockCreater>
     {
         //文字検索用
         int[] iDat = new int[4];
-        GameObject cube = null;
         //CSVの全文字列を保存する
         string str = "";
         //取り出した文字列を保存する
@@ -87,49 +90,103 @@ public class BlockCreater : Singleton<BlockCreater>
                     if (currentScene == SceneEnum.Game)
                     {
                         position.y = 20;
-                        GeneratePlayer(playerNumber - 1, position);
+                        GeneratePlayer(playerNumber - 1);
                     }
                     iDat[3] -= playerNumber * 100;
                 }
-                //壊れるブロック
-                if (iDat[3] < 10)
-                {
-                    for (int i = 0; i < iDat[3]; ++i)
-                    {
-                        position.y = i;
-                        cube = Instantiate(StageCubes[i], position, Quaternion.identity);
-                        cube.transform.parent = parent;
-                        blockMap.SetBlock(Zcubepos, Xcubepos, i, cube);
-                    }
-                }
-                //壊れないブロック
-                else
-                {
-                    for (int i = 0; i < iDat[3] - 10; ++i)
-                    {
-                        position.y = i;
-                        cube = Instantiate(StrongCube, position, Quaternion.identity);
-                        cube.transform.parent = parent;
-                        blockMap.SetBlock(Zcubepos, Xcubepos, i, cube);
-                    }
-                }
+                GenerateBlock(iDat[3], Xcubepos, Zcubepos, parent, blockMap);
                 //配置位置を(カメラから見て)右に移動
                 Xcubepos++;
             }
             //配置位置を(カメラから見て)縦に移動
             Zcubepos++;
         }
+
+#if UNITY_EDITOR
+        Debug.Log(CsvName + ":" + BlockCount.ToString());
+        BlockCount = 0;
+#endif
     }
 
     /// <summary>
     /// プレイヤーの生成
     /// </summary>
     /// <param name="playerNumber">プレイヤーの番号</param>
-    /// <param name="position">生成位置</param>
-    void GeneratePlayer(int playerNumber, Vector3 position)
+    void GeneratePlayer(int playerNumber)
     {
         GameObject player = Instantiate(Players[playerNumber], position, Quaternion.identity);
         //マップの中心を向かせる
         player.transform.LookAt(new Vector3(row_n / 2.0f, position.y, line_n / 2.0f));
+    }
+
+    void GenerateBlock(int number, int x, int z, Transform parent, BlockMap blockMap)
+    {
+        GameObject cube;
+        //壊れるブロック
+        if (number < 10)
+        {
+            for (int i = 0; i < number; ++i)
+            {
+                position.y = i;
+                cube = Instantiate(StageCubes[i], position, Quaternion.identity);
+                if (parent != null) cube.transform.parent = parent;
+                if (blockMap != null) blockMap.SetBlock(z, x, i, cube);
+
+#if UNITY_EDITOR
+                ++BlockCount;
+#endif
+            }
+        }
+        //壊れないブロック
+        else
+        {
+            for (int i = 0; i < number - 10; ++i)
+            {
+                position.y = i;
+                cube = Instantiate(StrongCube, position, Quaternion.identity);
+                if (parent != null) cube.transform.parent = parent;
+                if (blockMap != null) blockMap.SetBlock(z, x, i, cube);
+
+#if UNITY_EDITOR
+                ++BlockCount;
+#endif
+            }
+        }
+    }
+
+    public void AutoGenerateBlock(int[,] map, Transform parent, BlockMap blockMap)
+    {
+        for (int i = 0; i < line_n; ++i)
+        {
+            for (int j = 0; j < row_n; ++j)
+            {
+                position.Set(j, 0, i);
+                if (map[i, j] >= 100)
+                {
+                    int playerNumber = map[i, j] / 100;
+                    //プレイヤーを出現する
+                    position.y = 20;
+                    GeneratePlayer(playerNumber - 1);
+                    map[i, j] -= playerNumber * 100;
+                }
+                GenerateBlock(map[i, j], j, i, parent, blockMap);
+            }
+        }
+#if UNITY_EDITOR
+        Debug.Log(BlockCount.ToString());
+        BlockCount = 0;
+#endif
+    }
+
+    [SerializeField]
+    public Material[] mats = new Material[8];
+    public int GetMaterialNumber(Material mat)
+    {
+        for (int i = 0; i < 8; ++i)
+        {
+            if (mats[i] == mat) return i;
+        }
+        Debug.LogError("見つかりませんでした");
+        return -1;
     }
 }

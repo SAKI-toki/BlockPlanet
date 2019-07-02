@@ -19,7 +19,6 @@ public class TitleBomb : MonoBehaviour
     [SerializeField]
     Material rainbowMat;
 
-    // Use this for initialization
     void Start()
     {
         //パーティクル
@@ -71,7 +70,7 @@ public class TitleBomb : MonoBehaviour
         //キューブを消す
         foreach (GameObject obj in tagobjs)
         {
-            Destroy(obj);
+            obj.SetActive(false);
         }
         GameObject[] strongCubes = GameObject.FindGameObjectsWithTag("StrongCube");
         foreach (GameObject obj in strongCubes)
