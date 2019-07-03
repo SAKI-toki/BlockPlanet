@@ -26,4 +26,9 @@ public class DontDestroy : MonoBehaviour
         }
         RenderSettings.skybox.SetFloat("_Rotation", Rot);
     }
+
+    void OnDestroy()
+    {
+        RenderSettings.skybox.SetFloat("_Rotation", 0.0f);
+    }
 }
