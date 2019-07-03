@@ -331,7 +331,8 @@ MonoBehaviour:
   max_scale: {x: 0.5, y: 0.5, z: 0}
   CameraObject: {fileID: 1429951023}
   ui: {fileID: 2046592428}
-  PostProcess: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
+  PostProcessMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
+  postProcess: {fileID: 1429951027}
 --- !u!4 &433928473
 Transform:
   m_ObjectHideFlags: 0

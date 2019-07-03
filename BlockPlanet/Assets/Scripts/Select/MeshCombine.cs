@@ -45,6 +45,7 @@ static public class MeshCombine
             renderer.sharedMaterial = instance.Key;
             meshFilter.mesh = new Mesh();
             meshFilter.mesh.CombineMeshes(instance.Value.ToArray());
+            obj.isStatic = true;
             obj.transform.parent = parent.transform;
         }
     }

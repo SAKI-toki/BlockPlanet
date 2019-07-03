@@ -27,17 +27,19 @@ public class Select : SingletonMonoBehaviour<Select>
     public static int stagenumber = 0;
     private bool Push = false;
 
-    BlockMap[] blockMaps = new BlockMap[StageNum];
     [SerializeField]
     GameObject CameraObject;
     [SerializeField]
     GameObject ui;
     [SerializeField]
-    Material PostProcess;
+    Material PostProcessMaterial;
+    [SerializeField]
+    PostProcess postProcess;
 
     void Start()
     {
-        PostProcess.SetFloat("_Strength", 0);
+        PostProcessMaterial.SetFloat("_Strength", 0);
+        postProcess.enabled = false;
         //フェード
         Fade.Instance.FadeOut(1.0f);
         stagenumber = 0;
@@ -46,12 +48,11 @@ public class Select : SingletonMonoBehaviour<Select>
         {
             //空のオブジェクト
             GameObject field = new GameObject("field");
-            blockMaps[i] = new BlockMap();
-            BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps[i]);
+            BlockMap blockMaps = new BlockMap();
+            BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps);
             GameObject combineField = new GameObject("field" + (i + 1));
             combineField.transform.position = new Vector3(25, 0, 25);
-            blockMaps[i].BlockRendererUpdate();
-            //blockMaps[i].BlockPhysicsOff();
+            blockMaps.BlockRendererUpdate();
             MeshCombine.Combine(field, combineField);
             Destroy(field);
             //リストに追加
@@ -177,10 +178,11 @@ public class Select : SingletonMonoBehaviour<Select>
             const float speed = 0.5f;
             //フェード
             Fade.Instance.FadeIn(1.0f / speed);
+            postProcess.enabled = true;
             while (CameraObject.transform.position != endPosition)
             {
                 timeCount += Time.deltaTime * speed;
-                PostProcess.SetFloat("_Strength", Mathf.Min(timeCount, 1));
+                PostProcessMaterial.SetFloat("_Strength", Mathf.Min(timeCount, 1));
                 CameraObject.transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
                 CameraObject.transform.rotation = Quaternion.Slerp(initRotation, endRotation, timeCount);
                 yield return null;

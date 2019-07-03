@@ -104,7 +104,7 @@ public class BlockMap
         BlockArray[line, row, height].collider = block.GetComponent<BoxCollider>();
         BlockArray[line, row, height].block_number = block.GetComponent<BlockNumber>();
         BlockArray[line, row, height].cmesh.transform = block.transform.localToWorldMatrix;
-        BlockArray[line, row, height].cmesh.mesh = BlockArray[line, row, height].meshFilter.sharedMesh;
+        BlockArray[line, row, height].cmesh.mesh = MakeOptimizeCube(BlockArray[line, row, height].meshFilter, row);
         BlockArray[line, row, height].MaterialNumber =
             BlockCreater.GetInstance().GetMaterialNumber(BlockArray[line, row, height].renderer.sharedMaterial);
         BlockArray[line, row, height].block_number.SetNum(line, row, height);
@@ -173,5 +173,10 @@ public class BlockMap
         return line >= 0 && line < BlockArray.GetLength(0) &&
         row >= 0 && row < BlockArray.GetLength(1) &&
         height >= 0 && height < BlockArray.GetLength(2);
+    }
+
+    protected virtual Mesh MakeOptimizeCube(MeshFilter filter, int row)
+    {
+        return filter.sharedMesh;
     }
 }
