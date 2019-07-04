@@ -71,6 +71,9 @@ public class BlockMap
         }
     }
 
+    /// <summary>
+    /// rendererをOffにする
+    /// </summary>
     public void BlockRendererOff()
     {
         foreach (var block in BlockArray)
@@ -97,7 +100,7 @@ public class BlockMap
             return;
         }
         if (block == null) return;
-        BlockArray[line, row, height] = new BlockInfo();
+        //各情報をクラスに格納
         BlockArray[line, row, height].IsEnable = true;
         BlockArray[line, row, height].renderer = block.GetComponent<MeshRenderer>();
         BlockArray[line, row, height].meshFilter = block.GetComponent<MeshFilter>();

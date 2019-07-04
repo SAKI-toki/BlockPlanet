@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class DynamicBlockMeshCombine : BlockMap
+public class FieldBlockMeshCombine : BlockMap
 {
     Mesh mesh;
     class CombineMeshInfo
@@ -20,12 +19,12 @@ public class DynamicBlockMeshCombine : BlockMap
         public List<int> indices = new List<int>();
         public List<Vector2> uvs = new List<Vector2>();
     }
-    bool updateMeshFlg = false;
-    Mesh optimizeCubeMesh = null;
+    protected bool updateMeshFlg = false;
+    protected Mesh optimizeCubeMesh = null;
     Mesh optimizeCubeMeshRight = null;
     Mesh optimizeCubeMeshLeft = null;
     //縦方向にブロックの数を保持する
-    int[,] BlockNum = new int[BlockCreater.line_n, BlockCreater.row_n];
+    protected int[,] BlockNum = new int[BlockCreater.line_n, BlockCreater.row_n];
 
 
     public void CreateMesh()
@@ -51,11 +50,6 @@ public class DynamicBlockMeshCombine : BlockMap
                     var block = BlockArray[i, j, k];
                     if (!block.IsEnable || block.isSurround || block.MaterialNumber == 0) continue;
                     //位置を格納
-                    /* 
-                    !!!!!ここがボトルネック!!!!!!!
-                    追加するだけでString.memcpyが行われる
-                    CombineInstanceの仕様と思われ
-                    */
                     combines[block.MaterialNumber].Add(block.cmesh);
                 }
             }
@@ -91,23 +85,17 @@ public class DynamicBlockMeshCombine : BlockMap
         if (block_num.line < BlockArray.GetLength(0) - 1)
             BlockArray[block_num.line + 1, block_num.row, block_num.height].isSurround = false;
 
-        // if (block_num.line > 0)
-        //    BlockArray[block_num.line - 1, block_num.row, block_num.height].isSurround = false;
-
         if (block_num.row < BlockArray.GetLength(1) - 1)
             BlockArray[block_num.line, block_num.row + 1, block_num.height].isSurround = false;
 
         if (block_num.row > 0)
             BlockArray[block_num.line, block_num.row - 1, block_num.height].isSurround = false;
 
-        // if (block_num.height < BlockArray.GetLength(2) - 1)
-        //     BlockArray[block_num.line, block_num.row, block_num.height + 1].isSurround = false;
-
         if (block_num.height > 0)
             BlockArray[block_num.line, block_num.row, block_num.height - 1].isSurround = false;
     }
 
-    public void BlockIsSurroundUpdate()
+    public virtual void BlockIsSurroundUpdate()
     {
         for (int i = 1; i < BlockArray.GetLength(0); ++i)
         {
@@ -123,6 +111,12 @@ public class DynamicBlockMeshCombine : BlockMap
         }
     }
 
+    /// <summary>
+    /// 最適化されたキューブを取得
+    /// </summary>
+    /// <param name="filter">キューブを取得するためのFilter</param>
+    /// <param name="row">横の位置</param>
+    /// <returns>最適化されたキューブ</returns>
     protected override Mesh MakeOptimizeCube(MeshFilter filter, int row)
     {
         if (optimizeCubeMesh == null)
@@ -142,7 +136,7 @@ public class DynamicBlockMeshCombine : BlockMap
     /// 奥と下のポリゴンを消去したCubeMeshを生成
     /// </summary>
     /// <param name="filter"></param>
-    void CreateOptimizeCube(MeshFilter filter)
+    protected virtual void CreateOptimizeCube(MeshFilter filter)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.IO;
-using System.Collections.Generic;
 
 /// <summary>
 /// ブロックを生成する
@@ -23,11 +22,9 @@ public class BlockCreater : Singleton<BlockCreater>
     //設置位置
     Vector3 position = new Vector3();
 
-    public enum SceneEnum { Game, Other };
-
-#if UNITY_EDITOR
-    int BlockCount = 0;
-#endif
+    public enum SceneEnum { Game, Result, Other };
+    [SerializeField]
+    public Material[] mats = new Material[8];
 
     /// <summary>
     /// フィールドの生成
@@ -35,8 +32,10 @@ public class BlockCreater : Singleton<BlockCreater>
     /// <param name="CsvName">読み込むCSVの名前</param>
     /// <param name="parent">生成したブロックの親オブジェクト</param>
     /// <param name="blockMap">ブロックマップ</param>
+    /// <param name="LookatObject">注視点</param>
     /// <param name="currentScene">現在のシーン</param>
-    public void CreateField(string CsvName, Transform parent, BlockMap blockMap, SceneEnum currentScene = SceneEnum.Other)
+    public void CreateField(string CsvName, Transform parent, BlockMap blockMap,
+    GameObject LookatObject, SceneEnum currentScene = SceneEnum.Other)
     {
         //文字検索用
         int[] iDat = new int[4];
@@ -44,8 +43,6 @@ public class BlockCreater : Singleton<BlockCreater>
         string str = "";
         //取り出した文字列を保存する
         string strget = "";
-        int Xcubepos = 0;
-        int Zcubepos = 0;
         TextAsset csvfile = Resources.Load("csv/" + CsvName) as TextAsset;
         //文字列読み取る
         StringReader reader = new StringReader(csvfile.text);
@@ -64,8 +61,6 @@ public class BlockCreater : Singleton<BlockCreater>
 
         for (int z = 0; z < line_n; z++)
         {
-            //ループするたびにxを0に。この位置からずらさないように
-            Xcubepos = 0;
             for (int x = 0; x < row_n; x++)
             {
                 //IndexOfメソッドは文字列内に含まれる文字、文字列の位置を取得することができる。
@@ -81,44 +76,53 @@ public class BlockCreater : Singleton<BlockCreater>
                 //次のインデックスへ
                 iDat[0]++;
 
-                position.Set(Xcubepos, 0, Zcubepos);
+                position.Set(x, 0, z);
                 //プレイヤーの位置
                 if (iDat[3] >= 100)
                 {
                     int playerNumber = iDat[3] / 100;
                     //プレイヤーを出現する
-                    if (currentScene == SceneEnum.Game)
+                    if (currentScene == SceneEnum.Game ||
+                        currentScene == SceneEnum.Result)
                     {
                         position.y = 20;
-                        GeneratePlayer(playerNumber - 1);
+                        GeneratePlayer(playerNumber - 1, currentScene, LookatObject.transform.position);
                     }
                     iDat[3] -= playerNumber * 100;
                 }
-                GenerateBlock(iDat[3], Xcubepos, Zcubepos, parent, blockMap);
-                //配置位置を(カメラから見て)右に移動
-                Xcubepos++;
+                GenerateBlock(iDat[3], x, z, parent, blockMap);
             }
-            //配置位置を(カメラから見て)縦に移動
-            Zcubepos++;
         }
-
-#if UNITY_EDITOR
-        Debug.Log(CsvName + ":" + BlockCount.ToString());
-        BlockCount = 0;
-#endif
     }
 
     /// <summary>
     /// プレイヤーの生成
     /// </summary>
     /// <param name="playerNumber">プレイヤーの番号</param>
-    void GeneratePlayer(int playerNumber)
+    void GeneratePlayer(int playerNumber, SceneEnum scene, Vector3 lookatPosition)
     {
         GameObject player = Instantiate(Players[playerNumber], position, Quaternion.identity);
-        //マップの中心を向かせる
-        player.transform.LookAt(new Vector3(row_n / 2.0f, position.y, line_n / 2.0f));
+        //ゲームならマップの中心を向かせる
+        if (scene == SceneEnum.Game)
+        {
+            player.transform.LookAt(new Vector3(row_n / 2.0f, player.transform.position.y, line_n / 2.0f));
+        }
+        //リザルトならカメラに向かせる
+        else if (scene == SceneEnum.Result)
+        {
+            lookatPosition.y = 0;
+            player.transform.LookAt(lookatPosition);
+        }
     }
 
+    /// <summary>
+    /// ブロックの生成
+    /// </summary>
+    /// <param name="number">取得した番号</param>
+    /// <param name="x">x座標</param>
+    /// <param name="z">z座標</param>
+    /// <param name="parent">親オブジェクト</param>
+    /// <param name="blockMap">ブロックマップ</param>
     void GenerateBlock(int number, int x, int z, Transform parent, BlockMap blockMap)
     {
         GameObject cube;
@@ -131,10 +135,6 @@ public class BlockCreater : Singleton<BlockCreater>
                 cube = Instantiate(StageCubes[i], position, Quaternion.identity);
                 if (parent != null) cube.transform.parent = parent;
                 if (blockMap != null) blockMap.SetBlock(z, x, i, cube);
-
-#if UNITY_EDITOR
-                ++BlockCount;
-#endif
             }
         }
         //壊れないブロック
@@ -146,40 +146,15 @@ public class BlockCreater : Singleton<BlockCreater>
                 cube = Instantiate(StrongCube, position, Quaternion.identity);
                 if (parent != null) cube.transform.parent = parent;
                 if (blockMap != null) blockMap.SetBlock(z, x, i, cube);
-
-#if UNITY_EDITOR
-                ++BlockCount;
-#endif
             }
         }
     }
 
-    public void AutoGenerateBlock(int[,] map, Transform parent, BlockMap blockMap)
-    {
-        for (int i = 0; i < line_n; ++i)
-        {
-            for (int j = 0; j < row_n; ++j)
-            {
-                position.Set(j, 0, i);
-                if (map[i, j] >= 100)
-                {
-                    int playerNumber = map[i, j] / 100;
-                    //プレイヤーを出現する
-                    position.y = 20;
-                    GeneratePlayer(playerNumber - 1);
-                    map[i, j] -= playerNumber * 100;
-                }
-                GenerateBlock(map[i, j], j, i, parent, blockMap);
-            }
-        }
-#if UNITY_EDITOR
-        Debug.Log(BlockCount.ToString());
-        BlockCount = 0;
-#endif
-    }
-
-    [SerializeField]
-    public Material[] mats = new Material[8];
+    /// <summary>
+    /// 高速化のため、マテリアルを番号で管理する
+    /// </summary>
+    /// <param name="mat">番号を取得するマテリアル</param>
+    /// <returns>マテリアルの番号</returns>
     public int GetMaterialNumber(Material mat)
     {
         for (int i = 0; i < 8; ++i)

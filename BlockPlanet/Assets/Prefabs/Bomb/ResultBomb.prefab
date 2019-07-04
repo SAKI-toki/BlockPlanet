@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3219719412142578690}
   - component: {fileID: 3342762936116252550}
   - component: {fileID: 3343295618727586744}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: Glow Vertical
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4708,7 +4708,7 @@ GameObject:
   - component: {fileID: 3219688640522405982}
   - component: {fileID: 3342645805059813374}
   - component: {fileID: 3343316054842084994}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: Glow sparkles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9365,7 +9365,7 @@ GameObject:
   - component: {fileID: 3219800367468307770}
   - component: {fileID: 3231614806051576184}
   - component: {fileID: 3238880619592515836}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: BombBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9443,7 +9443,7 @@ GameObject:
   - component: {fileID: 3219541126670001186}
   - component: {fileID: 3230770210556230284}
   - component: {fileID: 3239202669996115630}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: BombTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9521,7 +9521,7 @@ GameObject:
   - component: {fileID: 3220499900332278206}
   - component: {fileID: 3342727927402166666}
   - component: {fileID: 3343769787569432778}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: Dot Sparkles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14267,7 +14267,7 @@ GameObject:
   - component: {fileID: 3220469342846081664}
   - component: {fileID: 3341924870792006062}
   - component: {fileID: 3343162192256900046}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: BOOM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18969,7 +18969,7 @@ GameObject:
   - component: {fileID: 3219956550497671982}
   - component: {fileID: 3341907034265965730}
   - component: {fileID: 3343327273311578618}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: Dot Sparkles Vertical
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23715,7 +23715,7 @@ GameObject:
   - component: {fileID: 3219743657493551008}
   - component: {fileID: 3230480469162356688}
   - component: {fileID: 3239149410562457908}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: BombWick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23794,7 +23794,7 @@ GameObject:
   - component: {fileID: 3260960126877288002}
   - component: {fileID: 3197766913585051822}
   - component: {fileID: 3215976138725786460}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: ResultBomb
   m_TagString: Bomb
   m_Icon: {fileID: 0}
@@ -23828,7 +23828,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &3260960126877288002
 SphereCollider:
@@ -23841,7 +23841,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &3197766913585051822
 Rigidbody:
@@ -23858,7 +23858,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &3215976138725786460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23882,7 +23882,7 @@ GameObject:
   - component: {fileID: 3220486739885052580}
   - component: {fileID: 3341857987772393842}
   - component: {fileID: 3343306083647486544}
-  m_Layer: 15
+  m_Layer: 20
   m_Name: Explosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}

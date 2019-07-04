@@ -2,14 +2,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ResultManager : MonoBehaviour
+/// <summary>
+/// リザルト画面
+/// </summary>
+public class ResultManager : SingletonMonoBehaviour<ResultManager>
 {
-
-    /// <summary>
-    /// リザルト画面
-    /// </summary>
-
-
     [SerializeField]
     RectTransform[] UiRectTransforms = new RectTransform[3];
     int select_index = 0;
@@ -20,49 +17,57 @@ public class ResultManager : MonoBehaviour
     float scale_time = 0.0f;
     [SerializeField]
     GameObject[] Uis = new GameObject[4];
-    [SerializeField]
-    GameObject[] PlayerWins = new GameObject[4];
-    [SerializeField]
-    GameObject[] PlayerLoses = new GameObject[4];
     private bool Push = false;
-
+    bool IsEndResultAnimation = false;
     [SerializeField]
-    ResultBomb[] Bombs = new ResultBomb[3];
-
+    GameObject ResultBombObject = null;
+    //ポイントを格納
+    public static int[] ResultPoints = new int[4];
+    public ResultBlockMeshCombine blockMap = new ResultBlockMeshCombine();
+    GameObject[] players = new GameObject[4];
+    [SerializeField]
+    GameObject uiCanvas = null;
+    [SerializeField]
+    ParticleSystem[] winEffects;
+    [SerializeField]
+    GameObject cameraObject = null;
+    [SerializeField]
+    Transform PlayerEndTransform = null;
 
     void Start()
     {
-        foreach (var player in PlayerWins)
-            player.SetActive(false);
-        foreach (var player in PlayerLoses)
-            player.SetActive(false);
-        foreach (var ui in Uis)
-            ui.SetActive(false);
-        //フェード
-        Fade.Instance.FadeOut(1.0f);
-        int loseIndex = 0;
-        //変数を持って来る
+        GameObject parent = new GameObject("FieldObject");
+        //マップ生成
+        BlockCreater.GetInstance().CreateField("Result", parent.transform, blockMap, cameraObject, BlockCreater.SceneEnum.Result);
+        parent.isStatic = true;
+        blockMap.BlockIsSurroundUpdate();
+        blockMap.BlockRendererOff();
+        blockMap.Initialize();
+        //プレイヤーを取得
         for (int i = 0; i < 4; ++i)
         {
-            if (i == FieldManeger.WinPlayerNumber)
-            {
-                PlayerWins[i].SetActive(true);
-                Uis[i].SetActive(true);
-            }
-            else
-            {
-                var bombPos = Bombs[loseIndex++].transform.position;
-                PlayerLoses[i].transform.position = new Vector3(bombPos.x, PlayerLoses[i].transform.position.y, bombPos.z);
-                PlayerLoses[i].SetActive(true);
-            }
+            players[i] = GameObject.FindGameObjectWithTag("Player" + (i + 1).ToString());
+            players[i].GetComponent<Player>().enabled = false;
         }
+        //プレイヤーを地面につける
+        Physics.autoSimulation = false;
+        Physics.Simulate(10.0f);
+        Physics.autoSimulation = true;
+        //UIの表示
+        foreach (var ui in Uis)
+            ui.SetActive(false);
+        uiCanvas.SetActive(false);
         init_scale = UiRectTransforms[0].localScale;
+        //リザルトのアニメーション開始
+        StartCoroutine(ResultAnimation());
     }
 
     void Update()
     {
+        blockMap.CreateMesh();
         if (Push) return;
         if (!Fade.Instance.IsEnd) return;
+        if (!IsEndResultAnimation) return;
         SelectUpdate();
         if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && !Push)
         {
@@ -81,7 +86,7 @@ public class ResultManager : MonoBehaviour
                     break;
             }
             //フェード開始
-            StartCoroutine("Loadscene", SceneName);
+            StartCoroutine(Loadscene(SceneName));
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
         }
@@ -109,10 +114,80 @@ public class ResultManager : MonoBehaviour
         increment_scale = (max_scale - init_scale) * ((Mathf.Sin(scale_time) + 1) / 2);
         UiRectTransforms[select_index].localScale = init_scale + increment_scale;
     }
+
     private IEnumerator Loadscene(string SceneName)
     {
         Fade.Instance.FadeIn(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
         SceneManager.LoadScene(SceneName);
+    }
+
+    IEnumerator ResultAnimation()
+    {
+        //フェード
+        Fade.Instance.FadeOut(1.0f);
+        while (!Fade.Instance.IsEnd) yield return null;
+        bool[] isEnd = new bool[4];
+        //負けたプレイヤーを順位の低い順番に爆弾で落としていく
+        for (int i = 0; i < 3; ++i)
+        {
+            int minPoint = int.MaxValue;
+            int minPlayer = int.MaxValue;
+            for (int j = 0; j < 4; ++j)
+            {
+                if (isEnd[j]) continue;
+                if (ResultPoints[j] < minPoint)
+                {
+                    minPoint = ResultPoints[j];
+                    minPlayer = j;
+                    Debug.Log(j);
+                }
+            }
+            isEnd[minPlayer] = true;
+            yield return StartCoroutine(BombAnimation(minPlayer));
+        }
+        int winPlayerNumber = 0;
+        //勝ったプレイヤーの番号を探す
+        for (int i = 0; i < 4; ++i)
+        {
+            if (!isEnd[i])
+            {
+                winPlayerNumber = i;
+                break;
+            }
+        }
+        var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
+        //勝ったプレイヤーのアニメーション
+        yield return StartCoroutine(resultWinPlayerAnimation.WinPlayerAnimation(winPlayerNumber));
+        float time = 0;
+        Vector3 InitPosition = players[winPlayerNumber].transform.position;
+        Quaternion InitRotation = players[winPlayerNumber].transform.rotation;
+        while (time <= 1.0f)
+        {
+            time += Time.deltaTime;
+            //終了位置に移動する
+            players[winPlayerNumber].transform.SetPositionAndRotation
+                (Vector3.Lerp(InitPosition, PlayerEndTransform.position, time),
+                Quaternion.Slerp(InitRotation, PlayerEndTransform.rotation, time));
+            yield return null;
+        }
+        //UIの表示
+        uiCanvas.SetActive(true);
+        Uis[winPlayerNumber].SetActive(true);
+        //エフェクトの開始
+        foreach (var effect in winEffects)
+        {
+            effect.Play();
+        }
+        IsEndResultAnimation = true;
+    }
+
+    IEnumerator BombAnimation(int index)
+    {
+        Vector3 pos = players[index].transform.position;
+        //爆弾の高さ
+        pos.y = 20;
+        GameObject bomb = Instantiate(ResultBombObject, pos, Quaternion.identity);
+        while (bomb != null) yield return null;
     }
 }

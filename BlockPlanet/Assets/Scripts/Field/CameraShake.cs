@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// カメラの振動
+/// </summary>
 public class CameraShake : SingletonMonoBehaviour<CameraShake>
 {
     [SerializeField]

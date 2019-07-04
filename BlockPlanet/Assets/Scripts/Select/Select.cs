@@ -49,7 +49,7 @@ public class Select : SingletonMonoBehaviour<Select>
             //空のオブジェクト
             GameObject field = new GameObject("field");
             BlockMap blockMaps = new BlockMap();
-            BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps);
+            BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps, null);
             GameObject combineField = new GameObject("field" + (i + 1));
             combineField.transform.position = new Vector3(25, 0, 25);
             blockMaps.BlockRendererUpdate();

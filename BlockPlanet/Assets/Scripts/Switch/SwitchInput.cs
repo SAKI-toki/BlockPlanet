@@ -2,27 +2,6 @@
 using nn.hid;
 
 /// <summary>
-/// Switchでジョイコンを横持ちにした場合の入力
-/// </summary>
-public enum SwitchButton : long
-{
-    Up = NpadButton.Y | NpadButton.Right,
-    Down = NpadButton.A | NpadButton.Left,
-    Right = NpadButton.X | NpadButton.Down,
-    Left = NpadButton.B | NpadButton.Up,
-    SR = NpadButton.RightSR | NpadButton.LeftSR,
-    SL = NpadButton.RightSL | NpadButton.LeftSL,
-    StickUp = NpadButton.StickRLeft | NpadButton.StickLRight,
-    StickDown = NpadButton.StickRRight | NpadButton.StickLLeft,
-    StickRight = NpadButton.StickRUp | NpadButton.StickLDown,
-    StickLeft = NpadButton.StickRDown | NpadButton.StickLUp,
-    Pause = NpadButton.Plus | NpadButton.Minus,
-    Ok = SwitchButton.Right,
-    Cancel = SwitchButton.Down,
-    None = 0
-}
-
-/// <summary>
 /// スイッチの入力情報
 /// </summary>
 static public class SwitchInput
@@ -303,4 +282,28 @@ static public class SwitchInput
     }
 
 #endif
+}
+
+
+/// <summary>
+/// Switchでジョイコンを横持ちにした場合の入力
+/// </summary>
+public enum SwitchButton : long
+{
+    Up = NpadButton.Y | NpadButton.Right,
+    Down = NpadButton.A | NpadButton.Left,
+    Right = NpadButton.X | NpadButton.Down,
+    Left = NpadButton.B | NpadButton.Up,
+    SR = NpadButton.RightSR | NpadButton.LeftSR,
+    SL = NpadButton.RightSL | NpadButton.LeftSL,
+    StickUp = NpadButton.StickRLeft | NpadButton.StickLRight,
+    StickDown = NpadButton.StickRRight | NpadButton.StickLLeft,
+    StickRight = NpadButton.StickRUp | NpadButton.StickLDown,
+    StickLeft = NpadButton.StickRDown | NpadButton.StickLUp,
+    Pause = NpadButton.Plus | NpadButton.Minus,
+    Ok = SwitchButton.Right,
+    Cancel = SwitchButton.Down,
+    Jump = SwitchButton.Down,
+    Bomb = SwitchButton.Left,
+    None = 0
 }

@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// リザルト画面に出てくる爆弾
+/// </summary>
 public class ResultBomb : MonoBehaviour
 {
-
-    /// <summary>
-    /// リザルト画面に出てくる爆弾
-    /// </summary>
-
     //デストロイ
     private bool Destroy_Flg = false;
     private float Destroy_Timer = 0.2f;
@@ -37,7 +35,10 @@ public class ResultBomb : MonoBehaviour
     {
         //キューブを破壊
         if (other.tag == "Cube")
-            Destroy(other.gameObject);
+        {
+            ResultManager.Instance.blockMap.BreakBlock(other.GetComponent<BlockNumber>());
+            other.gameObject.SetActive(false);
+        }
     }
 
     private void FixedUpdate()

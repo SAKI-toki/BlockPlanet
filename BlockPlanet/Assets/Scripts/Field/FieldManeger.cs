@@ -53,8 +53,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     RectTransform[] PlayerRectTransforms;
     [SerializeField]
     RectTransform[] PlayerWinRectTransforms;
-    bool isHitStop = false;
-    float hitStopTime = 0.0f;
 
     void Start()
     {
@@ -94,17 +92,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
                 StartCoroutine("Restart", gameOverCount == PlayerGameOvers.Length);
             }
         }
-        if (isHitStop)
-        {
-            hitStopTime += Time.unscaledDeltaTime;
-            if (hitStopTime > 0.1f)
-            {
-                hitStopTime = 0;
-                isHitStop = false;
-                Time.timeScale = 1;
-            }
-        }
-        else if (Pause_Flg)
+        if (Pause_Flg)
         {
             OnPause();
         }
@@ -187,12 +175,20 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
         while (!Fade.Instance.IsEnd) yield return null;
+        for (int i = 0; i < 4; ++i)
+        {
+            ResultManager.ResultPoints[i] = PlayerPoints[i];
+        }
         //スタティックなので値を0に
         PlayerPoints = new int[4];
         //リザルト画面に遷移
         SceneManager.LoadScene("Result");
     }
 
+    /// <summary>
+    /// 途中経過
+    /// </summary>
+    /// <returns></returns>
     IEnumerator OnTheWayCoroutine()
     {
         OnTheWayObject.SetActive(true);
@@ -213,7 +209,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         }
         float alpha = 0.0f;
         Color color;
-        //フェード
+        //フェードイン
         while (alpha < 1.0f)
         {
             alpha += Time.deltaTime;
@@ -228,11 +224,11 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             BackgroundImage.color = color;
             yield return null;
         }
-        //移動
         float moveSpeed = PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x -
                             PlayerRectTransforms[WinPlayerNumber].position.x;
         float timeCount = 0.0f;
         pos = PlayerRectTransforms[WinPlayerNumber].position;
+        //勝ったプレイヤーの移動
         while (PlayerRectTransforms[WinPlayerNumber].position.x <
         PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x)
         {
@@ -340,14 +336,5 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         while (!Fade.Instance.IsEnd) yield return null;
         //タイトル画面に遷移
         SceneManager.LoadScene("Title");
-    }
-
-    public void HitStop()
-    {
-        return;
-        // if (Pause_Flg) return;
-        // isHitStop = true;
-        // hitStopTime = 0;
-        // Time.timeScale = 0.2f;
     }
 }

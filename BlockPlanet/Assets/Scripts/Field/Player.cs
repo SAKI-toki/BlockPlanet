@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
 
     //爆弾を持っている状態
     private bool Hold = false;
-    float bombimpact;
+    float bombimpactVertical, bombimpactHorizontal;
 
     //投げる場所
     private Vector3 Target;
@@ -38,6 +38,9 @@ public class Player : MonoBehaviour
     private ParticleSystem Charge;
 
     GameObject bombObject = null;
+
+    bool IsHitBomb = false;
+    Vector3 bombPosition = new Vector3();
 
     void Start()
     {
@@ -55,29 +58,6 @@ public class Player : MonoBehaviour
             //爆弾を持っていたら消す
             Destroy(ShootObject);
             Destroy(gameObject);
-        }
-        if (other.tag == "Bomb")
-        {
-            //爆弾の位置
-            Vector3 BombPos = other.gameObject.transform.position;
-            //爆弾のｙの数値を合わせる そうしないと変な方向を向く
-            BombPos.y = transform.position.y;
-            //爆弾の方を向く
-            transform.LookAt(BombPos);
-            //吹っ飛ぶ力を設定 bombimpactは爆弾側で設定している
-            Vector3 force = transform.position - other.transform.position;
-            force.y = 0;
-            //Vector3 force = transform.position - (transform.forward * bombimpact);
-            //後ろに吹っ飛ぶ
-            rb.AddForce(force * bombimpact, ForceMode.Impulse);
-            //上に吹っ飛ぶ
-            rb.AddForce(Vector3.up * bombimpact * 10);
-            //振動
-            Pad = true;
-            Timer = 0.5f;
-            SwitchVibration.LowVibration(playerNumber, 0.3f);
-            FieldManeger.Instance.HitStop();
-            CameraShake.Instance.Shake();
         }
     }
 
@@ -104,6 +84,25 @@ public class Player : MonoBehaviour
                 (Vector3.right * SwitchInput.GetHorizontal(playerNumber)) - transform.position);
             }
         }
+
+        if (IsHitBomb)
+        {
+            IsHitBomb = false;
+            //吹っ飛ぶ力を設定 bombimpactは爆弾側で設定している
+            Vector3 force = transform.position - bombPosition;
+            force.y = 0;
+            force.Normalize();
+            //後ろに吹っ飛ぶ
+            rb.AddForce(force * bombimpactHorizontal, ForceMode.Impulse);
+            //上に吹っ飛ぶ
+            rb.AddForce(Vector3.up * bombimpactVertical, ForceMode.Impulse);
+            //振動
+            Pad = true;
+            Timer = 0.5f;
+            SwitchVibration.LowVibration(playerNumber, 0.3f);
+            CameraShake.Instance.Shake();
+        }
+
         //重力
         rb.AddForce(Vector3.down * 60f);
     }
@@ -119,7 +118,7 @@ public class Player : MonoBehaviour
 
             //ジャンプ                 自分の中心　　　　　　　レイの幅　　　　　　　　　　方向　　　　長さ
             if (Physics.SphereCast(transform.position, 1.5f, Vector3.down, out hit, 1.7f) &&
-            SwitchInput.GetButtonDown(playerNumber, SwitchButton.Down))
+            SwitchInput.GetButtonDown(playerNumber, SwitchButton.Jump))
             {
                 if (hit.collider.tag == "Cube" || hit.collider.tag == "StrongCube")
                 {
@@ -146,7 +145,7 @@ public class Player : MonoBehaviour
         transform.GetChild(1).transform.localScale = new Vector3(Body_Scale, 1.0f, 1.0f);
 
         //爆弾を生成
-        if (SwitchInput.GetButton(playerNumber, SwitchButton.Left) && !Namecheck() && !Hold)
+        if (SwitchInput.GetButton(playerNumber, SwitchButton.Bomb) && !Namecheck() && !Hold)
             Hold = true;
 
         if (Hold)
@@ -161,7 +160,7 @@ public class Player : MonoBehaviour
         }
 
         //大きくするのを止めて投げる
-        if (SwitchInput.GetButtonUp(playerNumber, SwitchButton.Left) && Hold)
+        if (SwitchInput.GetButtonUp(playerNumber, SwitchButton.Bomb) && Hold)
         {
             SoundManager.Instance.BombThrow();
             Charge.Stop();
@@ -290,9 +289,12 @@ public class Player : MonoBehaviour
         rigidbody.AddForce(force, ForceMode.Impulse);
     }
 
-    public void HitBomb(float impact, float distance)
+    public void HitBomb(Vector3 position)
     {
-        bombimpact = impact / distance;
+        bombPosition = position;
+        bombimpactHorizontal = 120 / Mathf.Max(Vector3.Distance(this.transform.position, position), 0.5f);
+        bombimpactVertical = 40 / Mathf.Max(Vector3.Distance(this.transform.position, position), 0.5f);
+        IsHitBomb = true;
     }
 }
 

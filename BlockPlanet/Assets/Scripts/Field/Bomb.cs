@@ -1,20 +1,16 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// 爆弾
+/// </summary>
 public class Bomb : MonoBehaviour
 {
-
-    /// <summary>
-    /// 爆弾💣
-    /// </summary>
-
     //デストロイ
     private bool Destroy_Flg = false;
     //爆弾が消滅するまでの時間
     private float Destroy_Timer = 0.2f;
     //プレイヤーに持たれているかどうか
     private bool Hold = false;
-    //爆弾の威力
-    const float Bombimpact = 60.0f;
 
     //爆発のパーティクル、子オブジェクト
     private ParticleSystem BOOM = null;
@@ -68,9 +64,14 @@ public class Bomb : MonoBehaviour
         }
 
         //爆弾の威力をプレイヤーに伝える
-        if (other.CompareTag("Player1") || other.CompareTag("Player2") || other.CompareTag("Player3") || other.CompareTag("Player4"))
+        //for文で回していたがString型の結合が重く、一回で何回も実行されるため、
+        //速度を上げるために直に書いた
+        if (other.tag == "Player1" ||
+            other.tag == "Player2" ||
+            other.tag == "Player3" ||
+            other.tag == "Player4")
         {
-            other.GetComponent<Player>().HitBomb(Bombimpact, Vector3.Distance(other.transform.position, this.transform.position));
+            other.GetComponent<Player>().HitBomb(transform.position);
         }
 
         //フィールド外に落ちた場合
