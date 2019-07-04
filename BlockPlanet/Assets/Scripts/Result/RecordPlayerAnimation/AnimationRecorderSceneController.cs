@@ -109,10 +109,10 @@ public class AnimationRecorderSceneController : MonoBehaviour
         {
             float sqrt = Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2));
             //=====移動=====
-            this.transform.Translate(Vector3.forward * 15 * Time.deltaTime * sqrt);
+            targetTransform.Translate(Vector3.forward * 15 * Time.deltaTime * sqrt);
             //=====回転=====
-            this.transform.rotation = Quaternion.Slerp
-                (this.transform.rotation,
+            targetTransform.rotation = Quaternion.Slerp
+                (targetTransform.rotation,
                  Quaternion.Euler(0, Mathf.Atan2(-vertical, horizontal) * Mathf.Rad2Deg + 90, 0),
                  Mathf.Sqrt(sqrt) / 2);
         }
