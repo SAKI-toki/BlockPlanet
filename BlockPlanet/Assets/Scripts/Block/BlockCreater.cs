@@ -86,7 +86,7 @@ public class BlockCreater : Singleton<BlockCreater>
                         currentScene == SceneEnum.Result)
                     {
                         position.y = 20;
-                        GeneratePlayer(playerNumber - 1, currentScene, LookatObject.transform.position);
+                        GeneratePlayer(playerNumber - 1, currentScene, LookatObject);
                     }
                     iDat[3] -= playerNumber * 100;
                 }
@@ -99,7 +99,7 @@ public class BlockCreater : Singleton<BlockCreater>
     /// プレイヤーの生成
     /// </summary>
     /// <param name="playerNumber">プレイヤーの番号</param>
-    void GeneratePlayer(int playerNumber, SceneEnum scene, Vector3 lookatPosition)
+    void GeneratePlayer(int playerNumber, SceneEnum scene, GameObject lookatObject)
     {
         GameObject player = Instantiate(Players[playerNumber], position, Quaternion.identity);
         //ゲームならマップの中心を向かせる
@@ -110,6 +110,7 @@ public class BlockCreater : Singleton<BlockCreater>
         //リザルトならカメラに向かせる
         else if (scene == SceneEnum.Result)
         {
+            Vector3 lookatPosition = lookatObject.transform.position;
             lookatPosition.y = 0;
             player.transform.LookAt(lookatPosition);
         }

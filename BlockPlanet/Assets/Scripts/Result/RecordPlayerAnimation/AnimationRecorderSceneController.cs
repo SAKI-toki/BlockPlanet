@@ -107,13 +107,14 @@ public class AnimationRecorderSceneController : MonoBehaviour
         if (Mathf.Abs(vertical) >= 0.4f ||
         Mathf.Abs(horizontal) >= 0.4f)
         {
+            float sqrt = Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2));
             //=====移動=====
-            targetTransform.Translate(Vector3.forward * 15 * Time.deltaTime *
-             Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2)));
+            this.transform.Translate(Vector3.forward * 15 * Time.deltaTime * sqrt);
             //=====回転=====
-            targetTransform.rotation = Quaternion.LookRotation(transform.position +
-            (Vector3.forward * SwitchInput.GetVertical(0)) +
-            (Vector3.right * SwitchInput.GetHorizontal(0)) - transform.position);
+            this.transform.rotation = Quaternion.Slerp
+                (this.transform.rotation,
+                 Quaternion.Euler(0, Mathf.Atan2(-vertical, horizontal) * Mathf.Rad2Deg + 90, 0),
+                 Mathf.Sqrt(sqrt) / 2);
         }
 
         //リストへプレイヤーの情報の追加
