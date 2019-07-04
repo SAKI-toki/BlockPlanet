@@ -42,11 +42,21 @@ public class AnimationRecorderSceneController : MonoBehaviour
     /// </summary>
     void OnGUI()
     {
+        GUI.color = Color.white;
         GUI.Label(new Rect(20, 40, 1000, 1000), "Enter:Record Start and End\nSpace:Scene Reload");
+        GUI.Label(new Rect(20, 80, 1000, 1000), "SelectPlayerNumber:" + RecordPlayerNumber);
+        if (IsRecord) GUI.color = Color.red;
+        GUI.Label(new Rect(20, 100, 1000, 1000), "REC");
     }
 
     void Update()
     {
+        //シーンのリロード
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            return;
+        }
         if (!IsRecord)
         {
             //レコード開始
@@ -63,11 +73,6 @@ public class AnimationRecorderSceneController : MonoBehaviour
             {
                 WriteText();
                 playerInfos.Clear();
-            }
-            //シーンのリロード
-            else if (Input.GetKeyDown(KeyCode.Space))
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             return;
         }

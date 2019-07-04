@@ -34,8 +34,21 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     [SerializeField]
     Transform PlayerEndTransform = null;
 
+#if UNITY_EDITOR
+    [SerializeField]
+    bool IsDebug = false;
+    [SerializeField]
+    int winPlayerDebug = 0;
+#endif
+
     void Start()
     {
+#if UNITY_EDITOR
+        if (IsDebug)
+        {
+            ResultPoints[winPlayerDebug] = int.MaxValue;
+        }
+#endif
         GameObject parent = new GameObject("FieldObject");
         //マップ生成
         BlockCreater.GetInstance().CreateField("Result", parent.transform, blockMap, cameraObject, BlockCreater.SceneEnum.Result);

@@ -29237,6 +29237,8 @@ MonoBehaviour:
   - {fileID: 1094548055}
   cameraObject: {fileID: 733741564}
   PlayerEndTransform: {fileID: 1576180763}
+  IsDebug: 1
+  winPlayerDebug: 2
 --- !u!4 &2008232419
 Transform:
   m_ObjectHideFlags: 0
