@@ -104,8 +104,8 @@ public class AnimationRecorderSceneController : MonoBehaviour
         if (!IsRecord) return;
         float vertical = SwitchInput.GetVertical(0);
         float horizontal = SwitchInput.GetHorizontal(0);
-        if (Mathf.Abs(vertical) >= 0.4f ||
-        Mathf.Abs(horizontal) >= 0.4f)
+        if (Mathf.Abs(vertical) >= 0.0f ||
+        Mathf.Abs(horizontal) >= 0.0f)
         {
             float sqrt = Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2));
             //=====移動=====

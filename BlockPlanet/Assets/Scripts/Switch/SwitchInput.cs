@@ -6,6 +6,7 @@ using nn.hid;
 /// </summary>
 static public class SwitchInput
 {
+    const float DeadZone = 0.4f;
     //1フレーム前のボタンの状態
     static long[] m_PrevButtons;
     //現在のボタンの状態
@@ -59,22 +60,58 @@ static public class SwitchInput
         if ((npadStyle & SwitchManager.GetInstance().GetNpadStyle()) == 0) return;
         //入力情報を取得
         Npad.GetState(ref m_NpadState, _NpadId, npadStyle);
-        m_CurrentButtons[_Index] = (long)m_NpadState.buttons;
+        m_NpadState.buttons &= ~(NpadButton.StickLUp | NpadButton.StickRUp |
+                                NpadButton.StickLDown | NpadButton.StickRDown |
+                                NpadButton.StickLRight | NpadButton.StickRRight |
+                                NpadButton.StickLLeft | NpadButton.StickRLeft);
         //スティックの更新
         if (npadStyle == NpadStyle.JoyRight)
         {
-            m_StickInfos[_Index].m_Horizontal = m_NpadState.analogStickR.fy;
-            m_StickInfos[_Index].m_Vertical = -m_NpadState.analogStickR.fx;
+            if (Mathf.Abs(m_NpadState.analogStickR.fx) > DeadZone)
+            {
+                m_StickInfos[_Index].m_Vertical = -m_NpadState.analogStickR.fx;
+                m_NpadState.buttons |= (m_NpadState.analogStickR.fx < 0) ? NpadButton.StickLRight : NpadButton.StickLLeft;
+            }
+            else
+            {
+                m_StickInfos[_Index].m_Vertical = 0.0f;
+            }
+            if (Mathf.Abs(m_NpadState.analogStickR.fy) > DeadZone)
+            {
+                m_StickInfos[_Index].m_Horizontal = m_NpadState.analogStickR.fy;
+                m_NpadState.buttons |= (m_NpadState.analogStickR.fy < 0) ? NpadButton.StickLUp : NpadButton.StickLDown;
+            }
+            else
+            {
+                m_StickInfos[_Index].m_Horizontal = 0.0f;
+            }
         }
         else if (npadStyle == NpadStyle.JoyLeft)
         {
-            m_StickInfos[_Index].m_Horizontal = -m_NpadState.analogStickL.fy;
-            m_StickInfos[_Index].m_Vertical = m_NpadState.analogStickL.fx;
+            if (Mathf.Abs(m_NpadState.analogStickL.fx) > DeadZone)
+            {
+                m_StickInfos[_Index].m_Vertical = m_NpadState.analogStickL.fx;
+                m_NpadState.buttons |= (m_NpadState.analogStickL.fx > 0) ? NpadButton.StickLRight : NpadButton.StickLLeft;
+            }
+            else
+            {
+                m_StickInfos[_Index].m_Vertical = 0.0f;
+            }
+            if (Mathf.Abs(m_NpadState.analogStickL.fy) > DeadZone)
+            {
+                m_StickInfos[_Index].m_Horizontal = -m_NpadState.analogStickL.fy;
+                m_NpadState.buttons |= (m_NpadState.analogStickL.fy > 0) ? NpadButton.StickLUp : NpadButton.StickLDown;
+            }
+            else
+            {
+                m_StickInfos[_Index].m_Horizontal = 0.0f;
+            }
         }
         else
         {
             Debug.LogError("JoyRight,JoyLeft以外のStyleを取得");
         }
+        m_CurrentButtons[_Index] = (long)m_NpadState.buttons;
     }
 
     /// <summary>
@@ -247,13 +284,13 @@ static public class SwitchInput
             case XboxInput.SL:
                 return Input.GetKey(KeyCode.Joystick1Button4 + _Index * addNum);
             case XboxInput.StickUp:
-                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) > 0;
+                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) > DeadZone;
             case XboxInput.StickDown:
-                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) < 0;
+                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) < -DeadZone;
             case XboxInput.StickRight:
-                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) > 0;
+                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) > DeadZone;
             case XboxInput.StickLeft:
-                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) < 0;
+                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) < -DeadZone;
             case XboxInput.Pause:
                 return Input.GetKey(KeyCode.Joystick1Button7 + _Index * addNum);
             default:

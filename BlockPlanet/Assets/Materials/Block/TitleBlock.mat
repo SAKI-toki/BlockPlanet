@@ -71,7 +71,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _X: -1000
+    - _X: 1000
     - _Y: 162.5
     - _Z: -1000
     - _ZWrite: 1
