@@ -102,7 +102,7 @@ public class Title : SingletonMonoBehaviour<Title>
                 case 0:
                     START = true;
                     //ロードする時の処理
-                    StartCoroutine("Loadscene");
+                    StartCoroutine(Loadscene());
                     //音再生
                     SoundManager.Instance.Push();
                     break;
@@ -149,21 +149,6 @@ public class Title : SingletonMonoBehaviour<Title>
         while (!Fade.Instance.IsEnd) yield return null;
         //シーン遷移
         SceneManager.LoadScene("Select");
-    }
-
-    //ゲームを終了させる
-    private IEnumerator End()
-    {
-        //フェード
-        Fade.Instance.FadeIn(1.0f);
-        //少し待つ
-        while (!Fade.Instance.IsEnd) yield return null;
-        //ゲームを終了させる処理
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#elif UNITY_STANDALONE
-    UnityEngine.Application.Quit();
-#endif
     }
 
     void CreditUpdate()

@@ -130,6 +130,7 @@ public class BlockCreater : Singleton<BlockCreater>
         //壊れるブロック
         if (number < 10)
         {
+            //指定数だけインスタンスを生成
             for (int i = 0; i < number; ++i)
             {
                 position.y = i;
@@ -141,6 +142,7 @@ public class BlockCreater : Singleton<BlockCreater>
         //壊れないブロック
         else
         {
+            //指定数だけインスタンスを生成
             for (int i = 0; i < number - 10; ++i)
             {
                 position.y = i;

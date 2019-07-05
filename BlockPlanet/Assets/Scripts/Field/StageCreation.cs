@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public class StageCreation : MonoBehaviour
 {
-
     /// <summary>
     /// ステージを生成
     /// </summary>

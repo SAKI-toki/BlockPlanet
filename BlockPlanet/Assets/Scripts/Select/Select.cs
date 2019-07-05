@@ -18,11 +18,8 @@ public class Select : SingletonMonoBehaviour<Select>
     [SerializeField]
     Vector3 max_scale = new Vector3();
     float scale_time = 0.0f;
-
-    [System.NonSerialized]
-    private List<GameObject> list = new List<GameObject>();
-
-    private GameObject holdobject;
+    [SerializeField]
+    List<GameObject> fieldList = new List<GameObject>();
 
     public static int stagenumber = 0;
     private bool Push = false;
@@ -43,32 +40,32 @@ public class Select : SingletonMonoBehaviour<Select>
         //フェード
         Fade.Instance.FadeOut(1.0f);
         stagenumber = 0;
-        //6個のステージ
-        for (int i = 0; i < StageNum; ++i)
-        {
-            //空のオブジェクト
-            GameObject field = new GameObject("field");
-            BlockMap blockMaps = new BlockMap();
-            BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps, null);
-            GameObject combineField = new GameObject("field" + (i + 1));
-            combineField.transform.position = new Vector3(25, 0, 25);
-            blockMaps.BlockRendererUpdate();
-            MeshCombine.Combine(field, combineField);
-            Destroy(field);
-            //リストに追加
-            list.Add(combineField);
-            //見えなくする
-            list[i].SetActive(false);
-        }
+        //8個のステージ
+        // for (int i = 0; i < StageNum; ++i)
+        // {
+        //     //空のオブジェクト
+        //     GameObject field = new GameObject("field");
+        //     BlockMap blockMaps = new BlockMap();
+        //     BlockCreater.GetInstance().CreateField("Stage" + (i + 1), field.transform, blockMaps, null);
+        //     GameObject combineField = new GameObject("field" + (i + 1));
+        //     combineField.transform.position = new Vector3(25, 0, 25);
+        //     blockMaps.BlockRendererUpdate();
+        //     MeshCombine.Combine(field, combineField);
+        //     Destroy(field);
+        //     //リストに追加
+        //     list.Add(combineField);
+        //     //見えなくする
+        //     list[i].SetActive(false);
+        // }
         stagenumber = CurrentSelectChoice.stageNumber - 1;
-        list[stagenumber].SetActive(true);
+        fieldList[stagenumber].SetActive(true);
         currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         init_scale = currentChoiceRectTransform.localScale;
     }
 
     void Update()
     {
-        list[stagenumber].transform.Rotate(Vector3.up * Time.deltaTime * 10);
+        fieldList[stagenumber].transform.Rotate(Vector3.up * Time.deltaTime * 10);
 
         if (Push) return;
         if (!Fade.Instance.IsEnd) return;
@@ -128,12 +125,12 @@ public class Select : SingletonMonoBehaviour<Select>
         if (prev != CurrentSelectChoice)
         {
             currentChoiceRectTransform.localScale = init_scale;
-            list[stagenumber].SetActive(false);
+            fieldList[stagenumber].SetActive(false);
             SoundManager.Instance.Stick();
             increment_scale.Set(0, 0, 0);
             scale_time = 0.0f;
             stagenumber = CurrentSelectChoice.stageNumber - 1;
-            list[stagenumber].SetActive(true);
+            fieldList[stagenumber].SetActive(true);
             currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         }
         scale_time += Time.deltaTime * 6;
@@ -158,20 +155,20 @@ public class Select : SingletonMonoBehaviour<Select>
         else
         {
             ui.SetActive(false);
-            Vector3 initPosition = list[stagenumber].transform.position;
+            Vector3 initPosition = fieldList[stagenumber].transform.position;
             Vector3 endPosition = CameraObject.transform.position;
             endPosition.y = initPosition.y;
             endPosition.z += 15;
             float timeCount = 0.0f;
-            while (list[stagenumber].transform.position != endPosition)
+            while (fieldList[stagenumber].transform.position != endPosition)
             {
                 timeCount += Time.deltaTime;
-                list[stagenumber].transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
+                fieldList[stagenumber].transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
                 yield return null;
             }
             timeCount = 0.0f;
             initPosition = CameraObject.transform.position;
-            endPosition = list[stagenumber].transform.position;
+            endPosition = fieldList[stagenumber].transform.position;
             endPosition.y += 10;
             Quaternion initRotation = CameraObject.transform.rotation;
             Quaternion endRotation = Quaternion.Euler(90, 0, 0);
