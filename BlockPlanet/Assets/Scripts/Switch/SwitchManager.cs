@@ -58,7 +58,7 @@ public class SwitchManager : Singleton<SwitchManager>
     public bool IsConnect(int _Index)
     {
 #if UNITY_EDITOR
-        return UnityEngine.Input.GetJoystickNames().Length >= _Index + 1;
+        return UnityEngine.Input.GetJoystickNames().Length >= _Index + 1 || _Index == 0;
 #else
         return m_IsConnect[_Index];
 #endif

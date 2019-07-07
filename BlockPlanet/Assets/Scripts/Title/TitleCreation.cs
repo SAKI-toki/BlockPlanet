@@ -34,10 +34,12 @@ public class TitleCreation : MonoBehaviour
         var cmesh = new CombineInstance();
         cmesh.mesh = CreateMesh(TitleCube.GetComponent<MeshFilter>().sharedMesh);
         GameObject parentField = new GameObject("TitleField");
-        //一回でまとめて統合するとバグるので2回に分ける
+        //メッシュ統合は頂点数がushortの最大値(65,535)を超えるとバグるので、
+        //ここでは2回に分けて処理する
         for (int i = 0; i < 2; ++i)
         {
             instances.Clear();
+            //統合するメッシュをリストに追加
             for (int j = i * meshRenderers.Length / 2; j < (i + 1) * meshRenderers.Length / 2; ++j)
             {
                 var tag = meshRenderers[j].tag;
@@ -48,15 +50,20 @@ public class TitleCreation : MonoBehaviour
                 cmesh.transform = meshRenderers[j].transform.localToWorldMatrix;
                 instances[tag].Add(cmesh);
             }
+            //統合する
             foreach (var instance in instances)
             {
                 GameObject obj = new GameObject(instance.Key + i.ToString());
+                //必要なコンポーネントを追加
                 MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
                 MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
                 MeshCollider collider = obj.AddComponent<MeshCollider>();
+                //マテリアルのセット
                 renderer.sharedMaterial = TitleCube.GetComponent<MeshRenderer>().sharedMaterial;
+                //タグのセット
                 obj.tag = instance.Key;
                 meshFilter.mesh = new Mesh();
+                //統合
                 meshFilter.mesh.CombineMeshes(instance.Value.ToArray());
                 collider.sharedMesh = meshFilter.mesh;
                 obj.isStatic = true;

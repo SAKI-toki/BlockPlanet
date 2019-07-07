@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.IO;
 
 /// <summary>
 /// ブロックを生成する
@@ -8,11 +7,10 @@ public class BlockCreater : Singleton<BlockCreater>
 {
     [SerializeField]
     GameObject[] Players = new GameObject[4];
-    //ブロック
     [SerializeField]
-    GameObject[] StageCubes = new GameObject[7];
+    GameObject[] CubeLists = new GameObject[7];
     [SerializeField]
-    GameObject StrongCube = null;
+    GameObject[] StrongCubeLists = new GameObject[7];
 
     //CSVデータの行数
     public const int line_n = 52;
@@ -26,6 +24,8 @@ public class BlockCreater : Singleton<BlockCreater>
     [SerializeField]
     public Material[] mats = new Material[8];
 
+    GameObject cubeList;
+
     /// <summary>
     /// フィールドの生成
     /// </summary>
@@ -37,50 +37,25 @@ public class BlockCreater : Singleton<BlockCreater>
     public void CreateField(string CsvName, Transform parent, BlockMap blockMap,
     GameObject LookatObject, SceneEnum currentScene = SceneEnum.Other)
     {
-        //文字検索用
-        int[] iDat = new int[4];
-        //CSVの全文字列を保存する
-        string str = "";
-        //取り出した文字列を保存する
-        string strget = "";
+        //csvの読み込み
         TextAsset csvfile = Resources.Load("csv/" + CsvName) as TextAsset;
-        //文字列読み取る
-        StringReader reader = new StringReader(csvfile.text);
-
-        //戻り値:使用できる文字がないか、ストリームがシークをサポートしていない場合は -1
-        while (reader.Peek() > -1)
-        {
-            string line = reader.ReadLine();
-            //真ん中の点が無いと12とか21が出るよ
-            str = str + "," + line;
-        }
-
-        //最後に検索文字列の","を追記。最後を取りこぼす
-        str = str + ",";
-
+        //改行ごとに格納
+        string[] lineString = csvfile.text.Split('\n');
 
         for (int z = 0; z < line_n; z++)
         {
+            //カンマごとに格納
+            string[] rowString = lineString[z].Split(',');
             for (int x = 0; x < row_n; x++)
             {
-                //IndexOfメソッドは文字列内に含まれる文字、文字列の位置を取得することができる。
-                iDat[0] = str.IndexOf(",", iDat[0]);
-                //次の","を検索
-                iDat[1] = str.IndexOf(",", iDat[0] + 1);
-                //何文字取り出すか決定
-                iDat[2] = iDat[1] - iDat[0] - 1;
-                //iDat[2]文字ぶんだけ取り出す
-                strget = str.Substring(iDat[0] + 1, iDat[2]);
-                //文字列を数値型に変換  
-                iDat[3] = int.Parse(strget);
-                //次のインデックスへ
-                iDat[0]++;
+                //string型をint型にパース
+                int number = int.Parse(rowString[x]);
 
                 position.Set(x, 0, z);
                 //プレイヤーの位置
-                if (iDat[3] >= 100)
+                if (number >= 100)
                 {
-                    int playerNumber = iDat[3] / 100;
+                    int playerNumber = number / 100;
                     //プレイヤーを出現する
                     if (currentScene == SceneEnum.Game ||
                         currentScene == SceneEnum.Result)
@@ -88,9 +63,10 @@ public class BlockCreater : Singleton<BlockCreater>
                         position.y = 20;
                         GeneratePlayer(playerNumber - 1, currentScene, LookatObject);
                     }
-                    iDat[3] -= playerNumber * 100;
+                    number -= playerNumber * 100;
                 }
-                GenerateBlock(iDat[3], x, z, parent, blockMap);
+                position.y = 0;
+                if (number != 0) GenerateBlock(number, x, z, parent, blockMap);
             }
         }
     }
@@ -126,29 +102,30 @@ public class BlockCreater : Singleton<BlockCreater>
     /// <param name="blockMap">ブロックマップ</param>
     void GenerateBlock(int number, int x, int z, Transform parent, BlockMap blockMap)
     {
-        GameObject cube;
         //壊れるブロック
         if (number < 10)
         {
-            //指定数だけインスタンスを生成
-            for (int i = 0; i < number; ++i)
+            cubeList = Instantiate(CubeLists[number - 1], position, Quaternion.identity);
+            if (parent != null) cubeList.transform.parent = parent;
+            if (blockMap != null)
             {
-                position.y = i;
-                cube = Instantiate(StageCubes[i], position, Quaternion.identity);
-                if (parent != null) cube.transform.parent = parent;
-                if (blockMap != null) blockMap.SetBlock(z, x, i, cube);
+                for (int i = 0; i < cubeList.transform.childCount; ++i)
+                {
+                    blockMap.SetBlock(z, x, i, cubeList.transform.GetChild(i).gameObject);
+                }
             }
         }
         //壊れないブロック
         else
         {
-            //指定数だけインスタンスを生成
-            for (int i = 0; i < number - 10; ++i)
+            cubeList = Instantiate(StrongCubeLists[number - 11], position, Quaternion.identity);
+            if (parent != null) cubeList.transform.parent = parent;
+            if (blockMap != null)
             {
-                position.y = i;
-                cube = Instantiate(StrongCube, position, Quaternion.identity);
-                if (parent != null) cube.transform.parent = parent;
-                if (blockMap != null) blockMap.SetBlock(z, x, i, cube);
+                for (int i = 0; i < cubeList.transform.childCount; ++i)
+                {
+                    blockMap.SetBlock(z, x, i, cubeList.transform.GetChild(i).gameObject);
+                }
             }
         }
     }

@@ -18,18 +18,18 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     static public int WinPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
     [System.NonSerialized]
-    public bool GameOver = false;
+    public bool IsGameOver = false;
     //ボタンを押す
     private bool Pause_Push = false;
     //ポーズの表示非表示を管理
     [System.NonSerialized]
-    public bool Pause_Flg = false;
+    public bool IsPause = false;
     //BGM
     AudioSource Sound = null;
     //カウントダウン
     [SerializeField] List<GameObject> image = new List<GameObject>();
 
-    bool Game_Start = false;
+    bool IsGameStart = false;
     //ポーズ画面のパネル
     [SerializeField]
     GameObject PauseObject = null;
@@ -57,7 +57,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     void Start()
     {
         //ゲームスタート時
-        StartCoroutine("Gamestart");
+        StartCoroutine(Gamestart());
         //BGM
         Sound = GetComponent<AudioSource>();
         init_scale = UiRectTransforms[0].localScale;
@@ -65,7 +65,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     void Update()
     {
-        if (GameOver) return;
+        if (IsGameOver || !IsGameStart) return;
         int gameOverCount = 0;
         for (int i = 0; i < PlayerGameOvers.Length; ++i)
         {
@@ -76,7 +76,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         }
         if (gameOverCount >= PlayerGameOvers.Length - 1)
         {
-            GameOver = true;
+            IsGameOver = true;
             //勝者決定
             if (gameOverCount == PlayerGameOvers.Length - 1)
             {
@@ -85,14 +85,14 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             //勝利ポイントに達したかどうか
             if (PlayerPoints[WinPlayerNumber] == WinPoint)
             {
-                StartCoroutine("Gameover");
+                StartCoroutine(Gameover());
             }
             else
             {
-                StartCoroutine("Restart", gameOverCount == PlayerGameOvers.Length);
+                StartCoroutine(Restart(gameOverCount == PlayerGameOvers.Length));
             }
         }
-        if (Pause_Flg)
+        if (IsPause)
         {
             OnPause();
         }
@@ -101,8 +101,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             Pause_Push = false;
             OnUnPause();
             //ポーズ画面
-            if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Flg && Game_Start)
-                Pause_Flg = true;
+            if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
+                IsPause = true;
         }
     }
 
@@ -133,7 +133,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         }
 
         //ゲームが開始された
-        Game_Start = true;
+        IsGameStart = true;
         //少し待つ
         yield return new WaitForSeconds(1.0f);
         //BGMを再生する
@@ -150,7 +150,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //少し待つ
         yield return new WaitForSeconds(1);
         if (!isDraw)
-            yield return StartCoroutine("OnTheWayCoroutine");
+            yield return StartCoroutine(OnTheWayCoroutine());
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
@@ -170,7 +170,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         SoundManager.Instance.F_GameSet();
         //少し待つ
         yield return new WaitForSeconds(1);
-        yield return StartCoroutine("OnTheWayCoroutine");
+        yield return StartCoroutine(OnTheWayCoroutine());
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
@@ -254,7 +254,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Push)
         {
             Pause_Push = true;
-            Pause_Flg = false;
+            IsPause = false;
             PauseObject.SetActive(false);
             select_index = 0;
             foreach (var obj in UiRectTransforms)
@@ -265,7 +265,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && !Pause_Push)
         {
             Pause_Push = true;
-            Pause_Flg = false;
+            IsPause = false;
             switch (select_index)
             {
                 case 0:
@@ -278,13 +278,13 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
                 case 1:
                     //スタティックなので値を0に
                     PlayerPoints = new int[4];
-                    StartCoroutine("SelectScene");
+                    StartCoroutine(TransitionSelectScene());
                     break;
 
                 case 2:
                     //スタティックなので値を0に
                     PlayerPoints = new int[4];
-                    StartCoroutine("TitleScene");
+                    StartCoroutine(TransitionTitleScene());
                     break;
             }
         }
@@ -319,7 +319,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     }
 
     ////ポーズ画面からの遷移
-    private IEnumerator SelectScene()
+    private IEnumerator TransitionSelectScene()
     {
         //フェード開始
         Fade.Instance.FadeIn(1.0f);
@@ -328,7 +328,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //セレクト画面に遷移
         SceneManager.LoadScene("Select");
     }
-    private IEnumerator TitleScene()
+    private IEnumerator TransitionTitleScene()
     {
         //フェード開始
         Fade.Instance.FadeIn(1.0f);

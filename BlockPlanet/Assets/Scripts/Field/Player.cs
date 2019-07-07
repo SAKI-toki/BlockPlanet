@@ -13,8 +13,7 @@ public class Player : MonoBehaviour
     //投げる力
     private float Shootpow = 5.0f;
     private float Body_Scale = 1.0f;
-    private bool Pad = false;
-    float Timer = 0.5f;
+    float VibrationTimer = 0.5f;
     public bool GameStart = false;
 
     //プレイヤーの頭上
@@ -68,7 +67,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameStart && !FieldManeger.Instance.Pause_Flg && !FieldManeger.Instance.GameOver)
+        if (GameStart && !FieldManeger.Instance.IsPause && !FieldManeger.Instance.IsGameOver)
         {
             float vertical = SwitchInput.GetVertical(playerNumber);
             float horizontal = SwitchInput.GetHorizontal(playerNumber);
@@ -98,8 +97,7 @@ public class Player : MonoBehaviour
             //上に吹っ飛ぶ
             rb.AddForce(Vector3.up * bombimpactVertical, ForceMode.Impulse);
             //振動
-            Pad = true;
-            Timer = 0.5f;
+            VibrationTimer = 0.5f;
             SwitchVibration.LowVibration(playerNumber, 0.3f);
             CameraShake.Instance.Shake();
         }
@@ -110,10 +108,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Pad)
-            Controller();
+        VibrationControl();
 
-        if (GameStart && !FieldManeger.Instance.Pause_Flg && !FieldManeger.Instance.GameOver)
+        if (GameStart && !FieldManeger.Instance.IsPause && !FieldManeger.Instance.IsGameOver)
         {
             RaycastHit hit;
 
@@ -165,7 +162,7 @@ public class Player : MonoBehaviour
         {
             SoundManager.Instance.BombThrow();
             Charge.Stop();
-            ShootObject = Instantiate(Bomb, HoldPosition, Quaternion.Euler(0, 0, 0));
+            ShootObject = Instantiate(Bomb, HoldPosition, Quaternion.identity);
             bombObject = ShootObject;
             //ターゲットの位置
             Target = transform.Find("Circle").transform.position;
@@ -186,13 +183,14 @@ public class Player : MonoBehaviour
         return bombObject != null;
     }
 
-    void Controller()
+    void VibrationControl()
     {
-        Timer -= Time.deltaTime;
-        if (Timer <= 0)
+        if (VibrationTimer == 0) return;
+        VibrationTimer -= Time.deltaTime;
+        if (VibrationTimer <= 0)
         {
-            Pad = false;
             SwitchVibration.LowVibration(playerNumber, 0.0f);
+            VibrationTimer = 0;
         }
     }
 

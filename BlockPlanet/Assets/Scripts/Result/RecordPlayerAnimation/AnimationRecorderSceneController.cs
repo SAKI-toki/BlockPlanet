@@ -24,13 +24,14 @@ public class AnimationRecorderSceneController : MonoBehaviour
     void Start()
     {
         ResultBlockMeshCombine blockMap = new ResultBlockMeshCombine();
-        GameObject parent = new GameObject("FieldObject");
+        GameObject parentTemp = new GameObject("FieldObjectTemp");
         //マップ生成
-        BlockCreater.GetInstance().CreateField("Result", parent.transform, blockMap, lookatObject, BlockCreater.SceneEnum.Result);
-        parent.isStatic = true;
+        BlockCreater.GetInstance().CreateField("Result", parentTemp.transform, blockMap, lookatObject, BlockCreater.SceneEnum.Result);
+        parentTemp.isStatic = true;
         blockMap.BlockIsSurroundUpdate();
         blockMap.BlockRendererOff();
-        blockMap.Initialize();
+        GameObject parent = new GameObject("FieldObject");
+        blockMap.Initialize(parent);
         //プレイヤーを地面につけるために時間を進める
         Physics.autoSimulation = false;
         Physics.Simulate(10.0f);

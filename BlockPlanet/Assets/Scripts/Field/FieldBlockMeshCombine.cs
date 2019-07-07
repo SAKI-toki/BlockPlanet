@@ -103,9 +103,25 @@ public class FieldBlockMeshCombine : BlockMap
             {
                 for (int k = 0; k < BlockArray.GetLength(2) - 1; ++k)
                 {
-                    if (BlockArray[i - 1, j, k].IsEnable && BlockArray[i, j - 1, k].IsEnable &&
-                    BlockArray[i, j + 1, k].IsEnable && BlockArray[i, j, k + 1].IsEnable)
-                        BlockArray[i, j, k].isSurround = true;
+                    //壊れないブロックのみ別の処理
+                    if (BlockArray[i, j, k].MaterialNumber == 0)
+                    {
+                        if (BlockArray[i - 1, j, k].IsEnable && BlockArray[i - 1, j, k].MaterialNumber == 0 &&
+                        BlockArray[i, j - 1, k].IsEnable && BlockArray[i, j - 1, k].MaterialNumber == 0 &&
+                        BlockArray[i, j + 1, k].IsEnable && BlockArray[i, j + 1, k].MaterialNumber == 0 &&
+                        BlockArray[i, j, k + 1].IsEnable && BlockArray[i, j, k + 1].MaterialNumber == 0)
+                        {
+                            BlockArray[i, j, k].isSurround = true;
+                        }
+                    }
+                    else
+                    {
+                        if (BlockArray[i - 1, j, k].IsEnable && BlockArray[i, j - 1, k].IsEnable &&
+                        BlockArray[i, j + 1, k].IsEnable && BlockArray[i, j, k + 1].IsEnable)
+                        {
+                            BlockArray[i, j, k].isSurround = true;
+                        }
+                    }
                 }
             }
         }
@@ -218,7 +234,7 @@ public class FieldBlockMeshCombine : BlockMap
         optimizeCubeMeshLeft.RecalculateNormals();
     }
 
-    public void Initialize()
+    public void Initialize(GameObject parent)
     {
         mesh = new Mesh();
         for (int i = 0; i < 8; ++i)
@@ -250,7 +266,8 @@ public class FieldBlockMeshCombine : BlockMap
         for (int i = 0; i < 8; ++i)
         {
             CombineMeshs[i] = new CombineMeshInfo();
-            CreateCombineMeshObject("Field" + BlockCreater.GetInstance().mats[i].name, CombineMeshs[i]);
+            CreateCombineMeshObject(BlockCreater.GetInstance().mats[i].name, CombineMeshs[i]);
+            CombineMeshs[i].obj.transform.parent = parent.transform;
             CombineMeshs[i].renderer.sharedMaterial = BlockCreater.GetInstance().mats[i];
             mesh = new Mesh();
             //先にメッシュを統合してから入れたほうが軽い

@@ -45,6 +45,10 @@ static public class MeshCombine
             renderer.sharedMaterial = instance.Key;
             meshFilter.mesh = new Mesh();
             meshFilter.mesh.CombineMeshes(instance.Value.ToArray());
+            if (meshFilter.sharedMesh.vertexCount > ushort.MaxValue)
+            {
+                Debug.LogError("頂点数が多すぎます");
+            }
             obj.isStatic = true;
             obj.transform.parent = parent.transform;
         }

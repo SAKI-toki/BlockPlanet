@@ -15,12 +15,13 @@ public class StageCreation : MonoBehaviour
     {
         //どのマップを使うか設定
         stagenumber = Select.Stagenum();
-        GameObject parent = new GameObject("FieldObject");
-        BlockCreater.GetInstance().CreateField("Stage" + stagenumber, parent.transform, blockMap, null, BlockCreater.SceneEnum.Game);
-        parent.isStatic = true;
+        GameObject parentTemp = new GameObject("FieldObjectTemp");
+        BlockCreater.GetInstance().CreateField("Stage" + stagenumber, parentTemp.transform, blockMap, null, BlockCreater.SceneEnum.Game);
+        parentTemp.isStatic = true;
         blockMap.BlockIsSurroundUpdate();
         blockMap.BlockRendererOff();
-        blockMap.Initialize();
+        GameObject parent = new GameObject("FieldObject");
+        blockMap.Initialize(parent);
     }
     void Update()
     {

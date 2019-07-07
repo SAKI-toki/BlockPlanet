@@ -9,7 +9,6 @@ public class TitleBomb : MonoBehaviour
 
     //デストロイ
     private bool Destroyflg = false;
-    private float Destroy_Timer = 0.2f;
     //爆発のパーティクル、子オブジェクト
     private ParticleSystem BOOM;
     //collision
@@ -33,7 +32,6 @@ public class TitleBomb : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Explosion(); //爆破処理
-        Title.Instance.Check = true;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -48,13 +46,9 @@ public class TitleBomb : MonoBehaviour
         Rb.AddForce(Vector3.down * 25.0f);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //爆弾が消えるまで
-        if (Destroyflg)
-            Destroy_Timer -= Time.deltaTime;
-        if (Destroy_Timer < 0)
+        if (Destroyflg && !BOOM.isPlaying)
         {
             Title.Instance.sounds.Play();
             Destroy(gameObject);
@@ -64,20 +58,7 @@ public class TitleBomb : MonoBehaviour
     //=====爆破処理=====
     void Explosion()
     {
-        //フィールドにある破壊するキューブを検索
-        GameObject[] tagobjs = GameObject.FindGameObjectsWithTag("Cube");
-
-        //キューブを消す
-        foreach (GameObject obj in tagobjs)
-        {
-            obj.SetActive(false);
-        }
-        GameObject[] strongCubes = GameObject.FindGameObjectsWithTag("StrongCube");
-        foreach (GameObject obj in strongCubes)
-        {
-            obj.GetComponent<MeshRenderer>().material = rainbowMat;
-        }
-
+        Title.Instance.BombExplosion();
         //爆発音
         SoundManager.Instance.Bomb();
         //爆弾の見た目を消す
@@ -86,7 +67,6 @@ public class TitleBomb : MonoBehaviour
         Rb.constraints = RigidbodyConstraints.FreezeAll;
         //パーティクル再生
         BOOM.Play();
-        BOOM.transform.parent = null;
         //デストロイするためのフラグ
         Destroyflg = true;
     }

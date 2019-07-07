@@ -13,6 +13,7 @@ public class AutoMaterialSet : MonoBehaviour
         if (mats.Length == 0) return;
         foreach (var renderer in GetComponentsInChildren<Renderer>())
         {
+            if (!renderer.gameObject.isStatic) continue;
             foreach (var mat in mats)
             {
                 if (mat.name == renderer.gameObject.name)

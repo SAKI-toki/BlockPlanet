@@ -7,7 +7,6 @@ public class ResultBomb : MonoBehaviour
 {
     //デストロイ
     private bool Destroy_Flg = false;
-    private float Destroy_Timer = 0.2f;
     //爆発のパーティクル、子オブジェクト
     private ParticleSystem BOOM;
     //collision
@@ -48,10 +47,7 @@ public class ResultBomb : MonoBehaviour
 
     void Update()
     {
-        //爆弾が消えるまで
-        if (Destroy_Flg)
-            Destroy_Timer -= Time.deltaTime;
-        if (Destroy_Timer < 0)
+        if (Destroy_Flg && !BOOM.isPlaying)
             Destroy(gameObject);
     }
 
@@ -65,7 +61,6 @@ public class ResultBomb : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeAll;
         //パーティクル再生
         BOOM.Play();
-        BOOM.transform.parent = null;
         //爆破の判定を出す
         BombColl[1].enabled = true;
         //デストロイするためのフラグ

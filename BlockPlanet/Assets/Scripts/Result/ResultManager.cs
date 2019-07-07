@@ -40,7 +40,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     [SerializeField]
     int winPlayerDebug = 0;
 #endif
-
+    GameObject fieldObjectParent;
     void Start()
     {
 #if UNITY_EDITOR
@@ -49,13 +49,14 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
             ResultPoints[winPlayerDebug] = int.MaxValue;
         }
 #endif
-        GameObject parent = new GameObject("FieldObject");
+        fieldObjectParent = new GameObject("FieldObjectTemp");
         //マップ生成
-        BlockCreater.GetInstance().CreateField("Result", parent.transform, blockMap, cameraObject, BlockCreater.SceneEnum.Result);
-        parent.isStatic = true;
+        BlockCreater.GetInstance().CreateField("Result", fieldObjectParent.transform, blockMap, cameraObject, BlockCreater.SceneEnum.Result);
+        fieldObjectParent.isStatic = true;
         blockMap.BlockIsSurroundUpdate();
         blockMap.BlockRendererOff();
-        blockMap.Initialize();
+        GameObject parent = new GameObject("FieldObject");
+        blockMap.Initialize(parent);
         //プレイヤーを取得
         for (int i = 0; i < 4; ++i)
         {
@@ -170,6 +171,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
             }
         }
         var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
+        fieldObjectParent.SetActive(false);
         //勝ったプレイヤーのアニメーション
         yield return StartCoroutine(resultWinPlayerAnimation.WinPlayerAnimation(winPlayerNumber));
         float time = 0;

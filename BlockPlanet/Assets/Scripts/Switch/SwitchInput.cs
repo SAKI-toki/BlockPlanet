@@ -65,8 +65,10 @@ static public class SwitchInput
                                 NpadButton.StickLRight | NpadButton.StickRRight |
                                 NpadButton.StickLLeft | NpadButton.StickRLeft);
         //スティックの更新
+        //右のジョイスティック
         if (npadStyle == NpadStyle.JoyRight)
         {
+            //デッドゾーンを超えているかどうか
             if (Mathf.Abs(m_NpadState.analogStickR.fx) > DeadZone)
             {
                 m_StickInfos[_Index].m_Vertical = -m_NpadState.analogStickR.fx;
@@ -76,6 +78,7 @@ static public class SwitchInput
             {
                 m_StickInfos[_Index].m_Vertical = 0.0f;
             }
+            //デッドゾーンを超えているかどうか
             if (Mathf.Abs(m_NpadState.analogStickR.fy) > DeadZone)
             {
                 m_StickInfos[_Index].m_Horizontal = m_NpadState.analogStickR.fy;
@@ -86,8 +89,10 @@ static public class SwitchInput
                 m_StickInfos[_Index].m_Horizontal = 0.0f;
             }
         }
-        else if (npadStyle == NpadStyle.JoyLeft)
+        //左のジョイスティック
+        else
         {
+            //デッドゾーンを超えているかどうか
             if (Mathf.Abs(m_NpadState.analogStickL.fx) > DeadZone)
             {
                 m_StickInfos[_Index].m_Vertical = m_NpadState.analogStickL.fx;
@@ -97,6 +102,7 @@ static public class SwitchInput
             {
                 m_StickInfos[_Index].m_Vertical = 0.0f;
             }
+            //デッドゾーンを超えているかどうか
             if (Mathf.Abs(m_NpadState.analogStickL.fy) > DeadZone)
             {
                 m_StickInfos[_Index].m_Horizontal = -m_NpadState.analogStickL.fy;
@@ -106,10 +112,6 @@ static public class SwitchInput
             {
                 m_StickInfos[_Index].m_Horizontal = 0.0f;
             }
-        }
-        else
-        {
-            Debug.LogError("JoyRight,JoyLeft以外のStyleを取得");
         }
         m_CurrentButtons[_Index] = (long)m_NpadState.buttons;
     }
@@ -272,27 +274,38 @@ static public class SwitchInput
         switch (_Button)
         {
             case XboxInput.Up:
-                return Input.GetKey(KeyCode.Joystick1Button3 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button3 + _Index * addNum) ||
+                Input.GetKey(KeyCode.UpArrow);
             case XboxInput.Down:
-                return Input.GetKey(KeyCode.Joystick1Button0 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button0 + _Index * addNum) ||
+                Input.GetKey(KeyCode.DownArrow);
             case XboxInput.Right:
-                return Input.GetKey(KeyCode.Joystick1Button1 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button1 + _Index * addNum) ||
+                Input.GetKey(KeyCode.RightArrow);
             case XboxInput.Left:
-                return Input.GetKey(KeyCode.Joystick1Button2 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button2 + _Index * addNum) ||
+                Input.GetKey(KeyCode.LeftArrow);
             case XboxInput.SR:
-                return Input.GetKey(KeyCode.Joystick1Button5 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button5 + _Index * addNum) ||
+                Input.GetKey(KeyCode.E);
             case XboxInput.SL:
-                return Input.GetKey(KeyCode.Joystick1Button4 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button4 + _Index * addNum) ||
+                Input.GetKey(KeyCode.Q);
             case XboxInput.StickUp:
-                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) > DeadZone;
+                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) > DeadZone ||
+                Input.GetKey(KeyCode.W);
             case XboxInput.StickDown:
-                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) < -DeadZone;
+                return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString()) < -DeadZone ||
+                Input.GetKey(KeyCode.S);
             case XboxInput.StickRight:
-                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) > DeadZone;
+                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) > DeadZone ||
+                Input.GetKey(KeyCode.D);
             case XboxInput.StickLeft:
-                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) < -DeadZone;
+                return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString()) < -DeadZone ||
+                Input.GetKey(KeyCode.A);
             case XboxInput.Pause:
-                return Input.GetKey(KeyCode.Joystick1Button7 + _Index * addNum);
+                return Input.GetKey(KeyCode.Joystick1Button7 + _Index * addNum) ||
+                Input.GetKey(KeyCode.Alpha1);
             default:
                 return false;
         }
@@ -305,7 +318,23 @@ static public class SwitchInput
     /// <returns>スティックの水平入力</returns>
     static float ConvertSwitchHorizontalToXboxHorizontal(int _Index)
     {
-        return Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString());
+        float stick = Input.GetAxisRaw("Horizontal" + (_Index + 1).ToString());
+        if (stick != 0) return stick;
+        //同時押しは0
+        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A)) return 0;
+        if (Input.GetKey(KeyCode.D))
+        {
+            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) return 1;
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) return Mathf.Sqrt(0.5f);
+            return 1;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) return -1;
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) return -Mathf.Sqrt(0.5f);
+            return -1;
+        }
+        return 0;
     }
 
     /// <summary>
@@ -315,7 +344,23 @@ static public class SwitchInput
     /// <returns>スティックの垂直入力</returns>
     static float ConvertSwitchVerticalToXboxVertical(int _Index)
     {
-        return Input.GetAxisRaw("Vertical" + (_Index + 1).ToString());
+        float stick = Input.GetAxisRaw("Vertical" + (_Index + 1).ToString());
+        if (stick != 0) return stick;
+        //同時押しは0
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) return 0;
+        if (Input.GetKey(KeyCode.W))
+        {
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A)) return 1;
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A)) return Mathf.Sqrt(0.5f);
+            return 1;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A)) return -1;
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A)) return -Mathf.Sqrt(0.5f);
+            return -1;
+        }
+        return 0;
     }
 
 #endif

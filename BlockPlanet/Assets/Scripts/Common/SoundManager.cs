@@ -46,7 +46,6 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     {
         Sounds.PlayOneShot(audioClip[5]);
     }
-
     //ジャンプの音
     public void Jump()
     {

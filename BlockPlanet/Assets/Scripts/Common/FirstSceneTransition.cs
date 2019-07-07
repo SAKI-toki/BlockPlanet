@@ -1,11 +1,16 @@
-﻿public class FirstSceneTransition : UnityEngine.MonoBehaviour
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class FirstSceneTransition : MonoBehaviour
 {
+    const string TitleSceneName = "Title";
     void Start()
     {
+        //一秒後にシーン遷移する
         Invoke("LoadStartScene", 1.0f);
     }
     void LoadStartScene()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
+        SceneManager.LoadScene(TitleSceneName);
     }
 }

@@ -306,6 +306,7 @@ GameObject:
   - component: {fileID: 3857737383228864387}
   - component: {fileID: 4623465270393206295}
   - component: {fileID: 4229392501679193798}
+  - component: {fileID: 8618162871482093418}
   m_Layer: 0
   m_Name: SwitchInput
   m_TagString: Untagged
@@ -372,6 +373,18 @@ MonoBehaviour:
   CharSize: 20
   CharColor: {r: 1, g: 1, b: 1, a: 1}
   UpdateInterval: 0.5
+--- !u!114 &8618162871482093418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3857737383228864389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a67ab30017ecdf48bd30efe1411b747, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8470455136538249090
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,6 +442,22 @@ MonoBehaviour:
   - {fileID: 1549535125379728, guid: 287bad5b14314fd48ba95ceaf38f6039, type: 3}
   - {fileID: 1790320502531378, guid: b4f8839004f725e44a594a3ca4e791e7, type: 3}
   StrongCube: {fileID: 1301499139755918, guid: 568d7b8bd377e32419180767e4ed77db, type: 3}
+  CubeLists:
+  - {fileID: 3149763473898769679, guid: e69e3791c4d224644940caaf024de101, type: 3}
+  - {fileID: 6579017577481020302, guid: a2ae5bf34c028754788c1feda31c1103, type: 3}
+  - {fileID: 8928037457642817034, guid: 3c359dfbfc26b9f4583d51cc7639ed66, type: 3}
+  - {fileID: 8686457312821054966, guid: 754a2dc464941a44ea571436c5977d4e, type: 3}
+  - {fileID: 2112089589236840459, guid: 74b3575295cd6114480fb25bb02eac60, type: 3}
+  - {fileID: 7864482572384953202, guid: 6d529a574cc9f5f4fbb8941bede83b58, type: 3}
+  - {fileID: 1643362026978349468, guid: 580fcbc2f35353540bf0acb026603dfc, type: 3}
+  StrongCubeLists:
+  - {fileID: 1533645389609929925, guid: 541033fdf3dcd5e4b997530cac605421, type: 3}
+  - {fileID: 5013334008616585552, guid: 3ceee0cfebb99484ebcc6c8279414ea5, type: 3}
+  - {fileID: 830796310700820982, guid: 842568610302cc943980be73680c8a9c, type: 3}
+  - {fileID: 3120475492084246333, guid: d31d1e8697e498a4399edcc346aefbd2, type: 3}
+  - {fileID: 3513860095929252403, guid: eb4a798540b49ee43b783965576360a3, type: 3}
+  - {fileID: 560319226559065997, guid: 17f128070c7a77e4cacd66938cef89ff, type: 3}
+  - {fileID: 1043354097843144024, guid: 7fec0e4f67fb42f4f9e4fad94bfdae67, type: 3}
   mats:
   - {fileID: 2100000, guid: 9890e697ae52e8f4e948aba67898732a, type: 2}
   - {fileID: 2100000, guid: b698813215ae462479f24b49d359c7b7, type: 2}
