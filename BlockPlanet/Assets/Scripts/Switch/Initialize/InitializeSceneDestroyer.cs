@@ -10,7 +10,7 @@ public class InitializeSceneDestroyer : MonoBehaviour
     void Start()
     {
         //初期化シーンの破棄コルーチンをスタート
-        StartCoroutine("DestroyInitializeScene", "InitializeScene");
+        StartCoroutine(DestroyInitializeScene("InitializeScene"));
     }
 
     /// <summary>

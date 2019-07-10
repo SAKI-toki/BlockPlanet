@@ -4835,7 +4835,7 @@ GameObject:
   - component: {fileID: 4553369871691882}
   - component: {fileID: 198627390449996450}
   - component: {fileID: 199883098602792012}
-  - component: {fileID: 114768065230009900}
+  - component: {fileID: 8674763008605990161}
   m_Layer: 15
   m_Name: BOOM
   m_TagString: Untagged
@@ -4870,7 +4870,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1122348395339254}
   serializedVersion: 6
-  lengthInSec: 6
+  lengthInSec: 0.5
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 1
@@ -9527,7 +9527,7 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &114768065230009900
+--- !u!114 &8674763008605990161
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9629,7 +9629,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6609c3dbf3814b344af8bacc26bbc70f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumber: 1
 --- !u!1 &1549799430259162
 GameObject:
   m_ObjectHideFlags: 0

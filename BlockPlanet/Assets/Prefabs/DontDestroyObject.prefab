@@ -304,7 +304,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3857737383228864388}
   - component: {fileID: 3857737383228864387}
-  - component: {fileID: 4623465270393206295}
   - component: {fileID: 4229392501679193798}
   - component: {fileID: 8618162871482093418}
   m_Layer: 0
@@ -338,18 +337,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: da7300bf1fab7c04081e6056802a736e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &4623465270393206295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3857737383228864389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5220f70d668e04f44818215cae0c4d6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4229392501679193798
@@ -433,15 +420,6 @@ MonoBehaviour:
   - {fileID: 2666398, guid: 9914914bb127eac499c6eee17818c38c, type: 3}
   - {fileID: 7804345447490751148, guid: 3a609d8c7ce5f114291c93646bc5d463, type: 3}
   - {fileID: 9007779802766357652, guid: cc8fc0adf1381b84c9d8fdd8309647ca, type: 3}
-  StageCubes:
-  - {fileID: 1626818043717834, guid: 835257f30c6c333448b250f9c6d2d315, type: 3}
-  - {fileID: 1763899405082200, guid: 1461742e459a446458e07f0578a7bbb7, type: 3}
-  - {fileID: 1438546579819188, guid: ab241e24599044c40aed5054c752f991, type: 3}
-  - {fileID: 1490423283499788, guid: 2f8dbb52ff9ac454cb132911567be937, type: 3}
-  - {fileID: 1467979413378186, guid: e1610ee3a6a4bc3429f796084eb6ddef, type: 3}
-  - {fileID: 1549535125379728, guid: 287bad5b14314fd48ba95ceaf38f6039, type: 3}
-  - {fileID: 1790320502531378, guid: b4f8839004f725e44a594a3ca4e791e7, type: 3}
-  StrongCube: {fileID: 1301499139755918, guid: 568d7b8bd377e32419180767e4ed77db, type: 3}
   CubeLists:
   - {fileID: 3149763473898769679, guid: e69e3791c4d224644940caaf024de101, type: 3}
   - {fileID: 6579017577481020302, guid: a2ae5bf34c028754788c1feda31c1103, type: 3}

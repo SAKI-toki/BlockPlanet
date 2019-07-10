@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public class StageCreation : MonoBehaviour
 {
@@ -7,8 +6,6 @@ public class StageCreation : MonoBehaviour
     /// ステージを生成
     /// </summary>
     int stagenumber = 1;
-
-    //public BlockMap blockMap = new BlockMap();
     public FieldBlockMeshCombine blockMap = new FieldBlockMeshCombine();
 
     void Start()

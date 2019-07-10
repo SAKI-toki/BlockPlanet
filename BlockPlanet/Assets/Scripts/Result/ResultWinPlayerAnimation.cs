@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// 勝ったプレイヤーのアニメーション
+/// </summary>
+
 public class ResultWinPlayerAnimation : MonoBehaviour
 {
     public IEnumerator WinPlayerAnimation(int winNumber)

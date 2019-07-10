@@ -114,9 +114,9 @@ public class Player : MonoBehaviour
         {
             RaycastHit hit;
 
+            if (SwitchInput.GetButtonDown(playerNumber, SwitchButton.Jump) &&
             //ジャンプ                 自分の中心　　　　　　　レイの幅　　　　　　　　　　方向　　　　長さ
-            if (Physics.SphereCast(transform.position, 1.5f, Vector3.down, out hit, 1.7f) &&
-            SwitchInput.GetButtonDown(playerNumber, SwitchButton.Jump))
+            Physics.SphereCast(transform.position, 1.5f, Vector3.down, out hit, 1.7f))
             {
                 if (hit.collider.tag == "Cube" || hit.collider.tag == "StrongCube")
                 {

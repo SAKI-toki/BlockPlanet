@@ -137,7 +137,7 @@ public class BlockCreater : Singleton<BlockCreater>
     /// <returns>マテリアルの番号</returns>
     public int GetMaterialNumber(Material mat)
     {
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < mats.Length; ++i)
         {
             if (mats[i] == mat) return i;
         }

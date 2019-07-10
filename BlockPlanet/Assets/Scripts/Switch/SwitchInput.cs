@@ -387,5 +387,6 @@ public enum SwitchButton : long
     Cancel = SwitchButton.Down,
     Jump = SwitchButton.Down,
     Bomb = SwitchButton.Left,
+    Horn = SwitchButton.Down,
     None = 0
 }

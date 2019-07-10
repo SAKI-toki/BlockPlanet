@@ -53,7 +53,8 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     RectTransform[] PlayerRectTransforms;
     [SerializeField]
     RectTransform[] PlayerWinRectTransforms;
-
+    [SerializeField]
+    AudioSource hornSound;
     void Start()
     {
         //ゲームスタート時
@@ -232,6 +233,13 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         while (PlayerRectTransforms[WinPlayerNumber].position.x <
         PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x)
         {
+            //煽りのクラクション
+            if (SwitchInput.GetButtonDown(WinPlayerNumber, SwitchButton.Horn))
+            {
+                if (hornSound.isPlaying) hornSound.Stop();
+                hornSound.Play();
+            }
+            //移動処理
             timeCount += Time.deltaTime;
             pos.x += moveSpeed * Time.deltaTime / 3;
             PlayerRectTransforms[WinPlayerNumber].position = pos;

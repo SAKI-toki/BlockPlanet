@@ -2,24 +2,20 @@
 
 public class BombEffect : MonoBehaviour
 {
-
-
-    /// <summary>
-    /// パーティクルが終わったら消すだけ
-    /// </summary>
-
-    float timer = 5;
+    ParticleSystem ps;
+    bool prevIsPlaying = false;
 
     void Start()
     {
-
+        ps = GetComponent<ParticleSystem>();
     }
 
     void Update()
     {
-        timer -= Time.deltaTime;
-
-        if (timer < 0)
+        if (prevIsPlaying && !ps.isPlaying)
+        {
             Destroy(gameObject);
+        }
+        prevIsPlaying = ps.isPlaying;
     }
 }

@@ -154,7 +154,6 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
                 {
                     minPoint = ResultPoints[j];
                     minPlayer = j;
-                    Debug.Log(j);
                 }
             }
             isEnd[minPlayer] = true;

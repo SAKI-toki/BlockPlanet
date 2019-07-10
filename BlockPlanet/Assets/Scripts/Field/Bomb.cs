@@ -7,8 +7,6 @@ public class Bomb : MonoBehaviour
 {
     //デストロイ
     private bool Destroy_Flg = false;
-    //爆弾が消滅するまでの時間
-    private float Destroy_Timer = 0.2f;
     //プレイヤーに持たれているかどうか
     private bool Hold = false;
 
@@ -18,6 +16,10 @@ public class Bomb : MonoBehaviour
     Rigidbody rb = null;
 
     BlockMap block_map = null;
+    const float bombInterval = 0.2f;
+    float destroyCount = 0.0f;
+
+    string collisionOtherTag;
 
     void Start()
     {
@@ -33,20 +35,23 @@ public class Bomb : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //接触判定
-        for (int i = 1; i <= 4; ++i)
+        collisionOtherTag = collision.gameObject.tag;
+
+        //for文で回していたがString型の結合が重く、一回で何回も実行されるため、
+        //速度を上げるために直に書いた
+        if (collisionOtherTag == "Player1" ||
+            collisionOtherTag == "Player2" ||
+            collisionOtherTag == "Player3" ||
+            collisionOtherTag == "Player4")
         {
-            if (collision.gameObject.CompareTag("Player" + i))
+            if (!Hold)
             {
-                if (!Hold)
-                {
-                    Explosion(); //爆破処理
-                    BombColl[1].center = Vector3.up * -1;
-                }
-                return;
+                Explosion(); //爆破処理
+                BombColl[1].center = Vector3.up * -1;
             }
+            return;
         }
-        if (collision.gameObject.tag == "Cube" || collision.gameObject.tag == "StrongCube")
+        if (collisionOtherTag == "Cube" || collisionOtherTag == "StrongCube")
         {
             if (!Hold)
                 Explosion(); //爆破処理
@@ -56,26 +61,27 @@ public class Bomb : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        collisionOtherTag = other.tag;
         //キューブを破壊
-        if (other.tag == "Cube")
+        if (collisionOtherTag == "Cube")
         {
             block_map.BreakBlock(other.GetComponent<BlockNumber>());
-            other.gameObject.SetActive(false);
+            Destroy(other.gameObject);
         }
 
         //爆弾の威力をプレイヤーに伝える
         //for文で回していたがString型の結合が重く、一回で何回も実行されるため、
         //速度を上げるために直に書いた
-        if (other.tag == "Player1" ||
-            other.tag == "Player2" ||
-            other.tag == "Player3" ||
-            other.tag == "Player4")
+        if (collisionOtherTag == "Player1" ||
+            collisionOtherTag == "Player2" ||
+            collisionOtherTag == "Player3" ||
+            collisionOtherTag == "Player4")
         {
             other.GetComponent<Player>().HitBomb(transform.position);
         }
 
         //フィールド外に落ちた場合
-        if (other.tag == "DustBox")
+        if (collisionOtherTag == "DustBox")
             Destroy(gameObject);
     }
 
@@ -107,11 +113,12 @@ public class Bomb : MonoBehaviour
 
     void Update()
     {
-        //爆弾が消えるまで
         if (Destroy_Flg)
-            Destroy_Timer -= Time.deltaTime;
-        if (Destroy_Timer < 0)
-            Destroy(gameObject);
+        {
+            destroyCount += Time.deltaTime;
+            if (destroyCount >= bombInterval)
+                Destroy(gameObject);
+        }
     }
 
     //=====爆破処理=====
