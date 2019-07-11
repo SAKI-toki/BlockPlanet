@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78ce7aae9115696468b1cc5018fadefb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RecordPlayerNumber: 1
+  RecordPlayerNumber: 3
   lookatObject: {fileID: 1858648799}
 --- !u!4 &280548068
 Transform:
