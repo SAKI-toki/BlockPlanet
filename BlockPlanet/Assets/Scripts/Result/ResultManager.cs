@@ -203,5 +203,6 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         pos.y = 20;
         GameObject bomb = Instantiate(ResultBombObject, pos, Quaternion.identity);
         while (bomb != null) yield return null;
+        Destroy(players[index], 3);
     }
 }

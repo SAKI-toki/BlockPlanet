@@ -19,7 +19,6 @@ public class Select : SingletonMonoBehaviour<Select>
 
     [SerializeField]
     List<GameObject> fieldList = new List<GameObject>();
-    List<GameObject> instanceFieldList = new List<GameObject>();
 
     public static int stagenumber = 0;
     private bool Push = false;
@@ -43,17 +42,17 @@ public class Select : SingletonMonoBehaviour<Select>
         stagenumber = CurrentSelectChoice.stageNumber - 1;
         for (int i = 0; i < 8; ++i)
         {
-            instanceFieldList.Add(Instantiate(fieldList[i], new Vector3(25, 0, 25), Quaternion.identity));
-            instanceFieldList[i].SetActive(false);
+            fieldList[i].transform.position = new Vector3(25, 0, 25);
+            fieldList[i].SetActive(false);
         }
-        instanceFieldList[stagenumber].SetActive(true);
+        fieldList[stagenumber].SetActive(true);
         currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         init_scale = currentChoiceRectTransform.localScale;
     }
 
     void Update()
     {
-        instanceFieldList[stagenumber].transform.Rotate(Vector3.up * Time.deltaTime * 10);
+        fieldList[stagenumber].transform.Rotate(Vector3.up * Time.deltaTime * 10);
 
         if (Push) return;
         if (!Fade.Instance.IsEnd) return;
@@ -114,14 +113,14 @@ public class Select : SingletonMonoBehaviour<Select>
         if (prev != CurrentSelectChoice)
         {
             currentChoiceRectTransform.localScale = init_scale;
-            instanceFieldList[stagenumber].SetActive(false);
+            fieldList[stagenumber].SetActive(false);
             //スティックの音
             SoundManager.Instance.Stick();
             increment_scale.Set(0, 0, 0);
             scale_time = 0.0f;
             stagenumber = CurrentSelectChoice.stageNumber - 1;
             //アクティブにするフィールドの変更
-            instanceFieldList[stagenumber].SetActive(true);
+            fieldList[stagenumber].SetActive(true);
             currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         }
         scale_time += Time.deltaTime * 6;
@@ -149,22 +148,22 @@ public class Select : SingletonMonoBehaviour<Select>
     {
         ui.SetActive(false);
         //横に移動
-        Vector3 initPosition = instanceFieldList[stagenumber].transform.position;
+        Vector3 initPosition = fieldList[stagenumber].transform.position;
         Vector3 endPosition = CameraObject.transform.position;
         endPosition.y = initPosition.y;
         endPosition.z += 15;
         float timeCount = 0.0f;
         //移動処理
-        while (instanceFieldList[stagenumber].transform.position != endPosition)
+        while (fieldList[stagenumber].transform.position != endPosition)
         {
             timeCount += Time.deltaTime;
-            instanceFieldList[stagenumber].transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
+            fieldList[stagenumber].transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
             yield return null;
         }
         //ステージに入り込むようなアニメーション
         timeCount = 0.0f;
         initPosition = CameraObject.transform.position;
-        endPosition = instanceFieldList[stagenumber].transform.position;
+        endPosition = fieldList[stagenumber].transform.position;
         endPosition.y += 10;
         Quaternion initRotation = CameraObject.transform.rotation;
         Quaternion endRotation = Quaternion.Euler(90, 0, 0);
