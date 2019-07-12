@@ -144,4 +144,26 @@ public class BlockCreater : Singleton<BlockCreater>
         Debug.LogError("見つかりませんでした");
         return -1;
     }
+
+    public void AutoGenerate(int[,] blockArray, Transform parent, BlockMap blockMap)
+    {
+        for (int i = 0; i < line_n; i++)
+        {
+            for (int j = 0; j < row_n; j++)
+            {
+                int number = blockArray[i, j];
+                position.Set(j, 0, i);
+                //プレイヤーの位置
+                if (number >= 100)
+                {
+                    int playerNumber = number / 100;
+                    position.y = 20;
+                    GeneratePlayer(playerNumber - 1, SceneEnum.Game, null);
+                    number -= playerNumber * 100;
+                }
+                position.y = 0;
+                if (number != 0) GenerateBlock(number, j, i, parent, blockMap);
+            }
+        }
+    }
 }
