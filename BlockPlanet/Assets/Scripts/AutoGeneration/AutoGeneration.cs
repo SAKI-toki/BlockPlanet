@@ -5,12 +5,11 @@
 /// </summary>
 static public class AutoGeneration
 {
-    static int[,] blockArray = new int[BlockCreater.line_n, BlockCreater.row_n];
-    static int[,] oneQuaterBlockArray = new int[BlockCreater.line_n / 2, BlockCreater.row_n / 2];
-    static bool isInitialize = false;
+    static int[,] blockArray = new int[BlockMapSize.line_n, BlockMapSize.row_n];
+    static int[,] oneQuaterBlockArray = new int[BlockMapSize.line_n / 2, BlockMapSize.row_n / 2];
     static public int[,] Generate(int maxHeightDiff, float sameHeightPercent)
     {
-        int randomPlayerPositionRandomHeight = Random.Range(1, 8);
+        int randomPlayerPositionRandomHeight = Random.Range(1, BlockMapSize.height_n + 1);
         for (int i = 0; i < 3; ++i)
         {
             for (int j = 0; j < 3; ++j)
@@ -18,6 +17,7 @@ static public class AutoGeneration
                 oneQuaterBlockArray[i, j] = randomPlayerPositionRandomHeight;
             }
         }
+
         //プレイヤーの位置
         oneQuaterBlockArray[1, 1] += 100;
         //ランダムにブロックを配置する
@@ -69,11 +69,11 @@ static public class AutoGeneration
                 //平均の値から指定の範囲内に収まるように高さを設定する
                 else
                 {
-                    oneQuaterBlockArray[i, j] = Mathf.Clamp(Random.Range(-maxHeightDiff, maxHeightDiff + 1) + heightSum / blockCount, 0, 7);
+                    oneQuaterBlockArray[i, j] = Mathf.Clamp(Random.Range(-maxHeightDiff, maxHeightDiff + 1) + heightSum / blockCount, 0, BlockMapSize.height_n + 1);
                 }
                 if (oneQuaterBlockArray[i, j] == 0) continue;
                 //壊れないブロック
-                if (Random.Range(0.0f, 1.0f) < 0.2f + 0.5f * strongNum / blockCount)
+                if (Random.Range(0.0f, 1.0f) < 0.1f + 0.4f * strongNum / blockCount)
                 {
                     oneQuaterBlockArray[i, j] += 10;
                 }
@@ -85,11 +85,11 @@ static public class AutoGeneration
             for (int j = 0; j < oneQuaterBlockArray.GetLength(1); ++j)
             {
                 blockArray[i, j] = oneQuaterBlockArray[i, j];
-                blockArray[i, BlockCreater.row_n - j - 1] =
+                blockArray[i, BlockMapSize.row_n - j - 1] =
                     oneQuaterBlockArray[i, j] + ((oneQuaterBlockArray[i, j] > 100) ? 100 : 0);
-                blockArray[BlockCreater.line_n - i - 1, j] =
+                blockArray[BlockMapSize.line_n - i - 1, j] =
                     oneQuaterBlockArray[i, j] + ((oneQuaterBlockArray[i, j] > 100) ? 200 : 0);
-                blockArray[BlockCreater.line_n - i - 1, BlockCreater.row_n - j - 1] =
+                blockArray[BlockMapSize.line_n - i - 1, BlockMapSize.row_n - j - 1] =
                     oneQuaterBlockArray[i, j] + ((oneQuaterBlockArray[i, j] > 100) ? 300 : 0);
             }
         }

@@ -51,6 +51,7 @@ static public class MeshCombine
             }
             obj.isStatic = true;
             obj.transform.parent = parent.transform;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
     }
 }

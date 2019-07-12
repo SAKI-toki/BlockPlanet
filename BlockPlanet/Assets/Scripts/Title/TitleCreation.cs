@@ -60,6 +60,7 @@ public class TitleCreation : MonoBehaviour
                 MeshCollider collider = obj.AddComponent<MeshCollider>();
                 //マテリアルのセット
                 renderer.sharedMaterial = TitleCube.GetComponent<MeshRenderer>().sharedMaterial;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 //タグのセット
                 obj.tag = instance.Key;
                 meshFilter.mesh = new Mesh();

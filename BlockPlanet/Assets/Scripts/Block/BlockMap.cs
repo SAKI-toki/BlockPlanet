@@ -21,7 +21,7 @@ public class BlockMap
         public int MaterialNumber = 0;
     }
     //サイズ分のマップを用意する
-    protected BlockInfo[,,] BlockArray = new BlockInfo[BlockCreater.line_n, BlockCreater.row_n, 7];
+    protected BlockInfo[,,] BlockArray = new BlockInfo[BlockMapSize.line_n, BlockMapSize.row_n, BlockMapSize.height_n];
     bool IsInit = false;
     void Initialize()
     {

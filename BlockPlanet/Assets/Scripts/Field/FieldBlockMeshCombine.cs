@@ -23,10 +23,10 @@ public class FieldBlockMeshCombine : BlockMap
     Mesh optimizeCubeMeshRight = null;
     Mesh optimizeCubeMeshLeft = null;
     //縦方向にブロックの数を保持する
-    protected int[,] BlockNum = new int[BlockCreater.line_n, BlockCreater.row_n];
+    protected int[,] BlockNum = new int[BlockMapSize.line_n, BlockMapSize.row_n];
     BlockInfo blockInfo;
 
-    BlockInfo[,] infos = new BlockInfo[8, BlockCreater.line_n * BlockCreater.row_n];
+    BlockInfo[,] infos = new BlockInfo[8, BlockMapSize.line_n * BlockMapSize.row_n];
 
     public void CreateMesh()
     {
@@ -81,6 +81,7 @@ public class FieldBlockMeshCombine : BlockMap
         combineMeshInfo.meshFilter = combineMeshInfo.obj.AddComponent<MeshFilter>();
         combineMeshInfo.renderer = combineMeshInfo.obj.AddComponent<MeshRenderer>();
         combineMeshInfo.obj.isStatic = true;
+        combineMeshInfo.renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
     public override void BreakBlock(BlockNumber block_num)
@@ -153,11 +154,11 @@ public class FieldBlockMeshCombine : BlockMap
         const int centerRange = 2;
         if (optimizeCubeMesh == null)
             CreateOptimizeCube(filter);
-        if (row < BlockCreater.row_n / 2 - centerRange)
+        if (row < BlockMapSize.row_n / 2 - centerRange)
         {
             return optimizeCubeMeshLeft;
         }
-        if (row > BlockCreater.row_n / 2 + centerRange)
+        if (row > BlockMapSize.row_n / 2 + centerRange)
         {
             return optimizeCubeMeshRight;
         }

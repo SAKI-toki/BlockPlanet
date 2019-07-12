@@ -8,14 +8,9 @@ public class BlockCreater : Singleton<BlockCreater>
     [SerializeField]
     GameObject[] Players = new GameObject[4];
     [SerializeField]
-    GameObject[] CubeLists = new GameObject[7];
+    GameObject[] CubeLists = new GameObject[BlockMapSize.height_n];
     [SerializeField]
-    GameObject[] StrongCubeLists = new GameObject[7];
-
-    //CSVデータの行数
-    public const int line_n = 52;
-    //CSVデータの列数
-    public const int row_n = 52;
+    GameObject[] StrongCubeLists = new GameObject[BlockMapSize.height_n];
 
     //設置位置
     Vector3 position = new Vector3();
@@ -42,11 +37,11 @@ public class BlockCreater : Singleton<BlockCreater>
         //改行ごとに格納
         string[] lineString = csvfile.text.Split('\n');
 
-        for (int z = 0; z < line_n; z++)
+        for (int z = 0; z < BlockMapSize.line_n; z++)
         {
             //カンマごとに格納
             string[] rowString = lineString[z].Split(',');
-            for (int x = 0; x < row_n; x++)
+            for (int x = 0; x < BlockMapSize.line_n; x++)
             {
                 //string型をint型にパース
                 int number = int.Parse(rowString[x]);
@@ -81,7 +76,7 @@ public class BlockCreater : Singleton<BlockCreater>
         //ゲームならマップの中心を向かせる
         if (scene == SceneEnum.Game)
         {
-            player.transform.LookAt(new Vector3(row_n / 2.0f, player.transform.position.y, line_n / 2.0f));
+            player.transform.LookAt(new Vector3(BlockMapSize.row_n / 2.0f, player.transform.position.y, BlockMapSize.line_n / 2.0f));
         }
         //リザルトならカメラに向かせる
         else if (scene == SceneEnum.Result)
@@ -147,9 +142,9 @@ public class BlockCreater : Singleton<BlockCreater>
 
     public void AutoGenerate(int[,] blockArray, Transform parent, BlockMap blockMap)
     {
-        for (int i = 0; i < line_n; i++)
+        for (int i = 0; i < BlockMapSize.line_n; i++)
         {
-            for (int j = 0; j < row_n; j++)
+            for (int j = 0; j < BlockMapSize.row_n; j++)
             {
                 int number = blockArray[i, j];
                 position.Set(j, 0, i);
