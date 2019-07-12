@@ -444,7 +444,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -280, y: 180}
+  m_AnchoredPosition: {x: -280, y: 160}
   m_SizeDelta: {x: 331, y: 126}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &236901089
@@ -609,7 +609,7 @@ GameObject:
   - component: {fileID: 379648429}
   - component: {fileID: 379648428}
   m_Layer: 5
-  m_Name: Progress
+  m_Name: ResultText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -654,7 +654,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a80e825f02ed3ab458909e4c0124c12d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5e7b7df71e6f80c4fb51f8a6346a3882, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -705,7 +705,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 280, y: 180}
+  m_AnchoredPosition: {x: 295, y: 160}
   m_SizeDelta: {x: 331, y: 126}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &494342571
