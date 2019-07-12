@@ -305,6 +305,7 @@ public class FieldBlockMeshCombine : BlockMap
         int length1 = BlockArray.GetLength(1);
         int length2 = BlockArray.GetLength(2);
         int[] indexs = new int[8];
+        List<CombineInstance> strongCombineInstanceList = new List<CombineInstance>();
         for (int i = 0; i < length0; ++i)
         {
             for (int j = 0; j < length1; ++j)
@@ -315,7 +316,14 @@ public class FieldBlockMeshCombine : BlockMap
                     if (blockInfo.MaterialNumber != 0) ++BlockNum[i, j];
                     if (!blockInfo.IsEnable || blockInfo.isSurround) continue;
                     //位置を格納
-                    infos[blockInfo.MaterialNumber, indexs[blockInfo.MaterialNumber]++] = blockInfo;
+                    if (blockInfo.MaterialNumber == 0)
+                    {
+                        strongCombineInstanceList.Add(blockInfo.cmesh);
+                    }
+                    else
+                    {
+                        infos[blockInfo.MaterialNumber, indexs[blockInfo.MaterialNumber]++] = blockInfo;
+                    }
                 }
             }
         }
@@ -327,13 +335,20 @@ public class FieldBlockMeshCombine : BlockMap
             CombineMeshs[i].obj.transform.parent = parent.transform;
             CombineMeshs[i].renderer.sharedMaterial = BlockCreater.GetInstance().mats[i];
             mesh = new Mesh();
-            CombineInstance[] instances = new CombineInstance[indexs[i]];
-            for (int j = 0; j < indexs[i]; ++j)
+            if (i == 0)
             {
-                instances[j] = infos[i, j].cmesh;
+                mesh.CombineMeshes(strongCombineInstanceList.ToArray());
             }
-            //先にメッシュを統合してから入れたほうが軽い
-            mesh.CombineMeshes(instances);
+            else
+            {
+                CombineInstance[] instances = new CombineInstance[indexs[i]];
+                for (int j = 0; j < indexs[i]; ++j)
+                {
+                    instances[j] = infos[i, j].cmesh;
+                }
+                //先にメッシュを統合してから入れたほうが軽い
+                mesh.CombineMeshes(instances);
+            }
             CombineMeshs[i].meshFilter.mesh = mesh;
         }
     }

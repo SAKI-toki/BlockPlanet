@@ -6,7 +6,7 @@ public class TestCreater : MonoBehaviour
     void Start()
     {
         GameObject parentTemp = new GameObject("FieldObjectTemp");
-        BlockCreater.GetInstance().AutoGenerate(AutoGeneration.Generate(), parentTemp.transform, blockMap);
+        BlockCreater.GetInstance().AutoGenerate(AutoGeneration.Generate(3, 0.9f), parentTemp.transform, blockMap);
         parentTemp.isStatic = true;
         blockMap.BlockIsSurroundUpdate();
         blockMap.BlockRendererOff();
