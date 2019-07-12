@@ -31,6 +31,8 @@ public class Select : SingletonMonoBehaviour<Select>
     Material PostProcessMaterial;
     [SerializeField]
     PostProcess postProcess;
+    [SerializeField]
+    Material[] mats;
 
     void Start()
     {
@@ -43,6 +45,17 @@ public class Select : SingletonMonoBehaviour<Select>
         for (int i = 0; i < 8; ++i)
         {
             fieldList[i].transform.position = new Vector3(25, 0, 25);
+            foreach (var renderer in fieldList[i].transform.GetComponentsInChildren<Renderer>())
+            {
+                foreach (var mat in mats)
+                {
+                    if (renderer.transform.name == mat.name)
+                    {
+                        renderer.sharedMaterial = mat;
+                        break;
+                    }
+                }
+            }
             fieldList[i].SetActive(false);
         }
         fieldList[stagenumber].SetActive(true);

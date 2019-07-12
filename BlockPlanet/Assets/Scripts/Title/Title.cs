@@ -6,7 +6,7 @@ public class Title : SingletonMonoBehaviour<Title>
 {
     //クレジットの画像
     [SerializeField]
-    GameObject[] Uis = null;
+    GameObject UiParent = null;
     [SerializeField]
     GameObject CreditParent;
     //BGM
@@ -27,8 +27,7 @@ public class Title : SingletonMonoBehaviour<Title>
         Fade.Instance.FadeOut(1.0f);
         //BGM
         sounds = GetComponent<AudioSource>();
-        foreach (var ui in Uis)
-            ui.SetActive(false);
+        UiParent.SetActive(false);
         CreditParent.SetActive(false);
     }
 
@@ -38,12 +37,11 @@ public class Title : SingletonMonoBehaviour<Title>
         //爆弾が爆発後
         if (TitleBomb == null)
         {
-            foreach (var ui in Uis)
-                ui.SetActive(true);
             if (CreditParent.activeSelf)
             {
+                UiParent.SetActive(false);
                 //クレジットの非表示
-                if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
+                if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) || SwitchInput.GetButtonDown(0, SwitchButton.Down))
                 {
                     SoundManager.Instance.Push();
                     CreditParent.SetActive(false);
@@ -51,6 +49,7 @@ public class Title : SingletonMonoBehaviour<Title>
             }
             else
             {
+                UiParent.SetActive(true);
                 //シーン遷移
                 if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
                 {
