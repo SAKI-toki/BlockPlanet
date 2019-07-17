@@ -329,11 +329,12 @@ public class MakeMapManager : MonoBehaviour
     void SwitchStrong(bool isToStrong, Vector2Int position)
     {
         if (IsStrongArray[position.y, position.x] == isToStrong) return;
-        IsStrongArray[position.y, position.x] = isToStrong;
         int blockNumber = BlockArray[position.y, position.x];
         if (blockNumber == 0) return;
         for (int i = 0; i < blockNumber; ++i)
             SubBlock(position);
+        //壊れるか壊れないかを切り替える
+        IsStrongArray[position.y, position.x] = isToStrong;
         for (int i = 0; i < blockNumber; ++i)
             AddBlock(position);
     }

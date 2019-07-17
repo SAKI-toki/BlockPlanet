@@ -69,7 +69,8 @@ static public class AutoGeneration
                 //平均の値から指定の範囲内に収まるように高さを設定する
                 else
                 {
-                    oneQuaterBlockArray[i, j] = Mathf.Clamp(Random.Range(-maxHeightDiff, maxHeightDiff + 1) + heightSum / blockCount, 0, BlockMapSize.height_n + 1);
+                    oneQuaterBlockArray[i, j] = Mathf.Clamp(Random.Range(-maxHeightDiff, maxHeightDiff + 1) + heightSum / blockCount,
+                        0, BlockMapSize.height_n);
                 }
                 if (oneQuaterBlockArray[i, j] == 0) continue;
                 //壊れないブロック
