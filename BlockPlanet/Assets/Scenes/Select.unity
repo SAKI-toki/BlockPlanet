@@ -330,14 +330,14 @@ MonoBehaviour:
   CurrentSelectChoice: {fileID: 263458069}
   max_scale: {x: 0.5, y: 0.5, z: 0}
   fieldList:
-  - {fileID: 2294235077073456040, guid: 77240a8eb043a0845becb4e87f00b5ea, type: 3}
-  - {fileID: 5948773403962390581, guid: 07bbfb1a3c6f8704ea72e3a4e6700a13, type: 3}
-  - {fileID: 78214616475697183, guid: bd0e0799aba1a8f4891f9ceca3c6e188, type: 3}
-  - {fileID: 6289097222642745265, guid: 7e634130737686d47aac6edbf42f5e6e, type: 3}
-  - {fileID: 3185300810546467583, guid: 5a8be4eaee61e284f86a5c6e24c999c4, type: 3}
-  - {fileID: 1625184824448212332, guid: 5f3761a8b9ec0494ea54e39e1b197ea7, type: 3}
-  - {fileID: 2778141234252023626, guid: 995333391a347a049bc5028ddf26c4d9, type: 3}
-  - {fileID: 7578238310376673440, guid: 69a02e78ec50db54e8a503769d53f49b, type: 3}
+  - {fileID: 2035301748030845033, guid: 77240a8eb043a0845becb4e87f00b5ea, type: 3}
+  - {fileID: 7042110132750570776, guid: 07bbfb1a3c6f8704ea72e3a4e6700a13, type: 3}
+  - {fileID: 4982315384771077968, guid: bd0e0799aba1a8f4891f9ceca3c6e188, type: 3}
+  - {fileID: 736772903282732488, guid: 7e634130737686d47aac6edbf42f5e6e, type: 3}
+  - {fileID: 1444486855629665039, guid: 5a8be4eaee61e284f86a5c6e24c999c4, type: 3}
+  - {fileID: 7628214344257533681, guid: 5f3761a8b9ec0494ea54e39e1b197ea7, type: 3}
+  - {fileID: 6436979618407784564, guid: 995333391a347a049bc5028ddf26c4d9, type: 3}
+  - {fileID: 8091652876960324046, guid: 69a02e78ec50db54e8a503769d53f49b, type: 3}
   CameraObject: {fileID: 1429951023}
   ui: {fileID: 2046592428}
   PostProcessMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}

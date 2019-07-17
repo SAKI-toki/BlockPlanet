@@ -2583,7 +2583,7 @@ MonoBehaviour:
   - {fileID: 1580009764}
   - {fileID: 1410852225}
   - {fileID: 564432644}
-  max_scale: {x: 1.1, y: 1, z: 0}
+  max_scale: {x: 0.8, y: 0.7, z: 0}
   OnTheWayObject: {fileID: 767992219}
   OnTheWayImages:
   - {fileID: 163522637}

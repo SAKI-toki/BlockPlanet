@@ -49,8 +49,7 @@ public class Bomb : MonoBehaviour
             if (!Hold)
             {
                 Explosion(); //爆破処理
-                transform.position = collision.transform.position;
-                //BombColl[1].center = Vector3.up * -1;
+                transform.position = (collision.transform.position + transform.position) / 2;
             }
             return;
         }
