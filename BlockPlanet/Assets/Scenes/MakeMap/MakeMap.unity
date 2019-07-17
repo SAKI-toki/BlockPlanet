@@ -240,7 +240,8 @@ MonoBehaviour:
   - {fileID: 5403356706041343445}
   - {fileID: 130070332929736016}
   CameraObject: {fileID: 812217407}
-  CsvAsset: {fileID: 4900000, guid: d66e3245a299eb642b96aaff31e35de5, type: 3}
+  ScrollSpeed: 2
+  CsvAsset: {fileID: 4900000, guid: df50c43fa41f4bb4cb993c346a82ed3f, type: 3}
 --- !u!4 &1528172435
 Transform:
   m_ObjectHideFlags: 0
