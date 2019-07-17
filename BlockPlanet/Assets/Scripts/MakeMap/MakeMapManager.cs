@@ -42,6 +42,8 @@ public class MakeMapManager : MonoBehaviour
 
     [SerializeField]
     TextAsset CsvAsset;
+    bool IsTracking = false;
+    float TrackingDistance = 0.0f;
 
     void Start()
     {
@@ -62,9 +64,13 @@ public class MakeMapManager : MonoBehaviour
         }
         //UIの表示・非表示
         if (Input.GetKeyDown(KeyCode.M)) DisplayUI = !DisplayUI;
-        CameraControl();
         CursorMove();
         State();
+    }
+
+    void LateUpdate()
+    {
+        CameraControl();
     }
 
     void BlockState()
@@ -294,6 +300,10 @@ public class MakeMapManager : MonoBehaviour
         Destroy(BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1]);
         //ブロックの数を減らす
         --BlockArray[position.y, position.x];
+        if (BlockArray[position.y, position.x] == 0)
+        {
+            IsStrongArray[position.y, position.x] = false;
+        }
     }
 
     void SetBlock(int blockNum, Vector2Int position)
@@ -350,15 +360,36 @@ public class MakeMapManager : MonoBehaviour
 
     void CameraControl()
     {
+        //追尾モード
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            IsTracking = true;
+            CameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
+            TrackingDistance = 60;
+        }
+        //俯瞰モード
         if (Input.GetKeyDown(KeyCode.C))
         {
+            IsTracking = false;
             CameraObject.transform.position = new Vector3(25.5f, 60, 25.5f);
             CameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
         }
+        //デフォルトモード
         if (Input.GetKeyDown(KeyCode.V))
         {
+            IsTracking = false;
             CameraObject.transform.position = CameraInitPosition;
             CameraObject.transform.rotation = CameraInitRotation;
+        }
+        if (IsTracking)
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll > 0) --TrackingDistance;
+            if (scroll < 0) ++TrackingDistance;
+            TrackingDistance = Mathf.Clamp(TrackingDistance, 10, 60);
+            Vector3 position = CursorTransform.position;
+            position.y = TrackingDistance;
+            CameraObject.transform.position = position;
         }
     }
 
@@ -473,6 +504,9 @@ public class MakeMapManager : MonoBehaviour
                 "C : 上からマップを見る\nV : 初期位置からマップを見る");
             }
         }
+        GUI.Label(new Rect(20, 350, 1000, 1000),
+         "縦：" + (CursorTransform.position.z + 1).ToString("##") + "\n" +
+         "横：" + (CursorTransform.position.x + 1).ToString("##"));
         GUI.Label(new Rect(20, 400, 1000, 1000), "M : 説明の表示・非表示");
     }
 #endif
