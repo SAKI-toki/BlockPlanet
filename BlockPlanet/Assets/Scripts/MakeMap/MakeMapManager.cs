@@ -39,6 +39,8 @@ public class MakeMapManager : MonoBehaviour
     Quaternion CameraInitRotation;
     [SerializeField]
     GameObject CameraObject;
+    [SerializeField, Range(1.0f, 10.0f)]
+    float ScrollSpeed = 2.0f;
 
     [SerializeField]
     TextAsset CsvAsset;
@@ -384,8 +386,8 @@ public class MakeMapManager : MonoBehaviour
         if (IsTracking)
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll > 0) --TrackingDistance;
-            if (scroll < 0) ++TrackingDistance;
+            if (scroll > 0) TrackingDistance -= ScrollSpeed;
+            if (scroll < 0) TrackingDistance += ScrollSpeed;
             TrackingDistance = Mathf.Clamp(TrackingDistance, 10, 60);
             Vector3 position = CursorTransform.position;
             position.y = TrackingDistance;
