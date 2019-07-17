@@ -495,7 +495,7 @@ public class MakeMapManager : MonoBehaviour
                 "\n+ : ブロックを一段増やす\n- : ブロックを一段減らす\nWASD,矢印 : 移動(Shiftを押すと高速移動)\n" +
                 "IOKL : 斜め移動(Shiftを押すと高速移動)\nZ : 壊れないブロックに変換\nX : 壊れるブロックに変換\n" +
                 "0~7 : 押した数の段数にする\nEnter : プレイヤーをセットするステートに移行\n" +
-                "C : 上からマップを見る\nV : 初期位置からマップを見る");
+                "C : 上からマップを見る\nV : 初期位置からマップを見る\nT : カメラが追尾する(マウスホイールで拡大縮小)");
             }
             else if (StateName == PlayerStateName)
             {
@@ -503,7 +503,7 @@ public class MakeMapManager : MonoBehaviour
                 "\nWASD,矢印 : 移動(Shiftを押すと高速移動)\nIOKL : 斜め移動(Shiftを押すと高速移動)\n" +
                 "1~4 : 押した数のプレイヤーをセットする\n(近すぎるとセットできません)\n" +
                 "Enter : CSVを生成し、マップをクリア\nBackSpace : ブロックをセットするステートに戻る\n" +
-                "C : 上からマップを見る\nV : 初期位置からマップを見る");
+                "C : 上からマップを見る\nV : 初期位置からマップを見る\nT : カメラが追尾する(マウスホイールで拡大縮小)");
             }
         }
         GUI.Label(new Rect(20, 350, 1000, 1000),
