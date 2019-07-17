@@ -21,6 +21,8 @@ public class Bomb : MonoBehaviour
 
     string collisionOtherTag;
 
+    Vector3 collisionPosition;
+
     void Start()
     {
         //パーティクル
@@ -47,7 +49,8 @@ public class Bomb : MonoBehaviour
             if (!Hold)
             {
                 Explosion(); //爆破処理
-                BombColl[1].center = Vector3.up * -1;
+                transform.position = collision.transform.position;
+                //BombColl[1].center = Vector3.up * -1;
             }
             return;
         }
@@ -77,7 +80,7 @@ public class Bomb : MonoBehaviour
             collisionOtherTag == "Player3" ||
             collisionOtherTag == "Player4")
         {
-            other.GetComponent<Player>().HitBomb(transform.position);
+            other.GetComponent<Player>().HitBomb(collisionPosition);
         }
 
         //フィールド外に落ちた場合
@@ -124,6 +127,7 @@ public class Bomb : MonoBehaviour
     //=====爆破処理=====
     void Explosion()
     {
+        collisionPosition = transform.position;
         //爆発音
         SoundManager.Instance.Bomb();
         //爆弾の見た目を消す
