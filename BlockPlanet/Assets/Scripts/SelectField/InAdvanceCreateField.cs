@@ -12,6 +12,29 @@ public class InAdvanceCreateField : MonoBehaviour
         CreateSelectField(stageNumber);
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            if (Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl))
+            {
+                AllCreateSelectField();
+            }
+            else
+            {
+                CreateSelectField(stageNumber);
+            }
+        }
+    }
+
+    void AllCreateSelectField()
+    {
+        for (int i = 0; i < 8; ++i)
+        {
+            CreateSelectField(i + 1);
+        }
+    }
+
     void CreateSelectField(int num)
     {
         GameObject field = new GameObject("field" + num);
@@ -27,23 +50,18 @@ public class InAdvanceCreateField : MonoBehaviour
         CreateAsset("Assets/Models/SelectField/Field" + num, "Assets/Prefabs/SelectField", combineField, num);
         Destroy(combineField);
     }
-    void CreateAsset(string modelPath, string prefabPath, GameObject obj, int num, bool withPlayer = false)
+
+    void CreateAsset(string modelPath, string prefabPath, GameObject obj, int num)
     {
         System.IO.Directory.CreateDirectory(modelPath);
         System.IO.Directory.CreateDirectory(prefabPath);
+        obj.transform.position = new Vector3(25, 0, 25);
         //メッシュの生成
         foreach (var filter in obj.GetComponentsInChildren<MeshFilter>())
         {
+            filter.transform.position = Vector3.zero;
             string[] name = filter.GetComponent<MeshRenderer>().material.name.Split('(');
             UnityEditor.AssetDatabase.CreateAsset(filter.mesh, modelPath + "/" + name[0] + ".asset");
-        }
-        if (withPlayer)
-        {
-            for (int i = 1; i <= 4; ++i)
-            {
-                GameObject player = GameObject.FindGameObjectWithTag("Player" + i);
-                player.transform.parent = obj.transform;
-            }
         }
         //prefab化
         UnityEditor.PrefabUtility.SaveAsPrefabAsset(obj, prefabPath + "/Field" + num + ".prefab");

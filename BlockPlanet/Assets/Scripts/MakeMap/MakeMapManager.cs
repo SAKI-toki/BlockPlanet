@@ -3,6 +3,7 @@ using System.IO;
 
 public class MakeMapManager : MonoBehaviour
 {
+#if UNITY_EDITOR
     [SerializeField]
     GameObject[] Cubes;
     [SerializeField]
@@ -19,6 +20,7 @@ public class MakeMapManager : MonoBehaviour
     [SerializeField]
     GameObject[] Players = new GameObject[4];
 
+    //プレイヤーの位置
     Vector2Int[] PlayerPositions = new Vector2Int[4];
 
     //生成したcsvのパス
@@ -26,48 +28,77 @@ public class MakeMapManager : MonoBehaviour
     delegate void StateType();
     StateType State;
     string StateName;
+    float[] CursorMoveTime = new float[8];
+
+    const string BlockStateName = "ブロックセット";
+    const string PlayerStateName = "プレイヤーセット";
+
+    bool DisplayUI = true;
+
+    Vector3 CameraInitPosition;
+    Quaternion CameraInitRotation;
+    [SerializeField]
+    GameObject CameraObject;
+
+    [SerializeField]
+    TextAsset CsvAsset;
 
     void Start()
     {
-        CursorTransform.position = Vector3.zero;
+        CameraInitPosition = CameraObject.transform.position;
+        CameraInitRotation = CameraObject.transform.rotation;
         FieldParent = new GameObject("FieldObject");
+        FieldParent.isStatic = true;
         State = BlockState;
     }
 
     void Update()
     {
+        if (CsvAsset)
+        {
+            Clear();
+            LoadCsv(CsvAsset);
+            CsvAsset = null;
+        }
+        //UIの表示・非表示
+        if (Input.GetKeyDown(KeyCode.M)) DisplayUI = !DisplayUI;
+        CameraControl();
+        CursorMove();
         State();
     }
 
     void BlockState()
     {
-        StateName = "ブロックセット";
+        StateName = BlockStateName;
         //ブロックを増やす
         if (Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            AddBlock();
+            AddBlock(new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
         }
         //ブロックを減らす
         if (Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
         {
-            SubBlock();
+            SubBlock(new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
         }
         //壊れる、壊れないブロックを切り替える
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Z))
         {
-            SwitchStrong();
+            SwitchStrong(true, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+        }
+        if (Input.GetKey(KeyCode.X))
+        {
+            SwitchStrong(false, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
         }
         //押した数字までブロックを増減する
-        for (int i = 1; i < 8; ++i)
+        for (int i = 0; i < 8; ++i)
         {
             if (Input.GetKey((KeyCode)((int)KeyCode.Alpha0 + i)) ||
             Input.GetKey((KeyCode)((int)KeyCode.Keypad0 + i)))
             {
-                SetBlock(i);
+                SetBlock(i, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
                 break;
             }
         }
-        CursorMove();
         //ステートの進行
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
@@ -77,18 +108,17 @@ public class MakeMapManager : MonoBehaviour
 
     void PlayerState()
     {
-        StateName = "プレイヤーセット";
+        StateName = PlayerStateName;
         //押した数字のプレイヤーを生成する
         for (int i = 1; i < 5; ++i)
         {
             if (Input.GetKey((KeyCode)((int)KeyCode.Alpha0 + i)) ||
             Input.GetKey((KeyCode)((int)KeyCode.Keypad0 + i)))
             {
-                SetPlayer(i);
+                SetPlayer(i, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
                 break;
             }
         }
-        CursorMove();
         //ステートの後退
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
@@ -114,124 +144,227 @@ public class MakeMapManager : MonoBehaviour
     void CursorMove()
     {
         Vector3 position = CursorTransform.position;
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        //移動の間隔
+        float moveTimeLimit = 0.3f;
+        //Shiftキーを押すと速く移動する
+        if (Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift))
         {
-            ++position.z;
+            moveTimeLimit = 0.05f;
         }
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            --position.z;
+            CursorMoveTime[0] += Time.deltaTime;
+            if (CursorMoveTime[0] > moveTimeLimit)
+            {
+                CursorMoveTime[0] = 0.0f;
+                ++position.z;
+            }
         }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        else
         {
-            ++position.x;
+            CursorMoveTime[0] = moveTimeLimit;
         }
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            --position.x;
+            CursorMoveTime[1] += Time.deltaTime;
+            if (CursorMoveTime[1] > moveTimeLimit)
+            {
+                CursorMoveTime[1] = 0.0f;
+                --position.z;
+            }
         }
+        else
+        {
+            CursorMoveTime[1] = moveTimeLimit;
+        }
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            CursorMoveTime[2] += Time.deltaTime;
+            if (CursorMoveTime[2] > moveTimeLimit)
+            {
+                CursorMoveTime[2] = 0.0f;
+                ++position.x;
+            }
+        }
+        else
+        {
+            CursorMoveTime[2] = moveTimeLimit;
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            CursorMoveTime[3] += Time.deltaTime;
+            if (CursorMoveTime[3] > moveTimeLimit)
+            {
+                CursorMoveTime[3] = 0.0f;
+                --position.x;
+            }
+        }
+        else
+        {
+            CursorMoveTime[3] = moveTimeLimit;
+        }
+        //右斜め上
+        if (Input.GetKey(KeyCode.O))
+        {
+            CursorMoveTime[4] += Time.deltaTime;
+            if (CursorMoveTime[4] > moveTimeLimit)
+            {
+                CursorMoveTime[4] = 0.0f;
+                ++position.z;
+                ++position.x;
+            }
+        }
+        else
+        {
+            CursorMoveTime[4] = moveTimeLimit;
+        }
+        //左斜め上
+        if (Input.GetKey(KeyCode.I))
+        {
+            CursorMoveTime[5] += Time.deltaTime;
+            if (CursorMoveTime[5] > moveTimeLimit)
+            {
+                CursorMoveTime[5] = 0.0f;
+                ++position.z;
+                --position.x;
+            }
+        }
+        else
+        {
+            CursorMoveTime[5] = moveTimeLimit;
+        }
+        //右斜め下
+        if (Input.GetKey(KeyCode.L))
+        {
+            CursorMoveTime[6] += Time.deltaTime;
+            if (CursorMoveTime[6] > moveTimeLimit)
+            {
+                CursorMoveTime[6] = 0.0f;
+                --position.z;
+                ++position.x;
+            }
+        }
+        else
+        {
+            CursorMoveTime[6] = moveTimeLimit;
+        }
+        //左斜め下
+        if (Input.GetKey(KeyCode.K))
+        {
+            CursorMoveTime[7] += Time.deltaTime;
+            if (CursorMoveTime[7] > moveTimeLimit)
+            {
+                CursorMoveTime[7] = 0.0f;
+                --position.z;
+                --position.x;
+            }
+        }
+        else
+        {
+            CursorMoveTime[7] = moveTimeLimit;
+        }
+        //位置の調整
         position.Set(Mathf.Clamp(position.x, 0, BlockArray.GetLength(1) - 1),
-                    position.y,
+                    BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] + 1,
                     Mathf.Clamp(position.z, 0, BlockArray.GetLength(0) - 1));
-        position.y = BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] + 1;
+        //位置のセット
         CursorTransform.position = position;
     }
 
-    void AddBlock()
+    void AddBlock(Vector2Int position)
     {
         //既に最大なら何もしない
-        if (BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] >= BlockMapSize.height_n) return;
+        if (BlockArray[position.y, position.x] >= BlockMapSize.height_n) return;
         //ブロックの数を増やす
-        ++BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x];
+        ++BlockArray[position.y, position.x];
         //一番上にブロックを生成
-        BlockObjectArray[(int)CursorTransform.position.z,
-                        (int)CursorTransform.position.x,
-                        BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] - 1]
-         = Instantiate(
-             IsStrongArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] ?
-             StrongCube :
-             Cubes[BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] - 1],
-                        new Vector3(CursorTransform.position.x,
-                                    BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x],
-                                    CursorTransform.position.z),
-                       Quaternion.identity);
+        BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1] =
+            Instantiate(IsStrongArray[position.y, position.x] ? StrongCube : Cubes[BlockArray[position.y, position.x] - 1]);
         //親オブジェクトをセット
-        BlockObjectArray[(int)CursorTransform.position.z,
-                        (int)CursorTransform.position.x,
-                        BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] - 1].transform.parent
-                        = FieldParent.transform;
+        BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1].transform.parent = FieldParent.transform;
+        BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1].transform.position =
+            new Vector3(position.x, BlockArray[position.y, position.x], position.y);
     }
 
-    void SubBlock()
+    void SubBlock(Vector2Int position)
     {
         //既に0なら何もしない
-        if (BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] <= 0) return;
+        if (BlockArray[position.y, position.x] <= 0) return;
         //一番上のブロックを削除
-        Destroy(BlockObjectArray[(int)CursorTransform.position.z,
-                        (int)CursorTransform.position.x,
-                        BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] - 1]);
+        Destroy(BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1]);
         //ブロックの数を減らす
-        --BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x];
+        --BlockArray[position.y, position.x];
     }
 
-    void SetBlock(int blockNum)
+    void SetBlock(int blockNum, Vector2Int position)
     {
-        int blockNumber = BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x];
+        int blockNumber = BlockArray[position.y, position.x];
         if (blockNumber == blockNum) return;
         int diff = blockNum - blockNumber;
         //差分だけ増減させる
         if (diff > 0)
         {
             for (int i = 0; i < diff; ++i)
-            {
-                AddBlock();
-            }
+                AddBlock(position);
         }
         else
         {
             for (int i = 0; i > diff; --i)
-            {
-                SubBlock();
-            }
+                SubBlock(position);
         }
     }
 
-    void SwitchStrong()
+    void SwitchStrong(bool isToStrong, Vector2Int position)
     {
-        IsStrongArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] =
-            !IsStrongArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x];
-        int blockNumber = BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x];
+        if (IsStrongArray[position.y, position.x] == isToStrong) return;
+        IsStrongArray[position.y, position.x] = isToStrong;
+        int blockNumber = BlockArray[position.y, position.x];
         if (blockNumber == 0) return;
         for (int i = 0; i < blockNumber; ++i)
-        {
-            SubBlock();
-        }
+            SubBlock(position);
         for (int i = 0; i < blockNumber; ++i)
-        {
-            AddBlock();
-        }
+            AddBlock(position);
     }
 
-    void SetPlayer(int number)
+    void SetPlayer(int number, Vector2Int position)
     {
-        if (BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] == 0) return;
+        //プレイヤー同士の距離の制限
+        const int DistanceLimit = 4;
+        if (BlockArray[position.y, position.x] == 0) return;
         for (int i = 0; i < PlayerPositions.Length; ++i)
         {
+            //距離範囲外かどうか
             if (i != (number - 1) && Players[i].activeSelf &&
-            Mathf.Abs(PlayerPositions[i].x - (int)CursorTransform.position.z) < 3 &&
-            Mathf.Abs(PlayerPositions[i].y - (int)CursorTransform.position.x) < 3)
+            Mathf.Abs(PlayerPositions[i].x - position.x) < DistanceLimit &&
+            Mathf.Abs(PlayerPositions[i].y - position.y) < DistanceLimit)
             {
                 return;
             }
         }
         Players[number - 1].SetActive(true);
-        Players[number - 1].transform.position = CursorTransform.position;
-        PlayerPositions[number - 1].Set((int)CursorTransform.position.z, (int)CursorTransform.position.x);
-        Debug.Log(PlayerPositions[number - 1]);
+        Players[number - 1].transform.position = new Vector3(position.x, BlockArray[position.y, position.x] + 3, position.y);
+        PlayerPositions[number - 1] = position;
+        Players[number - 1].transform.LookAt(
+            new Vector3(BlockMapSize.row_n / 2.0f, Players[number - 1].transform.position.y, BlockMapSize.line_n / 2.0f));
+    }
+
+    void CameraControl()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            CameraObject.transform.position = new Vector3(25.5f, 60, 25.5f);
+            CameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
+        }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            CameraObject.transform.position = CameraInitPosition;
+            CameraObject.transform.rotation = CameraInitRotation;
+        }
     }
 
     void MakeCsv()
     {
+        //フォルダの作成
         Directory.CreateDirectory(Path);
         string csvString = "";
         for (int i = 0; i < BlockMapSize.line_n; ++i)
@@ -239,37 +372,76 @@ public class MakeMapManager : MonoBehaviour
             bool first = true;
             for (int j = 0; j < BlockMapSize.row_n; ++j)
             {
+                //最初以外','をつける
                 if (!first)
                 {
                     csvString += ",";
                 }
                 first = false;
+                //ブロックの数を取得
                 int blockNumber = BlockArray[i, j];
                 if (blockNumber != 0)
                 {
+                    //壊れないブロックなら+10
                     blockNumber += IsStrongArray[i, j] ? 10 : 0;
+                    //プレイヤーの位置かチェックする
                     for (int k = 0; k < PlayerPositions.Length; ++k)
                     {
-                        if (PlayerPositions[k] == new Vector2Int(i, j))
+                        //プレイヤーの位置ならそのプレイヤー*100加算する
+                        if (PlayerPositions[k] == new Vector2Int(j, i))
                         {
                             blockNumber += (k + 1) * 100;
+                            break;
                         }
                     }
                 }
+                //stringに追加
                 csvString += blockNumber.ToString();
             }
             csvString += "\n";
         }
-        int number = Directory.GetFiles(Path, "*").Length;
+        int number = Directory.GetFiles(Path, "*").Length / 2;
         StreamWriter sw = new StreamWriter(Path + "/MapData" + number.ToString() + ".csv", false);
         sw.Write(csvString);
         sw.Flush();
         sw.Close();
     }
 
+    void LoadCsv(TextAsset textAsset)
+    {
+        //改行ごとに格納
+        string[] lineString = textAsset.text.Split('\n');
+        Vector2Int position = new Vector2Int();
+        for (int z = 0; z < BlockMapSize.line_n; z++)
+        {
+            //カンマごとに格納
+            string[] rowString = lineString[z].Split(',');
+            for (int x = 0; x < BlockMapSize.line_n; x++)
+            {
+                //string型をint型にパース
+                int number = int.Parse(rowString[x]);
+
+                position.Set(x, z);
+                //プレイヤーの位置
+                if (number >= 100)
+                {
+                    int playerNumber = number / 100;
+                    number -= playerNumber * 100;
+                }
+                if (number != 0)
+                {
+                    SwitchStrong(number >= 10, position);
+                    SetBlock(number % 10, position);
+                }
+            }
+        }
+    }
+
     void Clear()
     {
+        CursorTransform.position = Vector3.zero;
         BlockArray = new int[BlockMapSize.line_n, BlockMapSize.row_n];
+        IsStrongArray = new bool[BlockMapSize.line_n, BlockMapSize.row_n];
         foreach (var block in BlockObjectArray)
         {
             Destroy(block);
@@ -282,6 +454,26 @@ public class MakeMapManager : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.Label(new Rect(500, 20, 1000, 1000), StateName);
+        if (DisplayUI)
+        {
+            if (StateName == BlockStateName)
+            {
+                GUI.Label(new Rect(300, 20, 1000, 1000), StateName +
+                "\n+ : ブロックを一段増やす\n- : ブロックを一段減らす\nWASD,矢印 : 移動(Shiftを押すと高速移動)\n" +
+                "IOKL : 斜め移動(Shiftを押すと高速移動)\nZ : 壊れないブロックに変換\nX : 壊れるブロックに変換\n" +
+                "0~7 : 押した数の段数にする\nEnter : プレイヤーをセットするステートに移行\n" +
+                "C : 上からマップを見る\nV : 初期位置からマップを見る");
+            }
+            else if (StateName == PlayerStateName)
+            {
+                GUI.Label(new Rect(300, 20, 1000, 1000), StateName +
+                "\nWASD,矢印 : 移動(Shiftを押すと高速移動)\nIOKL : 斜め移動(Shiftを押すと高速移動)\n" +
+                "1~4 : 押した数のプレイヤーをセットする\n(近すぎるとセットできません)\n" +
+                "Enter : CSVを生成し、マップをクリア\nBackSpace : ブロックをセットするステートに戻る\n" +
+                "C : 上からマップを見る\nV : 初期位置からマップを見る");
+            }
+        }
+        GUI.Label(new Rect(20, 400, 1000, 1000), "M : 説明の表示・非表示");
     }
+#endif
 }
