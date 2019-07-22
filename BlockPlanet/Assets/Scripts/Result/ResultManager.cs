@@ -24,7 +24,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     //ポイントを格納
     public static int[] ResultPoints = new int[4];
     public ResultBlockMeshCombine blockMap = new ResultBlockMeshCombine();
-    GameObject[] players = new GameObject[4];
+    GameObject[] players;
     [SerializeField]
     GameObject uiCanvas = null;
     [SerializeField]
@@ -57,8 +57,9 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         blockMap.BlockRendererOff();
         GameObject parent = new GameObject("FieldObject");
         blockMap.Initialize(parent);
+        players = new GameObject[BlockCreater.GetInstance().maxPlayerNumber];
         //プレイヤーを取得
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < players.Length; ++i)
         {
             players[i] = GameObject.FindGameObjectWithTag("Player" + (i + 1).ToString());
             players[i].GetComponent<Player>().enabled = false;
@@ -141,13 +142,13 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         //フェード
         Fade.Instance.FadeOut(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
-        bool[] isEnd = new bool[4];
+        bool[] isEnd = new bool[BlockCreater.GetInstance().maxPlayerNumber];
         //負けたプレイヤーを順位の低い順番に爆弾で落としていく
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < isEnd.Length - 1; ++i)
         {
             int minPoint = int.MaxValue;
             int minPlayer = int.MaxValue;
-            for (int j = 0; j < 4; ++j)
+            for (int j = 0; j < isEnd.Length; ++j)
             {
                 if (isEnd[j]) continue;
                 if (ResultPoints[j] < minPoint)
@@ -161,7 +162,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         }
         int winPlayerNumber = 0;
         //勝ったプレイヤーの番号を探す
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < isEnd.Length; ++i)
         {
             if (!isEnd[i])
             {

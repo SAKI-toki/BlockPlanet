@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 {
     [System.NonSerialized]
-    public bool[] PlayerGameOvers = new bool[4];
+    public bool[] PlayerGameOvers;
     //プレイヤーのポイント。スタティックにしないといけない
     static public int[] PlayerPoints = new int[4];
     //勝利ポイント
@@ -41,7 +41,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     Vector3 max_scale = new Vector3();
     float scale_time = 0.0f;
     [System.NonSerialized]
-    public Player[] players = new Player[4];
+    public Player[] players;
 
     [SerializeField]
     GameObject OnTheWayObject;
@@ -54,9 +54,22 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     [SerializeField]
     RectTransform[] PlayerWinRectTransforms;
     [SerializeField]
+    Image[] PlayerImages;
+    [SerializeField]
+    Sprite stopSprite;
+    [SerializeField]
     AudioSource hornSound;
     void Start()
     {
+        //プレイ人数分要素を確保
+        players = new Player[BlockCreater.GetInstance().maxPlayerNumber];
+        PlayerGameOvers = new bool[BlockCreater.GetInstance().maxPlayerNumber];
+        //プレイしないプレイヤーの途中経過の画像を差し替える
+        for (int i = BlockCreater.GetInstance().maxPlayerNumber; i < PlayerImages.Length; ++i)
+        {
+            PlayerImages[i].sprite = stopSprite;
+            PlayerImages[i].SetNativeSize();
+        }
         //ゲームスタート時
         StartCoroutine(Gamestart());
         //BGM
@@ -67,19 +80,20 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     void Update()
     {
         if (IsGameOver || !IsGameStart) return;
-        int gameOverCount = 0;
+        //プレイヤーが死んだ数
+        int deathCount = 0;
         for (int i = 0; i < PlayerGameOvers.Length; ++i)
         {
             if (PlayerGameOvers[i])
-                ++gameOverCount;
+                ++deathCount;
             else
                 WinPlayerNumber = i;
         }
-        if (gameOverCount >= PlayerGameOvers.Length - 1)
+        if (deathCount >= PlayerGameOvers.Length - 1)
         {
             IsGameOver = true;
             //勝者決定
-            if (gameOverCount == PlayerGameOvers.Length - 1)
+            if (deathCount == PlayerGameOvers.Length - 1)
             {
                 ++PlayerPoints[WinPlayerNumber];
             }
@@ -90,7 +104,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             }
             else
             {
-                StartCoroutine(Restart(gameOverCount == PlayerGameOvers.Length));
+                StartCoroutine(Restart(deathCount == PlayerGameOvers.Length));
             }
         }
         if (IsPause)
@@ -127,7 +141,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             image[count].SetActive(false);
         }
         //プレイヤーを動けるようにする
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < players.Length; ++i)
         {
             players[i] = GameObject.Find("Player" + (i + 1) + "(Clone)").GetComponent<Player>();
             players[i].GameStart = true;
@@ -225,8 +239,10 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             BackgroundImage.color = color;
             yield return null;
         }
+        //移動速度
         float moveSpeed = PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x -
                             PlayerRectTransforms[WinPlayerNumber].position.x;
+        //時間を測る変数
         float timeCount = 0.0f;
         pos = PlayerRectTransforms[WinPlayerNumber].position;
         //勝ったプレイヤーの移動

@@ -22,7 +22,6 @@ public class Select : SingletonMonoBehaviour<Select>
     List<GameObject> instanceFieldList = new List<GameObject>();
 
     public static int stagenumber = 0;
-    private bool Push = false;
 
     [SerializeField]
     GameObject CameraObject;
@@ -34,19 +33,29 @@ public class Select : SingletonMonoBehaviour<Select>
     PostProcess postProcess;
     [SerializeField]
     Material[] mats;
-
+    [SerializeField]
+    GameObject descriptionUIparent;
+    [SerializeField]
+    GameObject[] playerNumberUIs;
+    delegate void StateType();
+    StateType state;
     void Start()
     {
+        descriptionUIparent.SetActive(false);
+        foreach (var playerNumUi in playerNumberUIs) playerNumUi.SetActive(false);
         PostProcessMaterial.SetFloat("_Strength", 0);
         postProcess.enabled = false;
         //フェード
         Fade.Instance.FadeOut(1.0f);
-        stagenumber = CurrentSelectChoice.stageNumber - 1;
+        stagenumber = CurrentSelectChoice.number - 1;
+        //フィールドの生成
         for (int i = 0; i < 8; ++i)
         {
+            //生成したものをリストに追加
             instanceFieldList.Add(Instantiate(fieldList[i], new Vector3(25, 0, 25), Quaternion.identity));
             foreach (var renderer in instanceFieldList[i].transform.GetComponentsInChildren<Renderer>())
             {
+                //マテリアルのセット
                 foreach (var mat in mats)
                 {
                     if (renderer.transform.name == mat.name)
@@ -61,33 +70,98 @@ public class Select : SingletonMonoBehaviour<Select>
         instanceFieldList[stagenumber].SetActive(true);
         currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
         init_scale = currentChoiceRectTransform.localScale;
+        state = SelectFieldState;
     }
 
     void Update()
     {
         instanceFieldList[stagenumber].transform.Rotate(Vector3.up * Time.deltaTime * 10);
 
-        if (Push) return;
         if (!Fade.Instance.IsEnd) return;
-        SelectUpdate();
 
+        if (state != null) state();
+    }
+
+    void SelectFieldState()
+    {
+        SelectUpdate();
         //決定
         if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
         {
-            Push = true;
+            ui.SetActive(false);
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
-            //ロード処理に入る
-            StartCoroutine(LoadFieldScene());
-
+            state = PlayerNumberChoiceState;
+            BlockCreater.GetInstance().maxPlayerNumber = 2;
+            playerNumberUIs[BlockCreater.GetInstance().maxPlayerNumber - 2].SetActive(true);
         }
+        //タイトルに戻る
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel))
         {
-            Push = true;
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
             //ロード処理に入る
             StartCoroutine(LoadTitleScene());
+            state = null;
+        }
+        //説明を表示
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
+        {
+            descriptionUIparent.SetActive(true);
+            //プッシュの音を鳴らす
+            SoundManager.Instance.Push();
+            state = DescriptState;
+        }
+    }
+
+    void DescriptState()
+    {
+        //説明を非表示
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) || SwitchInput.GetButtonDown(0, SwitchButton.Down))
+        {
+            descriptionUIparent.SetActive(false);
+            //プッシュの音を鳴らす
+            SoundManager.Instance.Push();
+            state = SelectFieldState;
+        }
+    }
+
+    void PlayerNumberChoiceState()
+    {
+        int maxPlayerNumber = BlockCreater.GetInstance().maxPlayerNumber;
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
+        {
+            //プッシュの音を鳴らす
+            SoundManager.Instance.Push();
+            //ロード処理に入る
+            StartCoroutine(LoadFieldScene());
+            playerNumberUIs[maxPlayerNumber - 2].SetActive(false);
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel))
+        {
+            //プッシュの音を鳴らす
+            SoundManager.Instance.Push();
+            ui.SetActive(true);
+            state = SelectFieldState;
+            playerNumberUIs[maxPlayerNumber - 2].SetActive(false);
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
+        {
+            ++maxPlayerNumber;
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
+        {
+            --maxPlayerNumber;
+        }
+        maxPlayerNumber = Mathf.Clamp(maxPlayerNumber, 2, 4);
+        if (maxPlayerNumber != BlockCreater.GetInstance().maxPlayerNumber)
+        {
+            playerNumberUIs[BlockCreater.GetInstance().maxPlayerNumber - 2].SetActive(false);
+            playerNumberUIs[maxPlayerNumber - 2].SetActive(true);
+            //スティックの音
+            SoundManager.Instance.Stick();
+
+            BlockCreater.GetInstance().maxPlayerNumber = maxPlayerNumber;
         }
     }
 
@@ -131,7 +205,7 @@ public class Select : SingletonMonoBehaviour<Select>
             SoundManager.Instance.Stick();
             increment_scale.Set(0, 0, 0);
             scale_time = 0.0f;
-            stagenumber = CurrentSelectChoice.stageNumber - 1;
+            stagenumber = CurrentSelectChoice.number - 1;
             //アクティブにするフィールドの変更
             instanceFieldList[stagenumber].SetActive(true);
             currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
@@ -159,7 +233,6 @@ public class Select : SingletonMonoBehaviour<Select>
 
     IEnumerator LoadFieldScene()
     {
-        ui.SetActive(false);
         //横に移動
         Vector3 initPosition = instanceFieldList[stagenumber].transform.position;
         Vector3 endPosition = CameraObject.transform.position;
