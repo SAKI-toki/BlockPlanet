@@ -7,6 +7,13 @@ static public class AutoGeneration
 {
     static int[,] blockArray = new int[BlockMapSize.line_n, BlockMapSize.row_n];
     static int[,] oneQuaterBlockArray = new int[BlockMapSize.line_n / 2, BlockMapSize.row_n / 2];
+
+    /// <summary>
+    /// 自動生成
+    /// </summary>
+    /// <param name="maxHeightDiff">最大の段差の差</param>
+    /// <param name="sameHeightPercent">同じ高さになる確率</param>
+    /// <returns>生成した配列</returns>
     static public int[,] Generate(int maxHeightDiff, float sameHeightPercent)
     {
         int randomPlayerPositionRandomHeight = Random.Range(1, BlockMapSize.height_n + 1);
