@@ -9,13 +9,13 @@ using UnityEngine.SceneManagement;
 public class Select : SingletonMonoBehaviour<Select>
 {
     [SerializeField]
-    SelectChoice CurrentSelectChoice = null;
+    SelectChoice currentSelectChoice = null;
     RectTransform currentChoiceRectTransform = null;
-    Vector3 init_scale = new Vector3();
-    Vector3 increment_scale = new Vector3();
+    Vector3 initScale = new Vector3();
+    Vector3 incrementScale = new Vector3();
     [SerializeField]
-    Vector3 max_scale = new Vector3();
-    float scale_time = 0.0f;
+    Vector3 maxScale = new Vector3();
+    float scaleTime = 0.0f;
 
     [SerializeField]
     List<GameObject> fieldList = new List<GameObject>();
@@ -24,11 +24,11 @@ public class Select : SingletonMonoBehaviour<Select>
     public static int stagenumber = 0;
 
     [SerializeField]
-    GameObject CameraObject;
+    GameObject cameraObject;
     [SerializeField]
     GameObject ui;
     [SerializeField]
-    Material PostProcessMaterial;
+    Material postProcessMaterial;
     [SerializeField]
     PostProcess postProcess;
     [SerializeField]
@@ -43,11 +43,11 @@ public class Select : SingletonMonoBehaviour<Select>
     {
         descriptionUIparent.SetActive(false);
         foreach (var playerNumUi in playerNumberUIs) playerNumUi.SetActive(false);
-        PostProcessMaterial.SetFloat("_Strength", 0);
+        postProcessMaterial.SetFloat("_Strength", 0);
         postProcess.enabled = false;
         //フェード
         Fade.Instance.FadeOut(1.0f);
-        stagenumber = CurrentSelectChoice.number - 1;
+        stagenumber = currentSelectChoice.number - 1;
         //フィールドの生成
         for (int i = 0; i < 8; ++i)
         {
@@ -68,8 +68,8 @@ public class Select : SingletonMonoBehaviour<Select>
             instanceFieldList[i].SetActive(false);
         }
         instanceFieldList[stagenumber].SetActive(true);
-        currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
-        init_scale = currentChoiceRectTransform.localScale;
+        currentChoiceRectTransform = currentSelectChoice.GetComponent<RectTransform>();
+        initScale = currentChoiceRectTransform.localScale;
         state = SelectFieldState;
     }
 
@@ -167,52 +167,52 @@ public class Select : SingletonMonoBehaviour<Select>
 
     void SelectUpdate()
     {
-        var prev = CurrentSelectChoice;
+        var prev = currentSelectChoice;
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickRight))
         {
-            if (CurrentSelectChoice.Right)
+            if (currentSelectChoice.Right)
             {
-                CurrentSelectChoice = CurrentSelectChoice.Right;
+                currentSelectChoice = currentSelectChoice.Right;
             }
         }
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickLeft))
         {
-            if (CurrentSelectChoice.Left)
+            if (currentSelectChoice.Left)
             {
-                CurrentSelectChoice = CurrentSelectChoice.Left;
+                currentSelectChoice = currentSelectChoice.Left;
             }
         }
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
         {
-            if (CurrentSelectChoice.Down)
+            if (currentSelectChoice.Down)
             {
-                CurrentSelectChoice = CurrentSelectChoice.Down;
+                currentSelectChoice = currentSelectChoice.Down;
             }
         }
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
         {
-            if (CurrentSelectChoice.Up)
+            if (currentSelectChoice.Up)
             {
-                CurrentSelectChoice = CurrentSelectChoice.Up;
+                currentSelectChoice = currentSelectChoice.Up;
             }
         }
         //カーソルが移動したら
-        if (prev != CurrentSelectChoice)
+        if (prev != currentSelectChoice)
         {
-            currentChoiceRectTransform.localScale = init_scale;
+            currentChoiceRectTransform.localScale = initScale;
             instanceFieldList[stagenumber].SetActive(false);
             //スティックの音
             SoundManager.Instance.Stick();
-            increment_scale.Set(0, 0, 0);
-            scale_time = 0.0f;
-            stagenumber = CurrentSelectChoice.number - 1;
+            incrementScale.Set(0, 0, 0);
+            scaleTime = 0.0f;
+            stagenumber = currentSelectChoice.number - 1;
             //アクティブにするフィールドの変更
             instanceFieldList[stagenumber].SetActive(true);
-            currentChoiceRectTransform = CurrentSelectChoice.GetComponent<RectTransform>();
+            currentChoiceRectTransform = currentSelectChoice.GetComponent<RectTransform>();
         }
-        scale_time += Time.deltaTime * 6;
-        increment_scale = (max_scale - init_scale) * ((Mathf.Sin(scale_time) + 1) / 2);
-        currentChoiceRectTransform.localScale = init_scale + increment_scale;
+        scaleTime += Time.deltaTime * 6;
+        incrementScale = (maxScale - initScale) * ((Mathf.Sin(scaleTime) + 1) / 2);
+        currentChoiceRectTransform.localScale = initScale + incrementScale;
     }
 
     public static int Stagenum()
@@ -235,7 +235,7 @@ public class Select : SingletonMonoBehaviour<Select>
     {
         //横に移動
         Vector3 initPosition = instanceFieldList[stagenumber].transform.position;
-        Vector3 endPosition = CameraObject.transform.position;
+        Vector3 endPosition = cameraObject.transform.position;
         endPosition.y = initPosition.y;
         endPosition.z += 15;
         float timeCount = 0.0f;
@@ -248,23 +248,23 @@ public class Select : SingletonMonoBehaviour<Select>
         }
         //ステージに入り込むようなアニメーション
         timeCount = 0.0f;
-        initPosition = CameraObject.transform.position;
+        initPosition = cameraObject.transform.position;
         endPosition = instanceFieldList[stagenumber].transform.position;
         endPosition.y += 10;
-        Quaternion initRotation = CameraObject.transform.rotation;
+        Quaternion initRotation = cameraObject.transform.rotation;
         Quaternion endRotation = Quaternion.Euler(90, 0, 0);
-        const float fadeSpeed = 0.5f;
+        const float FadeSpeed = 0.5f;
         //フェード
-        Fade.Instance.FadeIn(1.0f / fadeSpeed);
+        Fade.Instance.FadeIn(1.0f / FadeSpeed);
         postProcess.enabled = true;
         //移動処理
-        while (CameraObject.transform.position != endPosition)
+        while (cameraObject.transform.position != endPosition)
         {
-            timeCount += Time.deltaTime * fadeSpeed;
+            timeCount += Time.deltaTime * FadeSpeed;
             //ポストポロセスを効かせる
-            PostProcessMaterial.SetFloat("_Strength", Mathf.Min(timeCount, 1));
-            CameraObject.transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
-            CameraObject.transform.rotation = Quaternion.Slerp(initRotation, endRotation, timeCount);
+            postProcessMaterial.SetFloat("_Strength", Mathf.Min(timeCount, 1));
+            cameraObject.transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
+            cameraObject.transform.rotation = Quaternion.Slerp(initRotation, endRotation, timeCount);
             yield return null;
         }
         while (!Fade.Instance.IsEnd) yield return null;

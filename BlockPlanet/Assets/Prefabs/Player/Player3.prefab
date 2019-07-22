@@ -917,9 +917,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNumber: 2
-  GameStart: 0
-  Bomb: {fileID: 3308187423682230996, guid: e8b0ac523e3b65f4cb8092af4c0a17bf, type: 3}
-  ShootObject: {fileID: 0}
+  isGameStart: 0
+  bombObject: {fileID: 3308187423682230996, guid: e8b0ac523e3b65f4cb8092af4c0a17bf,
+    type: 3}
 --- !u!1 &7804345447740105452
 GameObject:
   m_ObjectHideFlags: 0

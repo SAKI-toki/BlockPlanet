@@ -9,17 +9,17 @@ public class TitleCreation : MonoBehaviour
 {
 #if UNITY_EDITOR
     [SerializeField]
-    GameObject TitleCube;
+    GameObject titleCube;
     [SerializeField]
-    GameObject TitleStrongCube;
+    GameObject titleStrongCube;
 
     private TextAsset csvfile;
 
 
     //CSVデータの行数
-    const int line_n = 52;
+    const int LineN = 52;
     //CSVデータの列数
-    const int row_n = 100;
+    const int RowN = 100;
 
 
     //設置位置
@@ -32,7 +32,7 @@ public class TitleCreation : MonoBehaviour
         Renderer[] meshRenderers = field.GetComponentsInChildren<Renderer>();
         Dictionary<string, List<CombineInstance>> instances = new Dictionary<string, List<CombineInstance>>();
         var cmesh = new CombineInstance();
-        cmesh.mesh = CreateMesh(TitleCube.GetComponent<MeshFilter>().sharedMesh);
+        cmesh.mesh = CreateMesh(titleCube.GetComponent<MeshFilter>().sharedMesh);
         GameObject parentField = new GameObject("TitleField");
         //メッシュ統合は頂点数がushortの最大値(65,535)を超えるとバグるので、
         //ここでは2回に分けて処理する
@@ -59,7 +59,7 @@ public class TitleCreation : MonoBehaviour
                 MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
                 MeshCollider collider = obj.AddComponent<MeshCollider>();
                 //マテリアルのセット
-                renderer.sharedMaterial = TitleCube.GetComponent<MeshRenderer>().sharedMaterial;
+                renderer.sharedMaterial = titleCube.GetComponent<MeshRenderer>().sharedMaterial;
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 //タグのセット
                 obj.tag = instance.Key;
@@ -115,9 +115,9 @@ public class TitleCreation : MonoBehaviour
         //最後に検索文字列の","を追記。最後を取りこぼす
         str = str + ",";
 
-        for (int z = 0; z < line_n; z++)
+        for (int z = 0; z < LineN; z++)
         {
-            for (int x = 0; x < row_n; x++)
+            for (int x = 0; x < RowN; x++)
             {
                 //IndexOfメソッドは文字列内に含まれる文字、文字列の位置を取得することができる。
                 iDat[0] = str.IndexOf(",", iDat[0]);
@@ -138,13 +138,13 @@ public class TitleCreation : MonoBehaviour
                 //透明
                 if (iDat[3] == 0)
                 {
-                    cube = Instantiate(TitleCube, position, Quaternion.identity);
+                    cube = Instantiate(titleCube, position, Quaternion.identity);
                     cube.transform.parent = parent.transform;
                 }
                 //一段
                 else
                 {
-                    cube = Instantiate(TitleStrongCube, position, Quaternion.identity);
+                    cube = Instantiate(titleStrongCube, position, Quaternion.identity);
                     cube.transform.parent = parent.transform;
                 }
             }

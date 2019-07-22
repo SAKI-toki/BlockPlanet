@@ -16,16 +16,16 @@ public class InitializeSceneDestroyer : MonoBehaviour
     /// <summary>
     /// 初期化シーンは読み込み終わったら必要ないのでアンロードする
     /// </summary>
-    /// <param name="_SceneName">シーンの名前</param>
+    /// <param name="sceneName">シーンの名前</param>
     /// <returns></returns>
-    IEnumerator DestroyInitializeScene(string _SceneName)
+    IEnumerator DestroyInitializeScene(string sceneName)
     {
         //初期化シーンが有効なシーンになるまで待機
-        while (!SceneManager.GetSceneByName(_SceneName).IsValid())
+        while (!SceneManager.GetSceneByName(sceneName).IsValid())
         {
             yield return null;
         }
         //シーンのアンロード
-        SceneManager.UnloadSceneAsync(_SceneName);
+        SceneManager.UnloadSceneAsync(sceneName);
     }
 }

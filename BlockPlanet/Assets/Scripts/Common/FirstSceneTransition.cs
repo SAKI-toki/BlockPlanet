@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class FirstSceneTransition : MonoBehaviour
 {
-    const string TitleSceneName = "Title";
+    const string titleSceneName = "Title";
     void Start()
     {
         //一秒後にシーン遷移する
@@ -11,6 +11,6 @@ public class FirstSceneTransition : MonoBehaviour
     }
     void LoadStartScene()
     {
-        SceneManager.LoadScene(TitleSceneName);
+        SceneManager.LoadScene(titleSceneName);
     }
 }

@@ -8,21 +8,21 @@ using UnityEngine.SceneManagement;
 public class ResultManager : SingletonMonoBehaviour<ResultManager>
 {
     [SerializeField]
-    RectTransform[] UiRectTransforms = new RectTransform[3];
-    int select_index = 0;
-    Vector3 init_scale = new Vector3();
-    Vector3 increment_scale = new Vector3();
+    RectTransform[] uiRectTransforms = new RectTransform[3];
+    int selectIndex = 0;
+    Vector3 initScale = new Vector3();
+    Vector3 incrementScale = new Vector3();
     [SerializeField]
-    Vector3 max_scale = new Vector3();
-    float scale_time = 0.0f;
+    Vector3 maxScale = new Vector3();
+    float scaleTime = 0.0f;
     [SerializeField]
-    GameObject[] Uis = new GameObject[4];
-    private bool Push = false;
-    bool IsEndResultAnimation = false;
+    GameObject[] playerNumberUis = new GameObject[4];
+    private bool push = false;
+    bool isEndResultAnimation = false;
     [SerializeField]
-    GameObject ResultBombObject = null;
+    GameObject resultBombObject = null;
     //ポイントを格納
-    public static int[] ResultPoints = new int[4];
+    public static int[] resultPoints = new int[4];
     public ResultBlockMeshCombine blockMap = new ResultBlockMeshCombine();
     GameObject[] players;
     [SerializeField]
@@ -32,11 +32,11 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     [SerializeField]
     GameObject cameraObject = null;
     [SerializeField]
-    Transform PlayerEndTransform = null;
+    Transform playerEndTransform = null;
 
 #if UNITY_EDITOR
     [SerializeField]
-    bool IsDebug = false;
+    bool isDebug = false;
     [SerializeField]
     int winPlayerDebug = 0;
 #endif
@@ -44,9 +44,9 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     void Start()
     {
 #if UNITY_EDITOR
-        if (IsDebug)
+        if (isDebug)
         {
-            ResultPoints[winPlayerDebug] = int.MaxValue;
+            resultPoints[winPlayerDebug] = int.MaxValue;
         }
 #endif
         fieldObjectParent = new GameObject("FieldObjectTemp");
@@ -69,10 +69,10 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         Physics.Simulate(10.0f);
         Physics.autoSimulation = true;
         //UIの表示
-        foreach (var ui in Uis)
+        foreach (var ui in playerNumberUis)
             ui.SetActive(false);
         uiCanvas.SetActive(false);
-        init_scale = UiRectTransforms[0].localScale;
+        initScale = uiRectTransforms[0].localScale;
         //リザルトのアニメーション開始
         StartCoroutine(ResultAnimation());
     }
@@ -80,61 +80,61 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     void Update()
     {
         blockMap.CreateMesh();
-        if (Push) return;
+        if (push) return;
         if (!Fade.Instance.IsEnd) return;
-        if (!IsEndResultAnimation) return;
+        if (!isEndResultAnimation) return;
         SelectUpdate();
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && !Push)
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && !push)
         {
-            Push = true;
-            string SceneName = "";
-            switch (select_index)
+            push = true;
+            string sceneName = "";
+            switch (selectIndex)
             {
                 case 0:
-                    SceneName = "Field";
+                    sceneName = "Field";
                     break;
                 case 1:
-                    SceneName = "Select";
+                    sceneName = "Select";
                     break;
                 case 2:
-                    SceneName = "Title";
+                    sceneName = "Title";
                     break;
             }
             //フェード開始
-            StartCoroutine(Loadscene(SceneName));
+            StartCoroutine(Loadscene(sceneName));
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
         }
     }
     void SelectUpdate()
     {
-        int prev_index = select_index;
+        int prevIndex = selectIndex;
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickRight))
         {
-            ++select_index;
+            ++selectIndex;
         }
         else if (SwitchInput.GetButtonDown(0, SwitchButton.StickLeft))
         {
-            --select_index;
+            --selectIndex;
         }
-        select_index = Mathf.Clamp(select_index, 0, UiRectTransforms.Length - 1);
-        if (prev_index != select_index)
+        selectIndex = Mathf.Clamp(selectIndex, 0, uiRectTransforms.Length - 1);
+        if (prevIndex != selectIndex)
         {
-            UiRectTransforms[prev_index].localScale = init_scale;
+            uiRectTransforms[prevIndex].localScale = initScale;
             SoundManager.Instance.Stick();
-            increment_scale.Set(0, 0, 0);
-            scale_time = 0.0f;
+            incrementScale.Set(0, 0, 0);
+            scaleTime = 0.0f;
         }
-        scale_time += Time.deltaTime * 6;
-        increment_scale = (max_scale - init_scale) * ((Mathf.Sin(scale_time) + 1) / 2);
-        UiRectTransforms[select_index].localScale = init_scale + increment_scale;
+        scaleTime += Time.deltaTime * 6;
+        incrementScale = (maxScale - initScale) * ((Mathf.Sin(scaleTime) + 1) / 2);
+        uiRectTransforms[selectIndex].localScale = initScale + incrementScale;
     }
 
-    private IEnumerator Loadscene(string SceneName)
+    private IEnumerator Loadscene(string sceneName)
     {
         Fade.Instance.FadeIn(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
-        SceneManager.LoadScene(SceneName);
+        SceneManager.LoadScene(sceneName);
     }
 
     IEnumerator ResultAnimation()
@@ -151,9 +151,9 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
             for (int j = 0; j < isEnd.Length; ++j)
             {
                 if (isEnd[j]) continue;
-                if (ResultPoints[j] < minPoint)
+                if (resultPoints[j] < minPoint)
                 {
-                    minPoint = ResultPoints[j];
+                    minPoint = resultPoints[j];
                     minPlayer = j;
                 }
             }
@@ -182,19 +182,19 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
             time += Time.deltaTime;
             //終了位置に移動する
             players[winPlayerNumber].transform.SetPositionAndRotation
-                (Vector3.Lerp(InitPosition, PlayerEndTransform.position, time),
-                Quaternion.Slerp(InitRotation, PlayerEndTransform.rotation, time));
+                (Vector3.Lerp(InitPosition, playerEndTransform.position, time),
+                Quaternion.Slerp(InitRotation, playerEndTransform.rotation, time));
             yield return null;
         }
         //UIの表示
         uiCanvas.SetActive(true);
-        Uis[winPlayerNumber].SetActive(true);
+        playerNumberUis[winPlayerNumber].SetActive(true);
         //エフェクトの開始
         foreach (var effect in winEffects)
         {
             effect.Play();
         }
-        IsEndResultAnimation = true;
+        isEndResultAnimation = true;
     }
 
     IEnumerator BombAnimation(int index)
@@ -202,7 +202,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         Vector3 pos = players[index].transform.position;
         //爆弾の高さ
         pos.y = 20;
-        GameObject bomb = Instantiate(ResultBombObject, pos, Quaternion.identity);
+        GameObject bomb = Instantiate(resultBombObject, pos, Quaternion.identity);
         while (bomb != null) yield return null;
         Destroy(players[index], 3);
     }

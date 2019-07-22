@@ -11,32 +11,35 @@ public class Player : MonoBehaviour
     //歩くスピード
     private float walkSpeed = 15;
     //投げる力
-    private float Shootpow = 5.0f;
-    private float Body_Scale = 1.0f;
-    float VibrationTimer = 0.5f;
-    public bool GameStart = false;
+    private float shootPow = 5.0f;
+    private float bodyScale = 1.0f;
+    float vibrationTimer = 0.5f;
+    [SerializeField]
+    public bool isGameStart = false;
 
     //プレイヤーの頭上
-    private Vector3 HoldPosition;
+    private Vector3 holdPosition;
     private Rigidbody rb;
 
+    [SerializeField]
     //=====爆弾=====
-    public GameObject Bomb;
+    GameObject bombObject;
 
     //爆弾を持っている状態
-    private bool Hold = false;
+    private bool isHold = false;
     float bombimpactVertical, bombimpactHorizontal;
 
     //投げる場所
-    private Vector3 Target;
+    private Vector3 bombTargetPosition;
     //自分の位置
-    private Transform ShootPoint = null;
+    private Transform shootPoint = null;
+    [System.NonSerialized]
     //投げる物
     public GameObject ShootObject = null;
 
-    private ParticleSystem Charge;
+    private ParticleSystem chargeParticle;
 
-    GameObject bombObject = null;
+    GameObject throwBombObject = null;
 
     bool IsHitBomb = false;
     Vector3 bombPosition = new Vector3();
@@ -44,7 +47,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Charge = transform.GetChild(0).GetComponent<ParticleSystem>();
+        chargeParticle = transform.GetChild(0).GetComponent<ParticleSystem>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -52,8 +55,8 @@ public class Player : MonoBehaviour
         if (other.tag == "DustBox")
         {
             //フラグ関連
-            Hold = false;
-            FieldManeger.Instance.PlayerGameOvers[playerNumber] = true;
+            isHold = false;
+            FieldManeger.Instance.playerGameOvers[playerNumber] = true;
             //爆弾を持っていたら消す
             Destroy(ShootObject);
             Destroy(gameObject);
@@ -67,7 +70,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameStart && !FieldManeger.Instance.IsPause && !FieldManeger.Instance.IsGameOver)
+        if (isGameStart && !FieldManeger.Instance.isPause && !FieldManeger.Instance.isGameOver)
         {
             float vertical = SwitchInput.GetVertical(playerNumber);
             float horizontal = SwitchInput.GetHorizontal(playerNumber);
@@ -97,7 +100,7 @@ public class Player : MonoBehaviour
             //上に吹っ飛ぶ
             rb.AddForce(Vector3.up * bombimpactVertical, ForceMode.Impulse);
             //振動
-            VibrationTimer = 0.5f;
+            vibrationTimer = 0.5f;
             SwitchVibration.LowVibration(playerNumber, 0.3f);
             CameraShake.Instance.Shake();
         }
@@ -110,7 +113,7 @@ public class Player : MonoBehaviour
     {
         VibrationControl();
 
-        if (GameStart && !FieldManeger.Instance.IsPause && !FieldManeger.Instance.IsGameOver)
+        if (isGameStart && !FieldManeger.Instance.isPause && !FieldManeger.Instance.isGameOver)
         {
             RaycastHit hit;
 
@@ -129,7 +132,7 @@ public class Player : MonoBehaviour
             }
 
             //プレイヤーの頭上に移動
-            HoldPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            holdPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
             //===爆弾関連===
             PlayerBomb();
@@ -140,57 +143,57 @@ public class Player : MonoBehaviour
     void PlayerBomb()
     {
         //体を縮める
-        transform.GetChild(1).transform.localScale = new Vector3(Body_Scale, 1.0f, 1.0f);
+        transform.GetChild(1).transform.localScale = new Vector3(bodyScale, 1.0f, 1.0f);
 
         //爆弾を生成
-        if (SwitchInput.GetButton(playerNumber, SwitchButton.Bomb) && !Namecheck() && !Hold)
-            Hold = true;
+        if (SwitchInput.GetButton(playerNumber, SwitchButton.Bomb) && !Namecheck() && !isHold)
+            isHold = true;
 
-        if (Hold)
+        if (isHold)
         {
             //投げる力
-            if (Shootpow <= 15.0f)
-                Shootpow += 10.0f * Time.deltaTime;
-            if (Body_Scale >= 0.5f)
-                Body_Scale -= 0.5f * Time.deltaTime;
+            if (shootPow <= 15.0f)
+                shootPow += 10.0f * Time.deltaTime;
+            if (bodyScale >= 0.5f)
+                bodyScale -= 0.5f * Time.deltaTime;
 
-            Charge.Play();
+            chargeParticle.Play();
         }
 
         //大きくするのを止めて投げる
-        if (SwitchInput.GetButtonUp(playerNumber, SwitchButton.Bomb) && Hold)
+        if (SwitchInput.GetButtonUp(playerNumber, SwitchButton.Bomb) && isHold)
         {
             SoundManager.Instance.BombThrow();
-            Charge.Stop();
-            ShootObject = Instantiate(Bomb, HoldPosition, Quaternion.identity);
-            bombObject = ShootObject;
+            chargeParticle.Stop();
+            ShootObject = Instantiate(bombObject, holdPosition, Quaternion.identity);
+            throwBombObject = ShootObject;
             //ターゲットの位置
-            Target = transform.Find("Circle").transform.position;
+            bombTargetPosition = transform.Find("Circle").transform.position;
             //投げるよ (投げる場所)入ってるよ
-            Shoot(Target);
+            Shoot(bombTargetPosition);
             //持っている物はなし
             ShootObject = null;
             //数値を元に戻す
-            Shootpow = 5.0f;
-            Body_Scale = 1;
-            Hold = false;
+            shootPow = 5.0f;
+            bodyScale = 1;
+            isHold = false;
         }
     }
 
     //爆弾が存在するかのチェック
     bool Namecheck()
     {
-        return bombObject != null;
+        return throwBombObject != null;
     }
 
     void VibrationControl()
     {
-        if (VibrationTimer == 0) return;
-        VibrationTimer -= Time.deltaTime;
-        if (VibrationTimer <= 0)
+        if (vibrationTimer == 0) return;
+        vibrationTimer -= Time.deltaTime;
+        if (vibrationTimer <= 0)
         {
             SwitchVibration.LowVibration(playerNumber, 0.0f);
-            VibrationTimer = 0;
+            vibrationTimer = 0;
         }
     }
 
@@ -219,9 +222,9 @@ public class Player : MonoBehaviour
     private float ComputeVectorFromAngle(Vector3 TargetPosition, float angle)
     {
         //自分の位置
-        ShootPoint = ShootObject.transform;
+        shootPoint = ShootObject.transform;
         //自分の位置
-        Vector2 startPos = new Vector2(ShootPoint.transform.position.x, ShootPoint.transform.position.z);
+        Vector2 startPos = new Vector2(shootPoint.transform.position.x, shootPoint.transform.position.z);
         //投げる場所
         Vector2 targetPos = new Vector2(TargetPosition.x, TargetPosition.z);
         //投げた瞬間の距離
@@ -232,7 +235,7 @@ public class Player : MonoBehaviour
         //重力
         float g = Physics.gravity.y;
         //自分の位置のｙ
-        float y0 = ShootPoint.transform.position.y;
+        float y0 = shootPoint.transform.position.y;
         //投げる場所
         float y = TargetPosition.y;
         //角度*Mathf.Deg2Radでラジアンに変換
@@ -243,7 +246,7 @@ public class Player : MonoBehaviour
         //タンジェント
         float tan = Mathf.Tan(rad);
         //投げる力*重力*距離*距離/(2*コサイン*コサイン*(投げる場所-自分の位置のｙ-距離*タンジェント))
-        float v0Square = Shootpow * g * x * x / (2 * cos * cos * (y - y0 - x * tan));
+        float v0Square = shootPow * g * x * x / (2 * cos * cos * (y - y0 - x * tan));
 
         //虚数になる計算は打ち切る
         if (v0Square <= 0.0f)
@@ -255,13 +258,13 @@ public class Player : MonoBehaviour
     }
 
     //対象との距離,角度(60度),投げる場所
-    private Vector3 ConvertVectorToVector3(float i_v0, float angle, Vector3 i_targetPosition)
+    private Vector3 ConvertVectorToVector3(float iv0, float angle, Vector3 iTargetPosition)
     {
 
         //投げる場所
-        Vector3 startPos = ShootPoint.transform.position;
+        Vector3 startPos = shootPoint.transform.position;
         //自分の位置
-        Vector3 targetPos = i_targetPosition;
+        Vector3 targetPos = iTargetPosition;
         startPos.y = 0.0f;
         targetPos.y = 0.0f;
 
@@ -270,20 +273,20 @@ public class Player : MonoBehaviour
         //ある方向から(from)ある方向へ(to)と回転させる
         Quaternion yawRot = Quaternion.FromToRotation(Vector3.right, dir);
         //対象との距離*Vector3(1,0,0)
-        Vector3 vec = i_v0 * Vector3.right;
+        Vector3 vec = iv0 * Vector3.right;
 
         vec = yawRot * Quaternion.AngleAxis(angle, Vector3.forward) * vec;
         return vec;
     }
 
-    private void InstantiateShootObject(Vector3 i_shootVector)
+    private void InstantiateShootObject(Vector3 iShootVector)
     {
         //投げる物に付いているrigidbody取得
         var rigidbody = ShootObject.GetComponent<Rigidbody>();
         //値を0に
         rigidbody.velocity = Vector3.zero;
         //速さ
-        Vector3 force = i_shootVector * rigidbody.mass;
+        Vector3 force = iShootVector * rigidbody.mass;
         //速さ*重さ(瞬時に速度変化)
         rigidbody.AddForce(force, ForceMode.Impulse);
     }

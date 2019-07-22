@@ -351,15 +351,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f928241632ae494bafc85a90cf36905, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RenderRect:
+  renderRect:
     serializedVersion: 2
     x: 20
     y: 20
-    width: 1000
-    height: 1000
-  CharSize: 20
-  CharColor: {r: 1, g: 1, b: 1, a: 1}
-  UpdateInterval: 0.5
+    width: 200
+    height: 200
+  charSize: 20
+  charColor: {r: 1, g: 1, b: 1, a: 1}
+  updateInterval: 0.5
 --- !u!114 &8618162871482093418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,12 +415,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba0a6ec78aaf7744822579670ddf84c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Players:
+  players:
   - {fileID: 1217565128, guid: b810073c6c506744a8239aed62714d5b, type: 3}
   - {fileID: 2666398, guid: 9914914bb127eac499c6eee17818c38c, type: 3}
   - {fileID: 7804345447490751148, guid: 3a609d8c7ce5f114291c93646bc5d463, type: 3}
   - {fileID: 9007779802766357652, guid: cc8fc0adf1381b84c9d8fdd8309647ca, type: 3}
-  CubeLists:
+  cubeLists:
   - {fileID: 3149763473898769679, guid: e69e3791c4d224644940caaf024de101, type: 3}
   - {fileID: 6579017577481020302, guid: a2ae5bf34c028754788c1feda31c1103, type: 3}
   - {fileID: 8928037457642817034, guid: 3c359dfbfc26b9f4583d51cc7639ed66, type: 3}
@@ -428,7 +428,7 @@ MonoBehaviour:
   - {fileID: 2112089589236840459, guid: 74b3575295cd6114480fb25bb02eac60, type: 3}
   - {fileID: 7864482572384953202, guid: 6d529a574cc9f5f4fbb8941bede83b58, type: 3}
   - {fileID: 1643362026978349468, guid: 580fcbc2f35353540bf0acb026603dfc, type: 3}
-  StrongCubeLists:
+  strongCubeLists:
   - {fileID: 1533645389609929925, guid: 541033fdf3dcd5e4b997530cac605421, type: 3}
   - {fileID: 5013334008616585552, guid: 3ceee0cfebb99484ebcc6c8279414ea5, type: 3}
   - {fileID: 830796310700820982, guid: 842568610302cc943980be73680c8a9c, type: 3}
@@ -445,6 +445,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: a8b5a97a93e096f4cb47ae5fb01463f6, type: 2}
   - {fileID: 2100000, guid: 050256a0965f95a49bce644480f583c1, type: 2}
   - {fileID: 2100000, guid: a31a7751cc925ce4d804b63521e2e2b8, type: 2}
+  maxPlayerNumber: 4
 --- !u!1001 &3857737381699178598
 PrefabInstance:
   m_ObjectHideFlags: 0

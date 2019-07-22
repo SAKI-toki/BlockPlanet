@@ -717,10 +717,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf8ec6b8bd0410c4bbb9136a3a069acd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UiParent: {fileID: 548276926}
-  CreditParent: {fileID: 8835050893810180974}
+  uiParent: {fileID: 548276926}
+  creditParent: {fileID: 8835050893810180974}
   rainbowMat: {fileID: 2100000, guid: 41ee01adb4d9fb342aee9bd47252395f, type: 2}
-  TitleBomb: {fileID: 1286304759253189}
+  titleBomb: {fileID: 1286304759253189}
   fallSound: {fileID: 1087125699}
 --- !u!4 &990228128
 Transform:
@@ -1244,9 +1244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e43d35a2c513a42b199e1b94336a39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TitleCube: {fileID: 1953824955924398, guid: 2a97b1eb129995445bfb98f4096504ce, type: 3}
-  TitleStrongCube: {fileID: 1195955269101638, guid: 7660fa711ef7e8340a67fc11454c04da,
-    type: 3}
+  titleCube: {fileID: 0}
+  titleStrongCube: {fileID: 0}
 --- !u!4 &1544281397
 Transform:
   m_ObjectHideFlags: 0

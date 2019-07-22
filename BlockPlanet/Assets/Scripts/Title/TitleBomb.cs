@@ -8,25 +8,25 @@ public class TitleBomb : MonoBehaviour
     /// </summary>
 
     //デストロイ
-    private bool Destroyflg = false;
+    private bool destroyFlg = false;
     //爆発のパーティクル、子オブジェクト
-    private ParticleSystem BOOM;
+    private ParticleSystem boomParticle;
     //collision
-    Collider[] BombColl;
+    Collider[] bombColl;
     //rigidbody
-    Rigidbody Rb;
+    Rigidbody rb;
     [SerializeField]
     Material rainbowMat;
 
     void Start()
     {
         //パーティクル
-        BOOM = transform.GetChild(1).GetComponent<ParticleSystem>();
+        boomParticle = transform.GetChild(1).GetComponent<ParticleSystem>();
         //爆弾のコリジョン
-        BombColl = GetComponents<Collider>();
-        BombColl[1].enabled = false;
+        bombColl = GetComponents<Collider>();
+        bombColl[1].enabled = false;
         //rigidbody
-        Rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -43,14 +43,14 @@ public class TitleBomb : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Rb.AddForce(Vector3.down * 25.0f);
+        rb.AddForce(Vector3.down * 25.0f);
     }
 
     void Update()
     {
-        if (Destroyflg && !BOOM.isPlaying)
+        if (destroyFlg && !boomParticle.isPlaying)
         {
-            Title.Instance.sounds.Play();
+            Title.Instance.bgmSound.Play();
             Destroy(gameObject);
         }
     }
@@ -64,10 +64,10 @@ public class TitleBomb : MonoBehaviour
         //爆弾の見た目を消す
         transform.GetChild(0).gameObject.SetActive(false);
         //爆弾の位置を固定
-        Rb.constraints = RigidbodyConstraints.FreezeAll;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
         //パーティクル再生
-        BOOM.Play();
+        boomParticle.Play();
         //デストロイするためのフラグ
-        Destroyflg = true;
+        destroyFlg = true;
     }
 }

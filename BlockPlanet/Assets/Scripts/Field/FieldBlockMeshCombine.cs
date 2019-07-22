@@ -11,7 +11,7 @@ public class FieldBlockMeshCombine : BlockMap
         public MeshFilter meshFilter = null;
         public MeshRenderer renderer = null;
     }
-    CombineMeshInfo[] CombineMeshs = new CombineMeshInfo[8];
+    CombineMeshInfo[] combineMeshs = new CombineMeshInfo[8];
     class meshInfo
     {
         public List<Vector3> vertices = new List<Vector3>();
@@ -23,34 +23,34 @@ public class FieldBlockMeshCombine : BlockMap
     Mesh optimizeCubeMeshRight = null;
     Mesh optimizeCubeMeshLeft = null;
     //縦方向にブロックの数を保持する
-    protected int[,] BlockNum = new int[BlockMapSize.line_n, BlockMapSize.row_n];
+    protected int[,] blockNums = new int[BlockMapSize.LineN, BlockMapSize.RowN];
     BlockInfo blockInfo;
 
-    BlockInfo[,] infos = new BlockInfo[8, BlockMapSize.line_n * BlockMapSize.row_n];
+    BlockInfo[,] infos = new BlockInfo[8, BlockMapSize.LineN * BlockMapSize.RowN];
 
     public void CreateMesh()
     {
         //更新フラグが立っていなかったら何もしない
         if (!updateMeshFlg) return;
         updateMeshFlg = false;
-        int length0 = BlockArray.GetLength(0);
-        int length1 = BlockArray.GetLength(1);
-        int length2 = BlockArray.GetLength(2);
+        int length0 = blockArray.GetLength(0);
+        int length1 = blockArray.GetLength(1);
+        int length2 = blockArray.GetLength(2);
         int[] indexs = new int[8];
         for (int i = 0; i < length0; ++i)
         {
             for (int j = 0; j < length1; ++j)
             {
                 //ブロックがない場所はループしない
-                if (BlockNum[i, j] == 0) continue;
+                if (blockNums[i, j] == 0) continue;
                 for (int k = 0; k < length2; ++k)
                 {
-                    blockInfo = BlockArray[i, j, k];
-                    if (!blockInfo.IsEnable ||
+                    blockInfo = blockArray[i, j, k];
+                    if (!blockInfo.isEnable ||
                         blockInfo.isSurround ||
-                        blockInfo.MaterialNumber == 0) continue;
+                        blockInfo.materialNumber == 0) continue;
                     //位置を格納
-                    infos[blockInfo.MaterialNumber, indexs[blockInfo.MaterialNumber]++] = blockInfo;
+                    infos[blockInfo.materialNumber, indexs[blockInfo.materialNumber]++] = blockInfo;
                 }
             }
         }
@@ -65,7 +65,7 @@ public class FieldBlockMeshCombine : BlockMap
             }
             //先にメッシュを統合してから入れたほうが軽い
             mesh.CombineMeshes(instances);
-            CombineMeshs[i].meshFilter.mesh = mesh;
+            combineMeshs[i].meshFilter.mesh = mesh;
         }
     }
 
@@ -84,58 +84,58 @@ public class FieldBlockMeshCombine : BlockMap
         combineMeshInfo.renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
-    public override void BreakBlock(BlockNumber block_num)
+    public override void BreakBlock(BlockNumber blockNum)
     {
         updateMeshFlg = true;
-        BlockArray[block_num.line, block_num.row, block_num.height].IsEnable = false;
-        --BlockNum[block_num.line, block_num.row];
+        blockArray[blockNum.line, blockNum.row, blockNum.height].isEnable = false;
+        --blockNums[blockNum.line, blockNum.row];
 
-        if (block_num.line < BlockArray.GetLength(0) - 1)
+        if (blockNum.line < blockArray.GetLength(0) - 1)
         {
-            BlockArray[block_num.line + 1, block_num.row, block_num.height].isSurround = false;
+            blockArray[blockNum.line + 1, blockNum.row, blockNum.height].isSurround = false;
         }
 
-        if (block_num.row < BlockArray.GetLength(1) - 1)
+        if (blockNum.row < blockArray.GetLength(1) - 1)
         {
-            BlockArray[block_num.line, block_num.row + 1, block_num.height].isSurround = false;
+            blockArray[blockNum.line, blockNum.row + 1, blockNum.height].isSurround = false;
         }
 
-        if (block_num.row > 0)
+        if (blockNum.row > 0)
         {
-            BlockArray[block_num.line, block_num.row - 1, block_num.height].isSurround = false;
+            blockArray[blockNum.line, blockNum.row - 1, blockNum.height].isSurround = false;
         }
 
-        if (block_num.height > 0)
+        if (blockNum.height > 0)
         {
-            BlockArray[block_num.line, block_num.row, block_num.height - 1].isSurround = false;
+            blockArray[blockNum.line, blockNum.row, blockNum.height - 1].isSurround = false;
         }
     }
 
     public virtual void BlockIsSurroundUpdate()
     {
-        for (int i = 1; i < BlockArray.GetLength(0); ++i)
+        for (int i = 1; i < blockArray.GetLength(0); ++i)
         {
-            for (int j = 1; j < BlockArray.GetLength(1) - 1; ++j)
+            for (int j = 1; j < blockArray.GetLength(1) - 1; ++j)
             {
-                for (int k = 0; k < BlockArray.GetLength(2) - 1; ++k)
+                for (int k = 0; k < blockArray.GetLength(2) - 1; ++k)
                 {
                     //壊れないブロックのみ別の処理
-                    if (BlockArray[i, j, k].MaterialNumber == 0)
+                    if (blockArray[i, j, k].materialNumber == 0)
                     {
-                        if (BlockArray[i - 1, j, k].IsEnable && BlockArray[i - 1, j, k].MaterialNumber == 0 &&
-                        BlockArray[i, j - 1, k].IsEnable && BlockArray[i, j - 1, k].MaterialNumber == 0 &&
-                        BlockArray[i, j + 1, k].IsEnable && BlockArray[i, j + 1, k].MaterialNumber == 0 &&
-                        BlockArray[i, j, k + 1].IsEnable && BlockArray[i, j, k + 1].MaterialNumber == 0)
+                        if (blockArray[i - 1, j, k].isEnable && blockArray[i - 1, j, k].materialNumber == 0 &&
+                        blockArray[i, j - 1, k].isEnable && blockArray[i, j - 1, k].materialNumber == 0 &&
+                        blockArray[i, j + 1, k].isEnable && blockArray[i, j + 1, k].materialNumber == 0 &&
+                        blockArray[i, j, k + 1].isEnable && blockArray[i, j, k + 1].materialNumber == 0)
                         {
-                            BlockArray[i, j, k].isSurround = true;
+                            blockArray[i, j, k].isSurround = true;
                         }
                     }
                     else
                     {
-                        if (BlockArray[i - 1, j, k].IsEnable && BlockArray[i, j - 1, k].IsEnable &&
-                        BlockArray[i, j + 1, k].IsEnable && BlockArray[i, j, k + 1].IsEnable)
+                        if (blockArray[i - 1, j, k].isEnable && blockArray[i, j - 1, k].isEnable &&
+                        blockArray[i, j + 1, k].isEnable && blockArray[i, j, k + 1].isEnable)
                         {
-                            BlockArray[i, j, k].isSurround = true;
+                            blockArray[i, j, k].isSurround = true;
                         }
                     }
                 }
@@ -151,14 +151,14 @@ public class FieldBlockMeshCombine : BlockMap
     /// <returns>最適化されたキューブ</returns>
     protected override Mesh MakeOptimizeCube(MeshFilter filter, int row)
     {
-        const int centerRange = 2;
+        const int CenterRange = 2;
         if (optimizeCubeMesh == null)
             CreateOptimizeCube(filter);
-        if (row < BlockMapSize.row_n / 2 - centerRange)
+        if (row < BlockMapSize.RowN / 2 - CenterRange)
         {
             return optimizeCubeMeshLeft;
         }
-        if (row > BlockMapSize.row_n / 2 + centerRange)
+        if (row > BlockMapSize.RowN / 2 + CenterRange)
         {
             return optimizeCubeMeshRight;
         }
@@ -302,9 +302,9 @@ public class FieldBlockMeshCombine : BlockMap
     {
         mesh = new Mesh();
         //毎回GetLengthすると重いので、前もって変数に格納しておく
-        int length0 = BlockArray.GetLength(0);
-        int length1 = BlockArray.GetLength(1);
-        int length2 = BlockArray.GetLength(2);
+        int length0 = blockArray.GetLength(0);
+        int length1 = blockArray.GetLength(1);
+        int length2 = blockArray.GetLength(2);
         int[] indexs = new int[8];
         List<CombineInstance> strongCombineInstanceList = new List<CombineInstance>();
         for (int i = 0; i < length0; ++i)
@@ -313,17 +313,17 @@ public class FieldBlockMeshCombine : BlockMap
             {
                 for (int k = 0; k < length2; ++k)
                 {
-                    blockInfo = BlockArray[i, j, k];
-                    if (blockInfo.MaterialNumber != 0) ++BlockNum[i, j];
-                    if (!blockInfo.IsEnable || blockInfo.isSurround) continue;
+                    blockInfo = blockArray[i, j, k];
+                    if (blockInfo.materialNumber != 0) ++blockNums[i, j];
+                    if (!blockInfo.isEnable || blockInfo.isSurround) continue;
                     //位置を格納
-                    if (blockInfo.MaterialNumber == 0)
+                    if (blockInfo.materialNumber == 0)
                     {
                         strongCombineInstanceList.Add(blockInfo.cmesh);
                     }
                     else
                     {
-                        infos[blockInfo.MaterialNumber, indexs[blockInfo.MaterialNumber]++] = blockInfo;
+                        infos[blockInfo.materialNumber, indexs[blockInfo.materialNumber]++] = blockInfo;
                     }
                 }
             }
@@ -331,10 +331,10 @@ public class FieldBlockMeshCombine : BlockMap
         //マテリアルごとにメッシュ統合
         for (int i = 0; i < 8; ++i)
         {
-            CombineMeshs[i] = new CombineMeshInfo();
-            CreateCombineMeshObject(BlockCreater.GetInstance().mats[i].name, CombineMeshs[i]);
-            CombineMeshs[i].obj.transform.parent = parent.transform;
-            CombineMeshs[i].renderer.sharedMaterial = BlockCreater.GetInstance().mats[i];
+            combineMeshs[i] = new CombineMeshInfo();
+            CreateCombineMeshObject(BlockCreater.GetInstance().mats[i].name, combineMeshs[i]);
+            combineMeshs[i].obj.transform.parent = parent.transform;
+            combineMeshs[i].renderer.sharedMaterial = BlockCreater.GetInstance().mats[i];
             mesh = new Mesh();
             if (i == 0)
             {
@@ -350,7 +350,7 @@ public class FieldBlockMeshCombine : BlockMap
                 //先にメッシュを統合してから入れたほうが軽い
                 mesh.CombineMeshes(instances);
             }
-            CombineMeshs[i].meshFilter.mesh = mesh;
+            combineMeshs[i].meshFilter.mesh = mesh;
         }
     }
 }

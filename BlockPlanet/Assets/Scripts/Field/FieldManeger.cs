@@ -10,51 +10,51 @@ using UnityEngine.UI;
 public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 {
     [System.NonSerialized]
-    public bool[] PlayerGameOvers;
+    public bool[] playerGameOvers;
     //プレイヤーのポイント。スタティックにしないといけない
-    static public int[] PlayerPoints = new int[4];
+    static public int[] playerPoints = new int[4];
     //勝利ポイント
     const int WinPoint = 3;
-    static public int WinPlayerNumber = 0;
+    static public int winPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
     [System.NonSerialized]
-    public bool IsGameOver = false;
+    public bool isGameOver = false;
     //ボタンを押す
-    private bool Pause_Push = false;
+    private bool pausePush = false;
     //ポーズの表示非表示を管理
     [System.NonSerialized]
-    public bool IsPause = false;
+    public bool isPause = false;
     //BGM
-    AudioSource Sound = null;
+    AudioSource bgmSound = null;
     //カウントダウン
     [SerializeField] List<GameObject> image = new List<GameObject>();
 
-    bool IsGameStart = false;
+    bool isGameStart = false;
     //ポーズ画面のパネル
     [SerializeField]
-    GameObject PauseObject = null;
+    GameObject pauseObject = null;
     [SerializeField]
-    RectTransform[] UiRectTransforms = new RectTransform[3];
-    int select_index = 0;
-    Vector3 init_scale = new Vector3();
+    RectTransform[] uiRectTransforms = new RectTransform[3];
+    int selectIndex = 0;
+    Vector3 initScale = new Vector3();
     [SerializeField]
-    Vector3 max_scale = new Vector3();
-    float scale_time = 0.0f;
+    Vector3 maxScale = new Vector3();
+    float scaleTime = 0.0f;
     [System.NonSerialized]
     public Player[] players;
 
     [SerializeField]
-    GameObject OnTheWayObject;
+    GameObject onTheWayObject;
     [SerializeField]
-    Image[] OnTheWayImages;
+    Image[] onTheWayImages;
     [SerializeField]
-    Image BackgroundImage;
+    Image backgroundImage;
     [SerializeField]
-    RectTransform[] PlayerRectTransforms;
+    RectTransform[] playerRectTransforms;
     [SerializeField]
-    RectTransform[] PlayerWinRectTransforms;
+    RectTransform[] playerWinRectTransforms;
     [SerializeField]
-    Image[] PlayerImages;
+    Image[] playerImages;
     [SerializeField]
     Sprite stopSprite;
     [SerializeField]
@@ -63,61 +63,61 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     {
         //プレイ人数分要素を確保
         players = new Player[BlockCreater.GetInstance().maxPlayerNumber];
-        PlayerGameOvers = new bool[BlockCreater.GetInstance().maxPlayerNumber];
+        playerGameOvers = new bool[BlockCreater.GetInstance().maxPlayerNumber];
         //プレイしないプレイヤーの途中経過の画像を差し替える
-        for (int i = BlockCreater.GetInstance().maxPlayerNumber; i < PlayerImages.Length; ++i)
+        for (int i = BlockCreater.GetInstance().maxPlayerNumber; i < playerImages.Length; ++i)
         {
-            PlayerImages[i].sprite = stopSprite;
-            PlayerImages[i].SetNativeSize();
+            playerImages[i].sprite = stopSprite;
+            playerImages[i].SetNativeSize();
         }
         //ゲームスタート時
         StartCoroutine(Gamestart());
         //BGM
-        Sound = GetComponent<AudioSource>();
-        init_scale = UiRectTransforms[0].localScale;
+        bgmSound = GetComponent<AudioSource>();
+        initScale = uiRectTransforms[0].localScale;
     }
 
     void Update()
     {
-        if (IsGameOver || !IsGameStart) return;
+        if (isGameOver || !isGameStart) return;
         //プレイヤーが死んだ数
         int deathCount = 0;
-        for (int i = 0; i < PlayerGameOvers.Length; ++i)
+        for (int i = 0; i < playerGameOvers.Length; ++i)
         {
-            if (PlayerGameOvers[i])
+            if (playerGameOvers[i])
                 ++deathCount;
             else
-                WinPlayerNumber = i;
+                winPlayerNumber = i;
         }
-        if (deathCount >= PlayerGameOvers.Length - 1)
+        if (deathCount >= playerGameOvers.Length - 1)
         {
-            IsGameOver = true;
+            isGameOver = true;
             //勝者決定
-            if (deathCount == PlayerGameOvers.Length - 1)
+            if (deathCount == playerGameOvers.Length - 1)
             {
-                ++PlayerPoints[WinPlayerNumber];
+                ++playerPoints[winPlayerNumber];
             }
             //勝利ポイントに達したかどうか
-            if (PlayerPoints[WinPlayerNumber] == WinPoint)
+            if (playerPoints[winPlayerNumber] == WinPoint)
             {
                 StartCoroutine(Gameover());
             }
             else
             {
-                StartCoroutine(Restart(deathCount == PlayerGameOvers.Length));
+                StartCoroutine(Restart(deathCount == playerGameOvers.Length));
             }
         }
-        if (IsPause)
+        if (isPause)
         {
             OnPause();
         }
         else
         {
-            Pause_Push = false;
+            pausePush = false;
             OnUnPause();
             //ポーズ画面
             if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
-                IsPause = true;
+                isPause = true;
         }
     }
 
@@ -129,7 +129,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //少し待つ
         while (!Fade.Instance.IsEnd) yield return null;
         //カウントダウンの音
-        SoundManager.Instance.F_Start();
+        SoundManager.Instance.GameStart();
         //カウントダウン開始
         for (int count = 3; count >= 1; count--)
         {
@@ -144,24 +144,24 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         for (int i = 0; i < players.Length; ++i)
         {
             players[i] = GameObject.Find("Player" + (i + 1) + "(Clone)").GetComponent<Player>();
-            players[i].GameStart = true;
+            players[i].isGameStart = true;
         }
 
         //ゲームが開始された
-        IsGameStart = true;
+        isGameStart = true;
         //少し待つ
         yield return new WaitForSeconds(1.0f);
         //BGMを再生する
-        Sound.Play();
+        bgmSound.Play();
     }
 
     //二ラウンド目以降
     private IEnumerator Restart(bool isDraw = false)
     {
         //BGMを停止する
-        Sound.Stop();
+        bgmSound.Stop();
         //ゲーム終了のSE
-        SoundManager.Instance.F_GameSet();
+        SoundManager.Instance.GameOver();
         //少し待つ
         yield return new WaitForSeconds(1);
         if (!isDraw)
@@ -180,9 +180,9 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //表示
         image[0].SetActive(true);
         //BGMを停止する
-        Sound.Stop();
+        bgmSound.Stop();
         //ゲーム終了のSE
-        SoundManager.Instance.F_GameSet();
+        SoundManager.Instance.GameOver();
         //少し待つ
         yield return new WaitForSeconds(1);
         yield return StartCoroutine(OnTheWayCoroutine());
@@ -192,10 +192,10 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         while (!Fade.Instance.IsEnd) yield return null;
         for (int i = 0; i < 4; ++i)
         {
-            ResultManager.ResultPoints[i] = PlayerPoints[i];
+            ResultManager.resultPoints[i] = playerPoints[i];
         }
         //スタティックなので値を0に
-        PlayerPoints = new int[4];
+        playerPoints = new int[4];
         //リザルト画面に遷移
         SceneManager.LoadScene("Result");
     }
@@ -206,21 +206,21 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     /// <returns></returns>
     IEnumerator OnTheWayCoroutine()
     {
-        OnTheWayObject.SetActive(true);
+        onTheWayObject.SetActive(true);
         Vector3 pos;
         //初期位置
-        for (int i = 0; i < PlayerPoints.Length; ++i)
+        for (int i = 0; i < playerPoints.Length; ++i)
         {
-            if (i == WinPlayerNumber)
+            if (i == winPlayerNumber)
             {
-                pos = PlayerWinRectTransforms[PlayerPoints[i] - 1].position;
+                pos = playerWinRectTransforms[playerPoints[i] - 1].position;
             }
             else
             {
-                pos = PlayerWinRectTransforms[PlayerPoints[i]].position;
+                pos = playerWinRectTransforms[playerPoints[i]].position;
             }
-            pos.y = PlayerRectTransforms[i].position.y;
-            PlayerRectTransforms[i].position = pos;
+            pos.y = playerRectTransforms[i].position.y;
+            playerRectTransforms[i].position = pos;
         }
         float alpha = 0.0f;
         Color color;
@@ -228,29 +228,29 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         while (alpha < 1.0f)
         {
             alpha += Time.deltaTime;
-            foreach (var image in OnTheWayImages)
+            foreach (var image in onTheWayImages)
             {
                 color = image.color;
                 color.a = alpha;
                 image.color = color;
             }
-            color = BackgroundImage.color;
+            color = backgroundImage.color;
             color.a = alpha * 0.8f;
-            BackgroundImage.color = color;
+            backgroundImage.color = color;
             yield return null;
         }
         //移動速度
-        float moveSpeed = PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x -
-                            PlayerRectTransforms[WinPlayerNumber].position.x;
+        float moveSpeed = playerWinRectTransforms[playerPoints[winPlayerNumber]].position.x -
+                            playerRectTransforms[winPlayerNumber].position.x;
         //時間を測る変数
         float timeCount = 0.0f;
-        pos = PlayerRectTransforms[WinPlayerNumber].position;
+        pos = playerRectTransforms[winPlayerNumber].position;
         //勝ったプレイヤーの移動
-        while (PlayerRectTransforms[WinPlayerNumber].position.x <
-        PlayerWinRectTransforms[PlayerPoints[WinPlayerNumber]].position.x)
+        while (playerRectTransforms[winPlayerNumber].position.x <
+        playerWinRectTransforms[playerPoints[winPlayerNumber]].position.x)
         {
             //煽りのクラクション
-            if (SwitchInput.GetButtonDown(WinPlayerNumber, SwitchButton.Horn))
+            if (SwitchInput.GetButtonDown(winPlayerNumber, SwitchButton.Horn))
             {
                 if (hornSound.isPlaying) hornSound.Stop();
                 hornSound.Play();
@@ -258,11 +258,11 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             //移動処理
             timeCount += Time.deltaTime;
             pos.x += moveSpeed * Time.deltaTime / 3;
-            PlayerRectTransforms[WinPlayerNumber].position = pos;
-            PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount * 2) * Mathf.Rad2Deg / 4);
+            playerRectTransforms[winPlayerNumber].position = pos;
+            playerRectTransforms[winPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount * 2) * Mathf.Rad2Deg / 4);
             yield return null;
         }
-        PlayerRectTransforms[WinPlayerNumber].rotation = Quaternion.identity;
+        playerRectTransforms[winPlayerNumber].rotation = Quaternion.identity;
         yield return new WaitForSeconds(0.5f);
     }
 
@@ -273,41 +273,41 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         Time.timeScale = 0;
 
         //ボタンを見えるように
-        PauseObject.SetActive(true);
+        pauseObject.SetActive(true);
         SelectUpdate();
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !Pause_Push)
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) && !pausePush)
         {
-            Pause_Push = true;
-            IsPause = false;
-            PauseObject.SetActive(false);
-            select_index = 0;
-            foreach (var obj in UiRectTransforms)
-                obj.localScale = init_scale;
-            scale_time = 0;
+            pausePush = true;
+            isPause = false;
+            pauseObject.SetActive(false);
+            selectIndex = 0;
+            foreach (var obj in uiRectTransforms)
+                obj.localScale = initScale;
+            scaleTime = 0;
         }
         //ボタンを押したら
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && !Pause_Push)
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok) && !pausePush)
         {
-            Pause_Push = true;
-            IsPause = false;
-            switch (select_index)
+            pausePush = true;
+            isPause = false;
+            switch (selectIndex)
             {
                 case 0:
-                    PauseObject.SetActive(false);
-                    select_index = 0;
-                    foreach (var obj in UiRectTransforms)
-                        obj.localScale = init_scale;
-                    scale_time = 0;
+                    pauseObject.SetActive(false);
+                    selectIndex = 0;
+                    foreach (var obj in uiRectTransforms)
+                        obj.localScale = initScale;
+                    scaleTime = 0;
                     break;
                 case 1:
                     //スタティックなので値を0に
-                    PlayerPoints = new int[4];
+                    playerPoints = new int[4];
                     StartCoroutine(TransitionSelectScene());
                     break;
 
                 case 2:
                     //スタティックなので値を0に
-                    PlayerPoints = new int[4];
+                    playerPoints = new int[4];
                     StartCoroutine(TransitionTitleScene());
                     break;
             }
@@ -316,24 +316,24 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 
     void SelectUpdate()
     {
-        int prev_index = select_index;
+        int prevIndex = selectIndex;
         if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
         {
-            ++select_index;
+            ++selectIndex;
         }
         else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
         {
-            --select_index;
+            --selectIndex;
         }
-        select_index = Mathf.Clamp(select_index, 0, UiRectTransforms.Length - 1);
-        if (prev_index != select_index)
+        selectIndex = Mathf.Clamp(selectIndex, 0, uiRectTransforms.Length - 1);
+        if (prevIndex != selectIndex)
         {
-            UiRectTransforms[prev_index].localScale = init_scale;
+            uiRectTransforms[prevIndex].localScale = initScale;
             SoundManager.Instance.Stick();
-            scale_time = 0.0f;
+            scaleTime = 0.0f;
         }
-        scale_time += Time.unscaledDeltaTime * 6;
-        UiRectTransforms[select_index].localScale = init_scale + (max_scale - init_scale) * ((Mathf.Sin(scale_time) + 1) / 2);
+        scaleTime += Time.unscaledDeltaTime * 6;
+        uiRectTransforms[selectIndex].localScale = initScale + (maxScale - initScale) * ((Mathf.Sin(scaleTime) + 1) / 2);
     }
 
     //ポーズ画面をしまう

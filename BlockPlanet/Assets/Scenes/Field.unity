@@ -928,8 +928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77bf4c732d8f1874c937b09b94ec0e6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraTransform: {fileID: 534669905}
-  ShakeTime: 0.1
+  shakeTime: 0.1
 --- !u!1 &564432643
 GameObject:
   m_ObjectHideFlags: 0
@@ -2944,42 +2943,42 @@ MonoBehaviour:
   - {fileID: 1776323638}
   - {fileID: 136209811}
   - {fileID: 1244778188}
-  PauseObject: {fileID: 350281229}
-  UiRectTransforms:
+  pauseObject: {fileID: 350281229}
+  uiRectTransforms:
   - {fileID: 1580009764}
   - {fileID: 1410852225}
   - {fileID: 564432644}
-  max_scale: {x: 0.8, y: 0.7, z: 0}
-  OnTheWayObject: {fileID: 767992219}
-  OnTheWayImages:
+  maxScale: {x: 0.8, y: 0.7, z: 0}
+  onTheWayObject: {fileID: 767992219}
+  onTheWayImages:
   - {fileID: 163522637}
-  - {fileID: 664943125}
-  - {fileID: 1561316443}
-  - {fileID: 1456717200}
-  - {fileID: 1283441892}
+  - {fileID: 379648428}
   - {fileID: 1837186953}
   - {fileID: 271279768}
   - {fileID: 1223483041}
   - {fileID: 2052810285}
-  - {fileID: 379648428}
-  - {fileID: 236901089}
-  - {fileID: 494342571}
   - {fileID: 1570922588}
   - {fileID: 1958994197}
   - {fileID: 1503407781}
   - {fileID: 45089150}
-  BackgroundImage: {fileID: 1101006771}
-  PlayerRectTransforms:
+  - {fileID: 236901089}
+  - {fileID: 494342571}
+  - {fileID: 664943125}
+  - {fileID: 1561316443}
+  - {fileID: 1456717200}
+  - {fileID: 1283441892}
+  backgroundImage: {fileID: 1101006771}
+  playerRectTransforms:
   - {fileID: 664943124}
   - {fileID: 1561316442}
   - {fileID: 1456717199}
   - {fileID: 1283441891}
-  PlayerWinRectTransforms:
+  playerWinRectTransforms:
   - {fileID: 1142578214}
   - {fileID: 1898374956}
   - {fileID: 1241379715}
   - {fileID: 128973619}
-  PlayerImages:
+  playerImages:
   - {fileID: 664943125}
   - {fileID: 1561316443}
   - {fileID: 1456717200}

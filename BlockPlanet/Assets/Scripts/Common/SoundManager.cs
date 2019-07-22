@@ -6,49 +6,49 @@ using UnityEngine;
 /// </summary>
 public class SoundManager : SingletonMonoBehaviour<SoundManager>
 {
-    AudioSource Sounds = null;
+    AudioSource sounds = null;
 
     [SerializeField]
     List<AudioClip> audioClip = new List<AudioClip>();
 
     void Start()
     {
-        Sounds = gameObject.GetComponent<AudioSource>();
+        sounds = gameObject.GetComponent<AudioSource>();
     }
 
     //スティックの音
     public void Stick()
     {
-        Sounds.PlayOneShot(audioClip[0]);
+        sounds.PlayOneShot(audioClip[0]);
     }
     //決定音
     public void Push()
     {
-        Sounds.PlayOneShot(audioClip[1]);
+        sounds.PlayOneShot(audioClip[1]);
     }
     //ゲームスタートの音
-    public void F_Start()
+    public void GameStart()
     {
-        Sounds.PlayOneShot(audioClip[2]);
+        sounds.PlayOneShot(audioClip[2]);
     }
     //ゲームオーバーの音
-    public void F_GameSet()
+    public void GameOver()
     {
-        Sounds.PlayOneShot(audioClip[3]);
+        sounds.PlayOneShot(audioClip[3]);
     }
     //爆弾を発射する音
     public void BombThrow()
     {
-        Sounds.PlayOneShot(audioClip[4]);
+        sounds.PlayOneShot(audioClip[4]);
     }
     //爆弾が爆発する音
     public void Bomb()
     {
-        Sounds.PlayOneShot(audioClip[5]);
+        sounds.PlayOneShot(audioClip[5]);
     }
     //ジャンプの音
     public void Jump()
     {
-        Sounds.PlayOneShot(audioClip[6]);
+        sounds.PlayOneShot(audioClip[6]);
     }
 }

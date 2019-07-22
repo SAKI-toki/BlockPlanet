@@ -29219,25 +29219,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a9d1a0489f62a445a2efa9e9292869d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UiRectTransforms:
+  uiRectTransforms:
   - {fileID: 1146479925}
   - {fileID: 2118972518}
   - {fileID: 2115821812}
-  max_scale: {x: 0.6, y: 0.6, z: 0}
-  Uis:
+  maxScale: {x: 0.6, y: 0.6, z: 0}
+  playerNumberUis:
   - {fileID: 412954020}
   - {fileID: 295052493}
   - {fileID: 1062773372}
   - {fileID: 152905883}
-  ResultBombObject: {fileID: 3217224491019294584, guid: 781fc1b12b3d914409053cd7b4bd13c2,
+  resultBombObject: {fileID: 3217224491019294584, guid: 781fc1b12b3d914409053cd7b4bd13c2,
     type: 3}
   uiCanvas: {fileID: 854416115}
   winEffects:
   - {fileID: 1918111464}
   - {fileID: 1094548055}
   cameraObject: {fileID: 733741564}
-  PlayerEndTransform: {fileID: 1576180763}
-  IsDebug: 0
+  playerEndTransform: {fileID: 1576180763}
+  isDebug: 0
   winPlayerDebug: 3
 --- !u!4 &2008232419
 Transform:

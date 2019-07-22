@@ -9,8 +9,8 @@ public class DontDestroy : MonoBehaviour
 
 
     // 1フレームに何度回すか[unit : deg]
-    float AnglePerFrame = 3;
-    float Rot = 0.0f;
+    float anglePerFrame = 3;
+    float rot = 0.0f;
 
     void Awake()
     {
@@ -19,12 +19,12 @@ public class DontDestroy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Rot += AnglePerFrame * Time.deltaTime;
-        if (Rot >= 360.0f)
+        rot += anglePerFrame * Time.deltaTime;
+        if (rot >= 360.0f)
         {
-            Rot -= 360.0f;
+            rot -= 360.0f;
         }
-        RenderSettings.skybox.SetFloat("_Rotation", Rot);
+        RenderSettings.skybox.SetFloat("_Rotation", rot);
     }
 
     void OnDestroy()

@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 [ExecuteInEditMode]
 public class PostProcess : MonoBehaviour
 {
     [SerializeField, Header("マテリアル")]
-    Material InvertMaterial = null;
+    Material invertMaterial = null;
 
     /// <summary>
     /// 全てのレンダリングが完了した時に呼ばれる関数
@@ -14,6 +12,6 @@ public class PostProcess : MonoBehaviour
     /// <param name="dest">コピー先のRenderTextureオブジェクト</param>
     void OnRenderImage(RenderTexture src, RenderTexture dest)
     {
-        Graphics.Blit(src, dest, InvertMaterial);
+        Graphics.Blit(src, dest, invertMaterial);
     }
 }

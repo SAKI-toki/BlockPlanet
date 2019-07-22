@@ -1,6 +1,6 @@
 ﻿static public class BlockMapSize
 {
-    public const int line_n = 52;
-    public const int row_n = 52;
-    public const int height_n = 7;
+    public const int LineN = 52;
+    public const int RowN = 52;
+    public const int HeightN = 7;
 }

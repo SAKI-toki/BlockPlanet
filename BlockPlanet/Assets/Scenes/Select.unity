@@ -327,8 +327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c707926f9505f484eb65ec7dde658700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentSelectChoice: {fileID: 263458069}
-  max_scale: {x: 0.5, y: 0.5, z: 0}
+  currentSelectChoice: {fileID: 263458069}
+  maxScale: {x: 0.5, y: 0.5, z: 0}
   fieldList:
   - {fileID: 2035301748030845033, guid: 77240a8eb043a0845becb4e87f00b5ea, type: 3}
   - {fileID: 7042110132750570776, guid: 07bbfb1a3c6f8704ea72e3a4e6700a13, type: 3}
@@ -338,9 +338,9 @@ MonoBehaviour:
   - {fileID: 7628214344257533681, guid: 5f3761a8b9ec0494ea54e39e1b197ea7, type: 3}
   - {fileID: 6436979618407784564, guid: 995333391a347a049bc5028ddf26c4d9, type: 3}
   - {fileID: 8091652876960324046, guid: 69a02e78ec50db54e8a503769d53f49b, type: 3}
-  CameraObject: {fileID: 1429951023}
+  cameraObject: {fileID: 1429951023}
   ui: {fileID: 2046592428}
-  PostProcessMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
+  postProcessMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
   postProcess: {fileID: 1429951027}
   mats:
   - {fileID: 2100000, guid: 9890e697ae52e8f4e948aba67898732a, type: 2}
@@ -1558,7 +1558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ded8293f7fb9c0e4eae096a145d04d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InvertMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
+  invertMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
 --- !u!1 &1439738127
 GameObject:
   m_ObjectHideFlags: 0

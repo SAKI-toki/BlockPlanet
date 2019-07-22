@@ -6,21 +6,21 @@
 public class ResultBomb : MonoBehaviour
 {
     //デストロイ
-    private bool Destroy_Flg = false;
+    private bool destroyFlg = false;
     //爆発のパーティクル、子オブジェクト
-    private ParticleSystem BOOM;
+    private ParticleSystem boomParticle;
     //collision
-    Collider[] BombColl;
+    Collider[] bombColl;
     //rigidbody
     Rigidbody rb;
 
     void Start()
     {
         //パーティクル
-        BOOM = transform.GetChild(1).GetComponent<ParticleSystem>();
+        boomParticle = transform.GetChild(1).GetComponent<ParticleSystem>();
         //爆弾のコリジョン
-        BombColl = GetComponents<Collider>();
-        BombColl[1].enabled = false;
+        bombColl = GetComponents<Collider>();
+        bombColl[1].enabled = false;
         //rigidbody
         rb = GetComponent<Rigidbody>();
     }
@@ -47,7 +47,7 @@ public class ResultBomb : MonoBehaviour
 
     void Update()
     {
-        if (Destroy_Flg && !BOOM.isPlaying)
+        if (destroyFlg && !boomParticle.isPlaying)
             Destroy(gameObject);
     }
 
@@ -60,10 +60,10 @@ public class ResultBomb : MonoBehaviour
         //爆弾の位置を固定
         rb.constraints = RigidbodyConstraints.FreezeAll;
         //パーティクル再生
-        BOOM.Play();
+        boomParticle.Play();
         //爆破の判定を出す
-        BombColl[1].enabled = true;
+        bombColl[1].enabled = true;
         //デストロイするためのフラグ
-        Destroy_Flg = true;
+        destroyFlg = true;
     }
 }

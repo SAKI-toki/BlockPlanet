@@ -3,38 +3,38 @@ using System.Collections.Generic;
 
 public class ResultBlockMeshCombine : FieldBlockMeshCombine
 {
-    public override void BreakBlock(BlockNumber block_num)
+    public override void BreakBlock(BlockNumber blockNum)
     {
         updateMeshFlg = true;
-        BlockArray[block_num.line, block_num.row, block_num.height].IsEnable = false;
-        --BlockNum[block_num.line, block_num.row];
-        if (block_num.line < BlockArray.GetLength(0) - 1)
-            BlockArray[block_num.line + 1, block_num.row, block_num.height].isSurround = false;
-        if (block_num.line > 0)
-            BlockArray[block_num.line - 1, block_num.row, block_num.height].isSurround = false;
+        blockArray[blockNum.line, blockNum.row, blockNum.height].isEnable = false;
+        --blockNums[blockNum.line, blockNum.row];
+        if (blockNum.line < blockArray.GetLength(0) - 1)
+            blockArray[blockNum.line + 1, blockNum.row, blockNum.height].isSurround = false;
+        if (blockNum.line > 0)
+            blockArray[blockNum.line - 1, blockNum.row, blockNum.height].isSurround = false;
 
-        if (block_num.row < BlockArray.GetLength(1) - 1)
-            BlockArray[block_num.line, block_num.row + 1, block_num.height].isSurround = false;
-        if (block_num.row > 0)
-            BlockArray[block_num.line, block_num.row - 1, block_num.height].isSurround = false;
+        if (blockNum.row < blockArray.GetLength(1) - 1)
+            blockArray[blockNum.line, blockNum.row + 1, blockNum.height].isSurround = false;
+        if (blockNum.row > 0)
+            blockArray[blockNum.line, blockNum.row - 1, blockNum.height].isSurround = false;
 
-        if (block_num.height < BlockArray.GetLength(2) - 1)
-            BlockArray[block_num.line, block_num.row, block_num.height + 1].isSurround = false;
-        if (block_num.height > 0)
-            BlockArray[block_num.line, block_num.row, block_num.height - 1].isSurround = false;
+        if (blockNum.height < blockArray.GetLength(2) - 1)
+            blockArray[blockNum.line, blockNum.row, blockNum.height + 1].isSurround = false;
+        if (blockNum.height > 0)
+            blockArray[blockNum.line, blockNum.row, blockNum.height - 1].isSurround = false;
     }
     public override void BlockIsSurroundUpdate()
     {
-        for (int i = 1; i < BlockArray.GetLength(0) - 1; ++i)
+        for (int i = 1; i < blockArray.GetLength(0) - 1; ++i)
         {
-            for (int j = 1; j < BlockArray.GetLength(1) - 1; ++j)
+            for (int j = 1; j < blockArray.GetLength(1) - 1; ++j)
             {
-                for (int k = 1; k < BlockArray.GetLength(2) - 1; ++k)
+                for (int k = 1; k < blockArray.GetLength(2) - 1; ++k)
                 {
-                    if (BlockArray[i - 1, j, k].IsEnable && BlockArray[i + 1, j, k].IsEnable &&
-                     BlockArray[i, j - 1, k].IsEnable && BlockArray[i, j + 1, k].IsEnable &&
-                     BlockArray[i, j, k - 1].IsEnable && BlockArray[i, j, k + 1].IsEnable)
-                        BlockArray[i, j, k].isSurround = true;
+                    if (blockArray[i - 1, j, k].isEnable && blockArray[i + 1, j, k].isEnable &&
+                     blockArray[i, j - 1, k].isEnable && blockArray[i, j + 1, k].isEnable &&
+                     blockArray[i, j, k - 1].isEnable && blockArray[i, j, k + 1].isEnable)
+                        blockArray[i, j, k].isSurround = true;
                 }
             }
         }

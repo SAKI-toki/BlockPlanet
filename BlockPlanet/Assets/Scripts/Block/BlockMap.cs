@@ -1,58 +1,58 @@
-ï»¿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// ãƒ–ãƒ­ãƒƒã‚¯ã®ä¸‰æ¬¡å…ƒé…åˆ—
+/// ƒuƒƒbƒN‚ÌOŸŒ³”z—ñ
 /// </summary>
 public class BlockMap
 {
     /// <summary>
-    /// ãƒ–ãƒ­ãƒƒã‚¯ã®æƒ…å ±
+    /// ƒuƒƒbƒN‚Ìî•ñ
     /// </summary>
     protected class BlockInfo
     {
         public bool isSurround = false;
-        public bool IsEnable = false;
+        public bool isEnable = false;
         public MeshRenderer renderer = null;
         public MeshFilter meshFilter = null;
         public BoxCollider collider = null;
-        public BlockNumber block_number = null;
+        public BlockNumber blockNumber = null;
         public CombineInstance cmesh = new CombineInstance();
-        public int MaterialNumber = 0;
+        public int materialNumber = 0;
     }
-    //ã‚µã‚¤ã‚ºåˆ†ã®ãƒãƒƒãƒ—ã‚’ç”¨æ„ã™ã‚‹
-    protected BlockInfo[,,] BlockArray = new BlockInfo[BlockMapSize.line_n, BlockMapSize.row_n, BlockMapSize.height_n];
-    bool IsInit = false;
+    //ƒTƒCƒY•ª‚Ìƒ}ƒbƒv‚ğ—pˆÓ‚·‚é
+    protected BlockInfo[,,] blockArray = new BlockInfo[BlockMapSize.LineN, BlockMapSize.RowN, BlockMapSize.HeightN];
+    bool isInit = false;
     void Initialize()
     {
-        for (int i = 0; i < BlockArray.GetLength(0); ++i)
+        for (int i = 0; i < blockArray.GetLength(0); ++i)
         {
-            for (int j = 0; j < BlockArray.GetLength(1); ++j)
+            for (int j = 0; j < blockArray.GetLength(1); ++j)
             {
-                for (int k = 0; k < BlockArray.GetLength(2); ++k)
+                for (int k = 0; k < blockArray.GetLength(2); ++k)
                 {
-                    BlockArray[i, j, k] = new BlockInfo();
+                    blockArray[i, j, k] = new BlockInfo();
                 }
             }
         }
-        IsInit = true;
+        isInit = true;
     }
 
     /// <summary>
-    /// Rendererã®æ›´æ–°
+    /// Renderer‚ÌXV
     /// </summary>
     public void BlockRendererUpdate()
     {
-        for (int i = 1; i < BlockArray.GetLength(0) - 1; ++i)
+        for (int i = 1; i < blockArray.GetLength(0) - 1; ++i)
         {
-            for (int j = 1; j < BlockArray.GetLength(1) - 1; ++j)
+            for (int j = 1; j < blockArray.GetLength(1) - 1; ++j)
             {
-                for (int k = 1; k < BlockArray.GetLength(2) - 1; ++k)
+                for (int k = 1; k < blockArray.GetLength(2) - 1; ++k)
                 {
-                    //å›²ã¾ã‚Œã¦ã„ãŸã‚‰Rendererã‚’Offã«ã™ã‚‹
+                    //ˆÍ‚Ü‚ê‚Ä‚¢‚½‚çRenderer‚ğOff‚É‚·‚é
                     if (IsSurround(i, j, k))
                     {
-                        BlockArray[i, j, k].renderer.enabled = false;
+                        blockArray[i, j, k].renderer.enabled = false;
                     }
                 }
             }
@@ -60,122 +60,135 @@ public class BlockMap
     }
 
     /// <summary>
-    /// Physicsã‚’Offã«ã™ã‚‹
+    /// Physics‚ğOff‚É‚·‚é
     /// </summary>
     public void BlockPhysicsOff()
     {
-        foreach (var block in BlockArray)
+        foreach (var block in blockArray)
         {
-            if (!block.IsEnable) continue;
+            if (!block.isEnable) continue;
             block.collider.enabled = false;
         }
     }
 
     /// <summary>
-    /// rendererã‚’Offã«ã™ã‚‹
+    /// renderer‚ğOff‚É‚·‚é
     /// </summary>
     public void BlockRendererOff()
     {
-        foreach (var block in BlockArray)
+        foreach (var block in blockArray)
         {
-            if (!block.IsEnable) continue;
+            if (!block.isEnable) continue;
             block.renderer.enabled = false;
         }
     }
 
     /// <summary>
-    /// ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚»ãƒƒãƒˆ
+    /// ƒuƒƒbƒN‚ÌƒZƒbƒg
     /// </summary>
-    /// <param name="line">ç¸¦</param>
-    /// <param name="row">æ¨ª</param>
-    /// <param name="height">é«˜ã•</param>
-    /// <param name="block">ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</param>
+    /// <param name="line">c</param>
+    /// <param name="row">‰¡</param>
+    /// <param name="height">‚‚³</param>
+    /// <param name="block">ƒuƒƒbƒN‚ÌƒIƒuƒWƒFƒNƒg</param>
     public void SetBlock(int line, int row, int height, GameObject block)
     {
-        if (!IsInit) Initialize();
-        //ç¯„å›²å¤–ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+        if (!isInit) Initialize();
+        //”ÍˆÍŠO‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚·‚é
         if (!RangeCheck(line, row, height))
         {
-            Debug.LogError("ç¯„å›²å¤–");
+            Debug.LogError("”ÍˆÍŠO");
             return;
         }
         if (block == null) return;
-        //å„æƒ…å ±ã‚’ã‚¯ãƒ©ã‚¹ã«æ ¼ç´
-        BlockArray[line, row, height].IsEnable = true;
-        BlockArray[line, row, height].renderer = block.GetComponent<MeshRenderer>();
-        BlockArray[line, row, height].meshFilter = block.GetComponent<MeshFilter>();
-        BlockArray[line, row, height].collider = block.GetComponent<BoxCollider>();
-        BlockArray[line, row, height].block_number = block.GetComponent<BlockNumber>();
-        BlockArray[line, row, height].cmesh.transform = block.transform.localToWorldMatrix;
-        BlockArray[line, row, height].cmesh.mesh = MakeOptimizeCube(BlockArray[line, row, height].meshFilter, row);
-        BlockArray[line, row, height].MaterialNumber =
-            BlockCreater.GetInstance().GetMaterialNumber(BlockArray[line, row, height].renderer.sharedMaterial);
-        BlockArray[line, row, height].block_number.SetNum(line, row, height);
+        //Šeî•ñ‚ğƒNƒ‰ƒX‚ÉŠi”[
+        blockArray[line, row, height].isEnable = true;
+        blockArray[line, row, height].renderer = block.GetComponent<MeshRenderer>();
+        blockArray[line, row, height].meshFilter = block.GetComponent<MeshFilter>();
+        blockArray[line, row, height].collider = block.GetComponent<BoxCollider>();
+        blockArray[line, row, height].blockNumber = block.GetComponent<BlockNumber>();
+        blockArray[line, row, height].cmesh.transform = block.transform.localToWorldMatrix;
+        blockArray[line, row, height].cmesh.mesh = MakeOptimizeCube(blockArray[line, row, height].meshFilter, row);
+        blockArray[line, row, height].materialNumber =
+            BlockCreater.GetInstance().GetMaterialNumber(blockArray[line, row, height].renderer.sharedMaterial);
+        blockArray[line, row, height].blockNumber.SetNum(line, row, height);
     }
 
     /// <summary>
-    /// ãƒ–ãƒ­ãƒƒã‚¯ãŒå£Šã‚ŒãŸã¨ãã«å®Ÿè¡Œã™ã‚‹
+    /// ƒuƒƒbƒN‚ª‰ó‚ê‚½‚Æ‚«‚ÉÀs‚·‚é
     /// </summary>
-    /// <param name="block_num">ãƒ–ãƒ­ãƒƒã‚¯ã®ç•ªå·</param>
-    public virtual void BreakBlock(BlockNumber block_num)
+    /// <param name="blockNum">ƒuƒƒbƒN‚Ì”Ô†</param>
+    public virtual void BreakBlock(BlockNumber blockNum)
     {
-        BlockArray[block_num.line, block_num.row, block_num.height].IsEnable = false;
-        if (block_num.line < BlockArray.GetLength(0) - 1 &&
-            BlockArray[block_num.line + 1, block_num.row, block_num.height].renderer)
-            BlockArray[block_num.line + 1, block_num.row, block_num.height].renderer.enabled = true;
+        blockArray[blockNum.line, blockNum.row, blockNum.height].isEnable = false;
 
-        if (block_num.line > 0 &&
-            BlockArray[block_num.line - 1, block_num.row, block_num.height].renderer)
-            BlockArray[block_num.line - 1, block_num.row, block_num.height].renderer.enabled = true;
+        if (blockNum.line < blockArray.GetLength(0) - 1 &&
+            blockArray[blockNum.line + 1, blockNum.row, blockNum.height].renderer)
+        {
+            blockArray[blockNum.line + 1, blockNum.row, blockNum.height].renderer.enabled = true;
+        }
 
-        if (block_num.row < BlockArray.GetLength(1) - 1 &&
-            BlockArray[block_num.line, block_num.row + 1, block_num.height].renderer)
-            BlockArray[block_num.line, block_num.row + 1, block_num.height].renderer.enabled = true;
+        if (blockNum.line > 0 &&
+            blockArray[blockNum.line - 1, blockNum.row, blockNum.height].renderer)
+        {
+            blockArray[blockNum.line - 1, blockNum.row, blockNum.height].renderer.enabled = true;
+        }
 
-        if (block_num.row > 0 &&
-            BlockArray[block_num.line, block_num.row - 1, block_num.height].renderer)
-            BlockArray[block_num.line, block_num.row - 1, block_num.height].renderer.enabled = true;
+        if (blockNum.row < blockArray.GetLength(1) - 1 &&
+            blockArray[blockNum.line, blockNum.row + 1, blockNum.height].renderer)
+        {
+            blockArray[blockNum.line, blockNum.row + 1, blockNum.height].renderer.enabled = true;
+        }
 
-        if (block_num.height < BlockArray.GetLength(2) - 1 &&
-            BlockArray[block_num.line, block_num.row, block_num.height + 1].renderer)
-            BlockArray[block_num.line, block_num.row, block_num.height + 1].renderer.enabled = true;
+        if (blockNum.row > 0 &&
+            blockArray[blockNum.line, blockNum.row - 1, blockNum.height].renderer)
+        {
+            blockArray[blockNum.line, blockNum.row - 1, blockNum.height].renderer.enabled = true;
+        }
 
-        if (block_num.height > 0 &&
-            BlockArray[block_num.line, block_num.row, block_num.height - 1].renderer)
-            BlockArray[block_num.line, block_num.row, block_num.height - 1].renderer.enabled = true;
+        if (blockNum.height < blockArray.GetLength(2) - 1 &&
+            blockArray[blockNum.line, blockNum.row, blockNum.height + 1].renderer)
+        {
+            blockArray[blockNum.line, blockNum.row, blockNum.height + 1].renderer.enabled = true;
+        }
+
+        if (blockNum.height > 0 &&
+            blockArray[blockNum.line, blockNum.row, blockNum.height - 1].renderer)
+        {
+            blockArray[blockNum.line, blockNum.row, blockNum.height - 1].renderer.enabled = true;
+        }
     }
 
     /// <summary>
-    /// å›²ã¿åˆ¤å®š
+    /// ˆÍ‚İ”»’è
     /// </summary>
-    /// <param name="line">ç¸¦</param>
-    /// <param name="row">æ¨ª</param>
-    /// <param name="height">é«˜ã•</param>
-    /// <returns>å›²ã¾ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹</returns>
+    /// <param name="line">c</param>
+    /// <param name="row">‰¡</param>
+    /// <param name="height">‚‚³</param>
+    /// <returns>ˆÍ‚Ü‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©</returns>
     bool IsSurround(int line, int row, int height)
     {
-        //ç¯„å›²å¤–ãƒã‚§ãƒƒã‚¯
+        //”ÍˆÍŠOƒ`ƒFƒbƒN
         if (line == 0 || row == 0 || height == 0 ||
-        line == BlockArray.GetLength(0) - 1 ||
-        row == BlockArray.GetLength(1) - 1 ||
-        height == BlockArray.GetLength(2) - 1)
+        line == blockArray.GetLength(0) - 1 ||
+        row == blockArray.GetLength(1) - 1 ||
+        height == blockArray.GetLength(2) - 1)
         {
             return false;
         }
 
-        return BlockArray[line + 1, row, height].IsEnable &&
-        BlockArray[line - 1, row, height].IsEnable &&
-        BlockArray[line, row + 1, height].IsEnable &&
-        BlockArray[line, row - 1, height].IsEnable &&
-        BlockArray[line, row, height + 1].IsEnable &&
-        BlockArray[line, row, height - 1].IsEnable;
+        return blockArray[line + 1, row, height].isEnable &&
+        blockArray[line - 1, row, height].isEnable &&
+        blockArray[line, row + 1, height].isEnable &&
+        blockArray[line, row - 1, height].isEnable &&
+        blockArray[line, row, height + 1].isEnable &&
+        blockArray[line, row, height - 1].isEnable;
     }
 
     bool RangeCheck(int line, int row, int height)
     {
-        return line >= 0 && line < BlockArray.GetLength(0) &&
-        row >= 0 && row < BlockArray.GetLength(1) &&
-        height >= 0 && height < BlockArray.GetLength(2);
+        return line >= 0 && line < blockArray.GetLength(0) &&
+        row >= 0 && row < blockArray.GetLength(1) &&
+        height >= 0 && height < blockArray.GetLength(2);
     }
 
     protected virtual Mesh MakeOptimizeCube(MeshFilter filter, int row)

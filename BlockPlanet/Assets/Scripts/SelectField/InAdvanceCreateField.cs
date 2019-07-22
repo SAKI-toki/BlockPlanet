@@ -60,8 +60,8 @@ public class InAdvanceCreateField : MonoBehaviour
         foreach (var filter in obj.GetComponentsInChildren<MeshFilter>())
         {
             filter.transform.position = Vector3.zero;
-            string[] name = filter.GetComponent<MeshRenderer>().material.name.Split('(');
-            UnityEditor.AssetDatabase.CreateAsset(filter.mesh, modelPath + "/" + name[0] + ".asset");
+            string[] names = filter.GetComponent<MeshRenderer>().material.name.Split('(');
+            UnityEditor.AssetDatabase.CreateAsset(filter.mesh, modelPath + "/" + names[0] + ".asset");
         }
         //prefab化
         UnityEditor.PrefabUtility.SaveAsPrefabAsset(obj, prefabPath + "/Field" + num + ".prefab");

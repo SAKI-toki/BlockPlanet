@@ -12,8 +12,8 @@ public struct ResultPlayerInfo
 public class AnimationRecorderSceneController : MonoBehaviour
 {
     [SerializeField]
-    int RecordPlayerNumber = 0;
-    bool IsRecord = false;
+    int recordPlayerNumber = 0;
+    bool isRecord = false;
     List<ResultPlayerInfo> playerInfos = new List<ResultPlayerInfo>();
     ResultPlayerInfo playerInfo = new ResultPlayerInfo();
     Rigidbody targetRigidbody;
@@ -45,8 +45,8 @@ public class AnimationRecorderSceneController : MonoBehaviour
     {
         GUI.color = Color.white;
         GUI.Label(new Rect(20, 40, 1000, 1000), "Enter:Record Start and End\nSpace:Scene Reload");
-        GUI.Label(new Rect(20, 80, 1000, 1000), "SelectPlayerNumber:" + RecordPlayerNumber);
-        if (IsRecord) GUI.color = Color.red;
+        GUI.Label(new Rect(20, 80, 1000, 1000), "SelectPlayerNumber:" + recordPlayerNumber);
+        if (isRecord) GUI.color = Color.red;
         GUI.Label(new Rect(20, 100, 1000, 1000), "REC");
     }
 
@@ -58,13 +58,13 @@ public class AnimationRecorderSceneController : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             return;
         }
-        if (!IsRecord)
+        if (!isRecord)
         {
             //レコード開始
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                IsRecord = true;
-                GameObject player = GameObject.FindGameObjectWithTag("Player" + (RecordPlayerNumber + 1));
+                isRecord = true;
+                GameObject player = GameObject.FindGameObjectWithTag("Player" + (recordPlayerNumber + 1));
                 targetTransform = player.transform;
                 targetRigidbody = player.GetComponent<Rigidbody>();
                 Debug.Log("RecordStart!");
@@ -80,7 +80,7 @@ public class AnimationRecorderSceneController : MonoBehaviour
         //レコード終了
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            IsRecord = false;
+            isRecord = false;
             Debug.Log("RecordEnd!\nRecordFrameNum:" + playerInfos.Count);
             return;
         }
@@ -102,7 +102,7 @@ public class AnimationRecorderSceneController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!IsRecord) return;
+        if (!isRecord) return;
         float vertical = SwitchInput.GetVertical(0);
         float horizontal = SwitchInput.GetHorizontal(0);
         if (Mathf.Abs(vertical) >= 0.0f ||
@@ -126,7 +126,7 @@ public class AnimationRecorderSceneController : MonoBehaviour
 
     void WriteText()
     {
-        StreamWriter sw = new StreamWriter("Assets/Resources/ResultPlayer/Record" + RecordPlayerNumber + ".txt", false);
+        StreamWriter sw = new StreamWriter("Assets/Resources/ResultPlayer/Record" + recordPlayerNumber + ".txt", false);
         //プレイヤーの情報を書き込む
         foreach (var playerInfo in playerInfos)
         {

@@ -6,18 +6,18 @@ public class Title : SingletonMonoBehaviour<Title>
 {
     //クレジットの画像
     [SerializeField]
-    GameObject UiParent = null;
+    GameObject uiParent = null;
     [SerializeField]
-    GameObject CreditParent;
+    GameObject creditParent;
     //BGM
     [System.NonSerialized]
-    public AudioSource sounds = null;
+    public AudioSource bgmSound = null;
     //タイトルの虹色のマテリアル
     [SerializeField]
     Material rainbowMat = null;
     //タイトルの爆弾
     [SerializeField]
-    GameObject TitleBomb = null;
+    GameObject titleBomb = null;
     [SerializeField]
     AudioSource fallSound = null;
 
@@ -26,30 +26,30 @@ public class Title : SingletonMonoBehaviour<Title>
         //フェード
         Fade.Instance.FadeOut(1.0f);
         //BGM
-        sounds = GetComponent<AudioSource>();
-        UiParent.SetActive(false);
-        CreditParent.SetActive(false);
+        bgmSound = GetComponent<AudioSource>();
+        uiParent.SetActive(false);
+        creditParent.SetActive(false);
     }
 
     void Update()
     {
         if (!Fade.Instance.IsEnd) return;
         //爆弾が爆発後
-        if (TitleBomb == null)
+        if (titleBomb == null)
         {
-            if (CreditParent.activeSelf)
+            if (creditParent.activeSelf)
             {
-                UiParent.SetActive(false);
+                uiParent.SetActive(false);
                 //クレジットの非表示
                 if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) || SwitchInput.GetButtonDown(0, SwitchButton.Down))
                 {
                     SoundManager.Instance.Push();
-                    CreditParent.SetActive(false);
+                    creditParent.SetActive(false);
                 }
             }
             else
             {
-                UiParent.SetActive(true);
+                uiParent.SetActive(true);
                 //シーン遷移
                 if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
                 {
@@ -60,7 +60,7 @@ public class Title : SingletonMonoBehaviour<Title>
                 else if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
                 {
                     SoundManager.Instance.Push();
-                    CreditParent.SetActive(true);
+                    creditParent.SetActive(true);
                 }
             }
         }
@@ -68,9 +68,9 @@ public class Title : SingletonMonoBehaviour<Title>
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
         {
             BombExplosion();
-            Destroy(TitleBomb);
+            Destroy(titleBomb);
             fallSound.Stop();
-            sounds.Play();
+            bgmSound.Play();
         }
     }
     //セレクト画面に遷移

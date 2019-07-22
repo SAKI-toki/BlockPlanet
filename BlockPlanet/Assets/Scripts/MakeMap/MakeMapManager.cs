@@ -5,69 +5,69 @@ public class MakeMapManager : MonoBehaviour
 {
 #if UNITY_EDITOR
     [SerializeField]
-    GameObject[] Cubes;
+    GameObject[] cubes;
     [SerializeField]
-    GameObject StrongCube;
-    int[,] BlockArray = new int[BlockMapSize.line_n, BlockMapSize.row_n];
-    bool[,] IsStrongArray = new bool[BlockMapSize.line_n, BlockMapSize.row_n];
-    GameObject[,,] BlockObjectArray = new GameObject[BlockMapSize.line_n, BlockMapSize.row_n, BlockMapSize.height_n];
+    GameObject strongCube;
+    int[,] blockArray = new int[BlockMapSize.LineN, BlockMapSize.RowN];
+    bool[,] isStrongArray = new bool[BlockMapSize.LineN, BlockMapSize.RowN];
+    GameObject[,,] blockObjectArray = new GameObject[BlockMapSize.LineN, BlockMapSize.RowN, BlockMapSize.HeightN];
 
     [SerializeField]
-    Transform CursorTransform;
+    Transform cursorTransform;
     //生成したブロックの親オブジェクト
-    GameObject FieldParent;
+    GameObject fieldParent;
 
     [SerializeField]
-    GameObject[] Players = new GameObject[4];
+    GameObject[] players = new GameObject[4];
 
     //プレイヤーの位置
-    Vector2Int[] PlayerPositions = new Vector2Int[4];
+    Vector2Int[] playerPositions = new Vector2Int[4];
 
     //生成したcsvのパス
     const string Path = "Assets/Resources/csv/MakeMap";
     delegate void StateType();
-    StateType State;
-    string StateName;
-    float[] CursorMoveTime = new float[8];
+    StateType state;
+    string stateName;
+    float[] cursorMoveTime = new float[8];
 
     const string BlockStateName = "ブロックセット";
     const string PlayerStateName = "プレイヤーセット";
 
-    bool DisplayUI = true;
+    bool displayUI = true;
 
-    Vector3 CameraInitPosition;
-    Quaternion CameraInitRotation;
+    Vector3 cameraInitPosition;
+    Quaternion cameraInitRotation;
     [SerializeField]
-    GameObject CameraObject;
+    GameObject cameraObject;
     [SerializeField, Range(1.0f, 10.0f)]
-    float ScrollSpeed = 2.0f;
+    float scrollSpeed = 2.0f;
 
     [SerializeField]
-    TextAsset CsvAsset;
-    bool IsTracking = false;
-    float TrackingDistance = 0.0f;
+    TextAsset csvAsset;
+    bool isTracking = false;
+    float trackingDistance = 0.0f;
 
     void Start()
     {
-        CameraInitPosition = CameraObject.transform.position;
-        CameraInitRotation = CameraObject.transform.rotation;
-        FieldParent = new GameObject("FieldObject");
-        FieldParent.isStatic = true;
-        State = BlockState;
+        cameraInitPosition = cameraObject.transform.position;
+        cameraInitRotation = cameraObject.transform.rotation;
+        fieldParent = new GameObject("FieldObject");
+        fieldParent.isStatic = true;
+        state = BlockState;
     }
 
     void Update()
     {
-        if (CsvAsset)
+        if (csvAsset)
         {
             Clear();
-            LoadCsv(CsvAsset);
-            CsvAsset = null;
+            LoadCsv(csvAsset);
+            csvAsset = null;
         }
         //UIの表示・非表示
-        if (Input.GetKeyDown(KeyCode.M)) DisplayUI = !DisplayUI;
+        if (Input.GetKeyDown(KeyCode.M)) displayUI = !displayUI;
         CursorMove();
-        State();
+        state();
     }
 
     void LateUpdate()
@@ -77,25 +77,25 @@ public class MakeMapManager : MonoBehaviour
 
     void BlockState()
     {
-        StateName = BlockStateName;
+        stateName = BlockStateName;
         //ブロックを増やす
         if (Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            AddBlock(new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+            AddBlock(new Vector2Int((int)cursorTransform.position.x, (int)cursorTransform.position.z));
         }
         //ブロックを減らす
         if (Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
         {
-            SubBlock(new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+            SubBlock(new Vector2Int((int)cursorTransform.position.x, (int)cursorTransform.position.z));
         }
         //壊れる、壊れないブロックを切り替える
         if (Input.GetKey(KeyCode.Z))
         {
-            SwitchStrong(true, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+            SwitchStrong(true, new Vector2Int((int)cursorTransform.position.x, (int)cursorTransform.position.z));
         }
         if (Input.GetKey(KeyCode.X))
         {
-            SwitchStrong(false, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+            SwitchStrong(false, new Vector2Int((int)cursorTransform.position.x, (int)cursorTransform.position.z));
         }
         //押した数字までブロックを増減する
         for (int i = 0; i < 8; ++i)
@@ -103,55 +103,55 @@ public class MakeMapManager : MonoBehaviour
             if (Input.GetKey((KeyCode)((int)KeyCode.Alpha0 + i)) ||
             Input.GetKey((KeyCode)((int)KeyCode.Keypad0 + i)))
             {
-                SetBlock(i, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+                SetBlock(i, new Vector2Int((int)cursorTransform.position.x, (int)cursorTransform.position.z));
                 break;
             }
         }
         //ステートの進行
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
-            State = PlayerState;
+            state = PlayerState;
         }
     }
 
     void PlayerState()
     {
-        StateName = PlayerStateName;
+        stateName = PlayerStateName;
         //押した数字のプレイヤーを生成する
         for (int i = 1; i < 5; ++i)
         {
             if (Input.GetKey((KeyCode)((int)KeyCode.Alpha0 + i)) ||
             Input.GetKey((KeyCode)((int)KeyCode.Keypad0 + i)))
             {
-                SetPlayer(i, new Vector2Int((int)CursorTransform.position.x, (int)CursorTransform.position.z));
+                SetPlayer(i, new Vector2Int((int)cursorTransform.position.x, (int)cursorTransform.position.z));
                 break;
             }
         }
         //ステートの後退
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            foreach (var player in Players)
+            foreach (var player in players)
             {
                 player.SetActive(false);
             }
-            State = BlockState;
+            state = BlockState;
         }
         //ステートの進行
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
-            foreach (var player in Players)
+            foreach (var player in players)
             {
                 if (player.activeSelf == false) return;
             }
             MakeCsv();
             Clear();
-            State = BlockState;
+            state = BlockState;
         }
     }
 
     void CursorMove()
     {
-        Vector3 position = CursorTransform.position;
+        Vector3 position = cursorTransform.position;
         //移動の間隔
         float moveTimeLimit = 0.3f;
         //Shiftキーを押すと速く移動する
@@ -161,156 +161,156 @@ public class MakeMapManager : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            CursorMoveTime[0] += Time.deltaTime;
-            if (CursorMoveTime[0] > moveTimeLimit)
+            cursorMoveTime[0] += Time.deltaTime;
+            if (cursorMoveTime[0] > moveTimeLimit)
             {
-                CursorMoveTime[0] = 0.0f;
+                cursorMoveTime[0] = 0.0f;
                 ++position.z;
             }
         }
         else
         {
-            CursorMoveTime[0] = moveTimeLimit;
+            cursorMoveTime[0] = moveTimeLimit;
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            CursorMoveTime[1] += Time.deltaTime;
-            if (CursorMoveTime[1] > moveTimeLimit)
+            cursorMoveTime[1] += Time.deltaTime;
+            if (cursorMoveTime[1] > moveTimeLimit)
             {
-                CursorMoveTime[1] = 0.0f;
+                cursorMoveTime[1] = 0.0f;
                 --position.z;
             }
         }
         else
         {
-            CursorMoveTime[1] = moveTimeLimit;
+            cursorMoveTime[1] = moveTimeLimit;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            CursorMoveTime[2] += Time.deltaTime;
-            if (CursorMoveTime[2] > moveTimeLimit)
+            cursorMoveTime[2] += Time.deltaTime;
+            if (cursorMoveTime[2] > moveTimeLimit)
             {
-                CursorMoveTime[2] = 0.0f;
+                cursorMoveTime[2] = 0.0f;
                 ++position.x;
             }
         }
         else
         {
-            CursorMoveTime[2] = moveTimeLimit;
+            cursorMoveTime[2] = moveTimeLimit;
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            CursorMoveTime[3] += Time.deltaTime;
-            if (CursorMoveTime[3] > moveTimeLimit)
+            cursorMoveTime[3] += Time.deltaTime;
+            if (cursorMoveTime[3] > moveTimeLimit)
             {
-                CursorMoveTime[3] = 0.0f;
+                cursorMoveTime[3] = 0.0f;
                 --position.x;
             }
         }
         else
         {
-            CursorMoveTime[3] = moveTimeLimit;
+            cursorMoveTime[3] = moveTimeLimit;
         }
         //右斜め上
         if (Input.GetKey(KeyCode.O))
         {
-            CursorMoveTime[4] += Time.deltaTime;
-            if (CursorMoveTime[4] > moveTimeLimit)
+            cursorMoveTime[4] += Time.deltaTime;
+            if (cursorMoveTime[4] > moveTimeLimit)
             {
-                CursorMoveTime[4] = 0.0f;
+                cursorMoveTime[4] = 0.0f;
                 ++position.z;
                 ++position.x;
             }
         }
         else
         {
-            CursorMoveTime[4] = moveTimeLimit;
+            cursorMoveTime[4] = moveTimeLimit;
         }
         //左斜め上
         if (Input.GetKey(KeyCode.I))
         {
-            CursorMoveTime[5] += Time.deltaTime;
-            if (CursorMoveTime[5] > moveTimeLimit)
+            cursorMoveTime[5] += Time.deltaTime;
+            if (cursorMoveTime[5] > moveTimeLimit)
             {
-                CursorMoveTime[5] = 0.0f;
+                cursorMoveTime[5] = 0.0f;
                 ++position.z;
                 --position.x;
             }
         }
         else
         {
-            CursorMoveTime[5] = moveTimeLimit;
+            cursorMoveTime[5] = moveTimeLimit;
         }
         //右斜め下
         if (Input.GetKey(KeyCode.L))
         {
-            CursorMoveTime[6] += Time.deltaTime;
-            if (CursorMoveTime[6] > moveTimeLimit)
+            cursorMoveTime[6] += Time.deltaTime;
+            if (cursorMoveTime[6] > moveTimeLimit)
             {
-                CursorMoveTime[6] = 0.0f;
+                cursorMoveTime[6] = 0.0f;
                 --position.z;
                 ++position.x;
             }
         }
         else
         {
-            CursorMoveTime[6] = moveTimeLimit;
+            cursorMoveTime[6] = moveTimeLimit;
         }
         //左斜め下
         if (Input.GetKey(KeyCode.K))
         {
-            CursorMoveTime[7] += Time.deltaTime;
-            if (CursorMoveTime[7] > moveTimeLimit)
+            cursorMoveTime[7] += Time.deltaTime;
+            if (cursorMoveTime[7] > moveTimeLimit)
             {
-                CursorMoveTime[7] = 0.0f;
+                cursorMoveTime[7] = 0.0f;
                 --position.z;
                 --position.x;
             }
         }
         else
         {
-            CursorMoveTime[7] = moveTimeLimit;
+            cursorMoveTime[7] = moveTimeLimit;
         }
         //位置の調整
-        position.Set(Mathf.Clamp(position.x, 0, BlockArray.GetLength(1) - 1),
-                    BlockArray[(int)CursorTransform.position.z, (int)CursorTransform.position.x] + 1,
-                    Mathf.Clamp(position.z, 0, BlockArray.GetLength(0) - 1));
+        position.Set(Mathf.Clamp(position.x, 0, blockArray.GetLength(1) - 1),
+                    blockArray[(int)cursorTransform.position.z, (int)cursorTransform.position.x] + 1,
+                    Mathf.Clamp(position.z, 0, blockArray.GetLength(0) - 1));
         //位置のセット
-        CursorTransform.position = position;
+        cursorTransform.position = position;
     }
 
     void AddBlock(Vector2Int position)
     {
         //既に最大なら何もしない
-        if (BlockArray[position.y, position.x] >= BlockMapSize.height_n) return;
+        if (blockArray[position.y, position.x] >= BlockMapSize.HeightN) return;
         //ブロックの数を増やす
-        ++BlockArray[position.y, position.x];
+        ++blockArray[position.y, position.x];
         //一番上にブロックを生成
-        BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1] =
-            Instantiate(IsStrongArray[position.y, position.x] ? StrongCube : Cubes[BlockArray[position.y, position.x] - 1]);
+        blockObjectArray[position.y, position.x, blockArray[position.y, position.x] - 1] =
+            Instantiate(isStrongArray[position.y, position.x] ? strongCube : cubes[blockArray[position.y, position.x] - 1]);
         //親オブジェクトをセット
-        BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1].transform.parent = FieldParent.transform;
-        BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1].transform.position =
-            new Vector3(position.x, BlockArray[position.y, position.x], position.y);
+        blockObjectArray[position.y, position.x, blockArray[position.y, position.x] - 1].transform.parent = fieldParent.transform;
+        blockObjectArray[position.y, position.x, blockArray[position.y, position.x] - 1].transform.position =
+            new Vector3(position.x, blockArray[position.y, position.x], position.y);
     }
 
     void SubBlock(Vector2Int position)
     {
         //既に0なら何もしない
-        if (BlockArray[position.y, position.x] <= 0) return;
+        if (blockArray[position.y, position.x] <= 0) return;
         //一番上のブロックを削除
-        Destroy(BlockObjectArray[position.y, position.x, BlockArray[position.y, position.x] - 1]);
+        Destroy(blockObjectArray[position.y, position.x, blockArray[position.y, position.x] - 1]);
         //ブロックの数を減らす
-        --BlockArray[position.y, position.x];
-        if (BlockArray[position.y, position.x] == 0)
+        --blockArray[position.y, position.x];
+        if (blockArray[position.y, position.x] == 0)
         {
-            IsStrongArray[position.y, position.x] = false;
+            isStrongArray[position.y, position.x] = false;
         }
     }
 
     void SetBlock(int blockNum, Vector2Int position)
     {
-        int blockNumber = BlockArray[position.y, position.x];
+        int blockNumber = blockArray[position.y, position.x];
         if (blockNumber == blockNum) return;
         int diff = blockNum - blockNumber;
         //差分だけ増減させる
@@ -328,13 +328,13 @@ public class MakeMapManager : MonoBehaviour
 
     void SwitchStrong(bool isToStrong, Vector2Int position)
     {
-        if (IsStrongArray[position.y, position.x] == isToStrong) return;
-        int blockNumber = BlockArray[position.y, position.x];
+        if (isStrongArray[position.y, position.x] == isToStrong) return;
+        int blockNumber = blockArray[position.y, position.x];
         if (blockNumber == 0) return;
         for (int i = 0; i < blockNumber; ++i)
             SubBlock(position);
         //壊れるか壊れないかを切り替える
-        IsStrongArray[position.y, position.x] = isToStrong;
+        isStrongArray[position.y, position.x] = isToStrong;
         for (int i = 0; i < blockNumber; ++i)
             AddBlock(position);
     }
@@ -343,22 +343,22 @@ public class MakeMapManager : MonoBehaviour
     {
         //プレイヤー同士の距離の制限
         const int DistanceLimit = 4;
-        if (BlockArray[position.y, position.x] == 0) return;
-        for (int i = 0; i < PlayerPositions.Length; ++i)
+        if (blockArray[position.y, position.x] == 0) return;
+        for (int i = 0; i < playerPositions.Length; ++i)
         {
             //距離範囲外かどうか
-            if (i != (number - 1) && Players[i].activeSelf &&
-            Mathf.Abs(PlayerPositions[i].x - position.x) < DistanceLimit &&
-            Mathf.Abs(PlayerPositions[i].y - position.y) < DistanceLimit)
+            if (i != (number - 1) && players[i].activeSelf &&
+            Mathf.Abs(playerPositions[i].x - position.x) < DistanceLimit &&
+            Mathf.Abs(playerPositions[i].y - position.y) < DistanceLimit)
             {
                 return;
             }
         }
-        Players[number - 1].SetActive(true);
-        Players[number - 1].transform.position = new Vector3(position.x, BlockArray[position.y, position.x] + 3, position.y);
-        PlayerPositions[number - 1] = position;
-        Players[number - 1].transform.LookAt(
-            new Vector3(BlockMapSize.row_n / 2.0f, Players[number - 1].transform.position.y, BlockMapSize.line_n / 2.0f));
+        players[number - 1].SetActive(true);
+        players[number - 1].transform.position = new Vector3(position.x, blockArray[position.y, position.x] + 3, position.y);
+        playerPositions[number - 1] = position;
+        players[number - 1].transform.LookAt(
+            new Vector3(BlockMapSize.RowN / 2.0f, players[number - 1].transform.position.y, BlockMapSize.LineN / 2.0f));
     }
 
     void CameraControl()
@@ -366,33 +366,33 @@ public class MakeMapManager : MonoBehaviour
         //追尾モード
         if (Input.GetKeyDown(KeyCode.T))
         {
-            IsTracking = true;
-            CameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
-            TrackingDistance = 60;
+            isTracking = true;
+            cameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
+            trackingDistance = 60;
         }
         //俯瞰モード
         if (Input.GetKeyDown(KeyCode.C))
         {
-            IsTracking = false;
-            CameraObject.transform.position = new Vector3(25.5f, 60, 25.5f);
-            CameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
+            isTracking = false;
+            cameraObject.transform.position = new Vector3(25.5f, 60, 25.5f);
+            cameraObject.transform.eulerAngles = new Vector3(90, 0, 0);
         }
         //デフォルトモード
         if (Input.GetKeyDown(KeyCode.V))
         {
-            IsTracking = false;
-            CameraObject.transform.position = CameraInitPosition;
-            CameraObject.transform.rotation = CameraInitRotation;
+            isTracking = false;
+            cameraObject.transform.position = cameraInitPosition;
+            cameraObject.transform.rotation = cameraInitRotation;
         }
-        if (IsTracking)
+        if (isTracking)
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll > 0) TrackingDistance -= ScrollSpeed;
-            if (scroll < 0) TrackingDistance += ScrollSpeed;
-            TrackingDistance = Mathf.Clamp(TrackingDistance, 10, 60);
-            Vector3 position = CursorTransform.position;
-            position.y = TrackingDistance;
-            CameraObject.transform.position = position;
+            if (scroll > 0) trackingDistance -= scrollSpeed;
+            if (scroll < 0) trackingDistance += scrollSpeed;
+            trackingDistance = Mathf.Clamp(trackingDistance, 10, 60);
+            Vector3 position = cursorTransform.position;
+            position.y = trackingDistance;
+            cameraObject.transform.position = position;
         }
     }
 
@@ -401,10 +401,10 @@ public class MakeMapManager : MonoBehaviour
         //フォルダの作成
         Directory.CreateDirectory(Path);
         string csvString = "";
-        for (int i = 0; i < BlockMapSize.line_n; ++i)
+        for (int i = 0; i < BlockMapSize.LineN; ++i)
         {
             bool first = true;
-            for (int j = 0; j < BlockMapSize.row_n; ++j)
+            for (int j = 0; j < BlockMapSize.RowN; ++j)
             {
                 //最初以外','をつける
                 if (!first)
@@ -413,16 +413,16 @@ public class MakeMapManager : MonoBehaviour
                 }
                 first = false;
                 //ブロックの数を取得
-                int blockNumber = BlockArray[i, j];
+                int blockNumber = blockArray[i, j];
                 if (blockNumber != 0)
                 {
                     //壊れないブロックなら+10
-                    blockNumber += IsStrongArray[i, j] ? 10 : 0;
+                    blockNumber += isStrongArray[i, j] ? 10 : 0;
                     //プレイヤーの位置かチェックする
-                    for (int k = 0; k < PlayerPositions.Length; ++k)
+                    for (int k = 0; k < playerPositions.Length; ++k)
                     {
                         //プレイヤーの位置ならそのプレイヤー*100加算する
-                        if (PlayerPositions[k] == new Vector2Int(j, i))
+                        if (playerPositions[k] == new Vector2Int(j, i))
                         {
                             blockNumber += (k + 1) * 100;
                             break;
@@ -446,11 +446,11 @@ public class MakeMapManager : MonoBehaviour
         //改行ごとに格納
         string[] lineString = textAsset.text.Split('\n');
         Vector2Int position = new Vector2Int();
-        for (int z = 0; z < BlockMapSize.line_n; z++)
+        for (int z = 0; z < BlockMapSize.LineN; z++)
         {
             //カンマごとに格納
             string[] rowString = lineString[z].Split(',');
-            for (int x = 0; x < BlockMapSize.line_n; x++)
+            for (int x = 0; x < BlockMapSize.LineN; x++)
             {
                 //string型をint型にパース
                 int number = int.Parse(rowString[x]);
@@ -473,14 +473,14 @@ public class MakeMapManager : MonoBehaviour
 
     void Clear()
     {
-        CursorTransform.position = Vector3.zero;
-        BlockArray = new int[BlockMapSize.line_n, BlockMapSize.row_n];
-        IsStrongArray = new bool[BlockMapSize.line_n, BlockMapSize.row_n];
-        foreach (var block in BlockObjectArray)
+        cursorTransform.position = Vector3.zero;
+        blockArray = new int[BlockMapSize.LineN, BlockMapSize.RowN];
+        isStrongArray = new bool[BlockMapSize.LineN, BlockMapSize.RowN];
+        foreach (var block in blockObjectArray)
         {
             Destroy(block);
         }
-        foreach (var player in Players)
+        foreach (var player in players)
         {
             player.SetActive(false);
         }
@@ -488,19 +488,19 @@ public class MakeMapManager : MonoBehaviour
 
     void OnGUI()
     {
-        if (DisplayUI)
+        if (displayUI)
         {
-            if (StateName == BlockStateName)
+            if (stateName == BlockStateName)
             {
-                GUI.Label(new Rect(300, 20, 1000, 1000), StateName +
+                GUI.Label(new Rect(300, 20, 1000, 1000), stateName +
                 "\n+ : ブロックを一段増やす\n- : ブロックを一段減らす\nWASD,矢印 : 移動(Shiftを押すと高速移動)\n" +
                 "IOKL : 斜め移動(Shiftを押すと高速移動)\nZ : 壊れないブロックに変換\nX : 壊れるブロックに変換\n" +
                 "0~7 : 押した数の段数にする\nEnter : プレイヤーをセットするステートに移行\n" +
                 "C : 上からマップを見る\nV : 初期位置からマップを見る\nT : カメラが追尾する(マウスホイールで拡大縮小)");
             }
-            else if (StateName == PlayerStateName)
+            else if (stateName == PlayerStateName)
             {
-                GUI.Label(new Rect(300, 20, 1000, 1000), StateName +
+                GUI.Label(new Rect(300, 20, 1000, 1000), stateName +
                 "\nWASD,矢印 : 移動(Shiftを押すと高速移動)\nIOKL : 斜め移動(Shiftを押すと高速移動)\n" +
                 "1~4 : 押した数のプレイヤーをセットする\n(近すぎるとセットできません)\n" +
                 "Enter : CSVを生成し、マップをクリア\nBackSpace : ブロックをセットするステートに戻る\n" +
@@ -508,8 +508,8 @@ public class MakeMapManager : MonoBehaviour
             }
         }
         GUI.Label(new Rect(20, 350, 1000, 1000),
-         "縦：" + (CursorTransform.position.z + 1).ToString("##") + "\n" +
-         "横：" + (CursorTransform.position.x + 1).ToString("##"));
+         "縦：" + (cursorTransform.position.z + 1).ToString("##") + "\n" +
+         "横：" + (cursorTransform.position.x + 1).ToString("##"));
         GUI.Label(new Rect(20, 400, 1000, 1000), "M : 説明の表示・非表示");
     }
 #endif

@@ -7,32 +7,32 @@ using UnityEngine.Profiling;
 public class DebugProfiling : MonoBehaviour
 {
     [SerializeField, Header("表示する位置")]
-    Rect RenderRect = new Rect(20, 20, 200, 200);
+    Rect renderRect = new Rect(20, 20, 200, 200);
     [SerializeField, Header("文字サイズ")]
-    int CharSize = 20;
+    int charSize = 20;
     [SerializeField, Header("文字色")]
-    Color CharColor = Color.white;
+    Color charColor = Color.white;
     [SerializeField]
-    float UpdateInterval = 0.5f;
+    float updateInterval = 0.5f;
 
-    float TimeCount;
+    float timeCount;
     int count = 0;
     float fps = 0.0f;
 
     void Start()
     {
-        TimeCount = UpdateInterval;
+        timeCount = updateInterval;
     }
 
     void Update()
     {
-        TimeCount += Time.unscaledDeltaTime;
+        timeCount += Time.unscaledDeltaTime;
         ++count;
-        if (TimeCount > UpdateInterval)
+        if (timeCount > updateInterval)
         {
-            fps = count / TimeCount;
+            fps = count / timeCount;
             count = 0;
-            TimeCount = 0.0f;
+            timeCount = 0.0f;
         }
     }
 
@@ -41,9 +41,9 @@ public class DebugProfiling : MonoBehaviour
     /// </summary>
     void OnGUI()
     {
-        GUI.skin.label.fontSize = CharSize;
-        GUI.color = CharColor;
-        GUI.Label(RenderRect,
+        GUI.skin.label.fontSize = charSize;
+        GUI.color = charColor;
+        GUI.Label(renderRect,
         "FPS:" + fps.ToString("#.##"));
     }
 }

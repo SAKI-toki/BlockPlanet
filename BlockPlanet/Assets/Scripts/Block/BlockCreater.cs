@@ -6,11 +6,11 @@
 public class BlockCreater : Singleton<BlockCreater>
 {
     [SerializeField]
-    GameObject[] Players = new GameObject[4];
+    GameObject[] players = new GameObject[4];
     [SerializeField]
-    GameObject[] CubeLists = new GameObject[BlockMapSize.height_n];
+    GameObject[] cubeLists = new GameObject[BlockMapSize.HeightN];
     [SerializeField]
-    GameObject[] StrongCubeLists = new GameObject[BlockMapSize.height_n];
+    GameObject[] strongCubeLists = new GameObject[BlockMapSize.HeightN];
 
     //設置位置
     Vector3 position = new Vector3();
@@ -19,6 +19,7 @@ public class BlockCreater : Singleton<BlockCreater>
     [SerializeField]
     public Material[] mats = new Material[8];
 
+    [System.NonSerialized]
     public int maxPlayerNumber = 4;
 
     GameObject cubeList;
@@ -26,24 +27,24 @@ public class BlockCreater : Singleton<BlockCreater>
     /// <summary>
     /// フィールドの生成
     /// </summary>
-    /// <param name="CsvName">読み込むCSVの名前</param>
+    /// <param name="csvName">読み込むCSVの名前</param>
     /// <param name="parent">生成したブロックの親オブジェクト</param>
     /// <param name="blockMap">ブロックマップ</param>
-    /// <param name="LookatObject">注視点</param>
+    /// <param name="lookatObject">注視点</param>
     /// <param name="currentScene">現在のシーン</param>
-    public void CreateField(string CsvName, Transform parent, BlockMap blockMap,
-    GameObject LookatObject, SceneEnum currentScene = SceneEnum.Other)
+    public void CreateField(string csvName, Transform parent, BlockMap blockMap,
+    GameObject lookatObject, SceneEnum currentScene = SceneEnum.Other)
     {
         //csvの読み込み
-        TextAsset csvfile = Resources.Load("csv/" + CsvName) as TextAsset;
+        TextAsset csvfile = Resources.Load("csv/" + csvName) as TextAsset;
         //改行ごとに格納
         string[] lineString = csvfile.text.Split('\n');
 
-        for (int z = 0; z < BlockMapSize.line_n; z++)
+        for (int z = 0; z < BlockMapSize.LineN; z++)
         {
             //カンマごとに格納
             string[] rowString = lineString[z].Split(',');
-            for (int x = 0; x < BlockMapSize.line_n; x++)
+            for (int x = 0; x < BlockMapSize.LineN; x++)
             {
                 //string型をint型にパース
                 int number = int.Parse(rowString[x]);
@@ -58,7 +59,7 @@ public class BlockCreater : Singleton<BlockCreater>
                         currentScene == SceneEnum.Result)
                     {
                         position.y = 20;
-                        GeneratePlayer(playerNumber - 1, currentScene, LookatObject);
+                        GeneratePlayer(playerNumber - 1, currentScene, lookatObject);
                     }
                     number -= playerNumber * 100;
                 }
@@ -72,17 +73,19 @@ public class BlockCreater : Singleton<BlockCreater>
     /// プレイヤーの生成
     /// </summary>
     /// <param name="playerNumber">プレイヤーの番号</param>
+    /// <param name="scene">シーン</param>
+    /// <param name="lookatObject">注視オブジェクト</param>
     void GeneratePlayer(int playerNumber, SceneEnum scene, GameObject lookatObject)
     {
         if (maxPlayerNumber - 1 < playerNumber)
         {
             return;
         }
-        GameObject player = Instantiate(Players[playerNumber], position, Quaternion.identity);
+        GameObject player = Instantiate(players[playerNumber], position, Quaternion.identity);
         //ゲームならマップの中心を向かせる
         if (scene == SceneEnum.Game)
         {
-            player.transform.LookAt(new Vector3(BlockMapSize.row_n / 2.0f, player.transform.position.y, BlockMapSize.line_n / 2.0f));
+            player.transform.LookAt(new Vector3(BlockMapSize.RowN / 2.0f, player.transform.position.y, BlockMapSize.LineN / 2.0f));
         }
         //リザルトならカメラに向かせる
         else if (scene == SceneEnum.Result)
@@ -106,7 +109,7 @@ public class BlockCreater : Singleton<BlockCreater>
         //壊れるブロック
         if (number < 10)
         {
-            cubeList = Instantiate(CubeLists[number - 1], position, Quaternion.identity);
+            cubeList = Instantiate(cubeLists[number - 1], position, Quaternion.identity);
             if (parent != null) cubeList.transform.parent = parent;
             if (blockMap != null)
             {
@@ -119,7 +122,7 @@ public class BlockCreater : Singleton<BlockCreater>
         //壊れないブロック
         else
         {
-            cubeList = Instantiate(StrongCubeLists[number - 11], position, Quaternion.identity);
+            cubeList = Instantiate(strongCubeLists[number - 11], position, Quaternion.identity);
             if (parent != null) cubeList.transform.parent = parent;
             if (blockMap != null)
             {
@@ -148,9 +151,9 @@ public class BlockCreater : Singleton<BlockCreater>
 
     public void AutoGenerate(int[,] blockArray, Transform parent, BlockMap blockMap)
     {
-        for (int i = 0; i < BlockMapSize.line_n; i++)
+        for (int i = 0; i < BlockMapSize.LineN; i++)
         {
-            for (int j = 0; j < BlockMapSize.row_n; j++)
+            for (int j = 0; j < BlockMapSize.RowN; j++)
             {
                 int number = blockArray[i, j];
                 position.Set(j, 0, i);
