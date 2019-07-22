@@ -7,20 +7,20 @@ using UnityEngine;
 public class Singleton<T> : MyMonoBehaviour where T : MyMonoBehaviour
 {
     //インスタンス
-    static T m_Instance = default(T);
+    static T instance = default(T);
     //インスタンス化フラグ
-    static bool m_IsInstantiate = false;
+    static bool isInstantiate = false;
 
     void Start()
     {
         //インスタンス化は一度だけ
-        if (!m_IsInstantiate) Instantiate();
+        if (!isInstantiate) Instantiate();
     }
 
     void Update()
     {
-        if (!m_IsInstantiate) Instantiate();
-        m_Instance.MyUpdate();
+        if (!isInstantiate) Instantiate();
+        instance.MyUpdate();
     }
 
     /// <summary>
@@ -29,8 +29,8 @@ public class Singleton<T> : MyMonoBehaviour where T : MyMonoBehaviour
     /// <returns>インスタンス</returns>
     public static T GetInstance()
     {
-        if (!m_IsInstantiate) Instantiate();
-        return m_Instance;
+        if (!isInstantiate) Instantiate();
+        return instance;
     }
 
     static void Instantiate()
@@ -40,9 +40,9 @@ public class Singleton<T> : MyMonoBehaviour where T : MyMonoBehaviour
         if (instanceObjects.Length == 1)
         {
             //インスタンス化フラグをtrueにする
-            m_IsInstantiate = true;
-            m_Instance = (T)instanceObjects[0];
-            m_Instance.MyStart();
+            isInstantiate = true;
+            instance = (T)instanceObjects[0];
+            instance.MyStart();
         }
         //複数見つかった場合はエラーを出す
         else if (instanceObjects.Length > 1)

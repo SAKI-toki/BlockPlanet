@@ -6,72 +6,72 @@ using nn.hid;
 public class SwitchManager : Singleton<SwitchManager>
 {
     //使用するID
-    NpadId[] m_NpadIds = { NpadId.No1, NpadId.No2, NpadId.No3, NpadId.No4 };
+    NpadId[] npadIds = { NpadId.No1, NpadId.No2, NpadId.No3, NpadId.No4 };
 
     //使用するコントローラーのスタイル
-    NpadStyle m_NpadStyles = NpadStyle.JoyLeft | NpadStyle.JoyRight;
+    NpadStyle npadStyles = NpadStyle.JoyLeft | NpadStyle.JoyRight;
 
     //接続されているかどうか
-    static bool[] m_IsConnect;
+    static bool[] isConnect;
 
     public override void MyStart()
     {
         //コントローラーの初期化
         Npad.Initialize();
         //サポートするタイプをセット
-        Npad.SetSupportedIdType(m_NpadIds);
+        Npad.SetSupportedIdType(npadIds);
         //サポートするスタイルをセット
-        Npad.SetSupportedStyleSet(m_NpadStyles);
+        Npad.SetSupportedStyleSet(npadStyles);
         //配列の要素確保
-        m_IsConnect = new bool[m_NpadIds.Length];
+        isConnect = new bool[npadIds.Length];
         //入力の初期化
-        SwitchInput.InputInit(m_NpadIds.Length);
+        SwitchInput.InputInit(npadIds.Length);
     }
 
     public override void MyUpdate()
     {
-        for (int i = 0; i < m_NpadIds.Length; ++i)
+        for (int i = 0; i < npadIds.Length; ++i)
         {
             //接続状態の更新
             ConnectUpdate(i);
             //入力情報の更新
-            SwitchInput.InputUpdate(i, m_NpadIds[i]);
+            SwitchInput.InputUpdate(i, npadIds[i]);
         }
     }
 
     /// <summary>
     /// 接続状態の更新
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
+    /// <param name="index">コントローラーの番号</param>
     /// <returns></returns>
-    void ConnectUpdate(int _Index)
+    void ConnectUpdate(int index)
     {
         //スタイルがNoneならfalse
-        m_IsConnect[_Index] = (Npad.GetStyleSet(m_NpadIds[_Index]) != NpadStyle.None);
+        isConnect[index] = (Npad.GetStyleSet(npadIds[index]) != NpadStyle.None);
     }
 
     /// <summary>
     /// 接続されているか
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
+    /// <param name="index">コントローラーの番号</param>
     /// <returns>接続されていたらtrue</returns>
-    public bool IsConnect(int _Index)
+    public bool IsConnect(int index)
     {
 #if UNITY_EDITOR
-        return UnityEngine.Input.GetJoystickNames().Length >= _Index + 1 || _Index == 0;
+        return UnityEngine.Input.GetJoystickNames().Length >= index + 1 || index == 0;
 #else
-        return m_IsConnect[_Index];
+        return isConnect[index];
 #endif
     }
 
     /// <summary>
     /// NpadIdのゲッタ
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
+    /// <param name="index">コントローラーの番号</param>
     /// <returns>NpadId</returns>
-    public NpadId GetNpadId(int _Index)
+    public NpadId GetNpadId(int index)
     {
-        return m_NpadIds[_Index];
+        return npadIds[index];
     }
 
     /// <summary>
@@ -80,6 +80,6 @@ public class SwitchManager : Singleton<SwitchManager>
     /// <returns>NpadStyle</returns>
     public NpadStyle GetNpadStyle()
     {
-        return m_NpadStyles;
+        return npadStyles;
     }
 }

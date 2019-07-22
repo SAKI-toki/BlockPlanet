@@ -6,66 +6,66 @@ using nn.hid;
 static public class SwitchVibration
 {
     //デバイスのハンドラ
-    static VibrationDeviceHandle[] m_VibrationDeviceHandles = new VibrationDeviceHandle[1];
+    static VibrationDeviceHandle[] vibrationDeviceHandles = new VibrationDeviceHandle[1];
     //振動の値
-    static VibrationValue m_VibrationValue = VibrationValue.Make();
+    static VibrationValue vibrationValue = VibrationValue.Make();
 
     /// <summary>
     /// 低周波の振動
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
-    /// <param name="_LowPow">振動の強さ</param>
-    static public void LowVibration(int _Index, float _LowPow)
+    /// <param name="index">コントローラーの番号</param>
+    /// <param name="lowPow">振動の強さ</param>
+    static public void LowVibration(int index, float lowPow)
     {
-        VibrationImpl(_Index, UnityEngine.Mathf.Clamp01(_LowPow), 0.0f);
+        VibrationImpl(index, UnityEngine.Mathf.Clamp01(lowPow), 0.0f);
     }
 
     /// <summary>
     /// 高周波の振動
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
-    /// <param name="_HighPow">振動の強さ</param>
-    static public void HighVibration(int _Index, float _HighPow)
+    /// <param name="index">コントローラーの番号</param>
+    /// <param name="highPow">振動の強さ</param>
+    static public void HighVibration(int index, float highPow)
     {
-        VibrationImpl(_Index, 0.0f, UnityEngine.Mathf.Clamp01(_HighPow));
+        VibrationImpl(index, 0.0f, UnityEngine.Mathf.Clamp01(highPow));
     }
 
     /// <summary>
     /// 低周波と高周波の振動
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
-    /// <param name="_LowPow">低周波の振動の強さ</param>
-    /// <param name="_HighPow">高周波の振動の強さ</param>
-    static public void LowAndHighVibration(int _Index, float _LowPow, float _HighPow)
+    /// <param name="index">コントローラーの番号</param>
+    /// <param name="lowPow">低周波の振動の強さ</param>
+    /// <param name="highPow">高周波の振動の強さ</param>
+    static public void LowAndHighVibration(int index, float lowPow, float highPow)
     {
-        VibrationImpl(_Index, UnityEngine.Mathf.Clamp01(_LowPow), UnityEngine.Mathf.Clamp01(_HighPow));
+        VibrationImpl(index, UnityEngine.Mathf.Clamp01(lowPow), UnityEngine.Mathf.Clamp01(highPow));
     }
 
     /// <summary>
     /// 振動の実装部
     /// </summary>
-    /// <param name="_Index">コントローラーの番号</param>
-    /// <param name="_LowPow">低周波の振動の強さ</param>
-    /// <param name="_HighPow">高周波の振動の強さ</param>
-    static void VibrationImpl(int _Index, float _LowPow, float _HighPow)
+    /// <param name="index">コントローラーの番号</param>
+    /// <param name="lowPow">低周波の振動の強さ</param>
+    /// <param name="highPow">高周波の振動の強さ</param>
+    static void VibrationImpl(int index, float lowPow, float highPow)
     {
         //未接続なら何もしない
-        if (!SwitchManager.GetInstance().IsConnect(_Index)) return;
+        if (!SwitchManager.GetInstance().IsConnect(index)) return;
         //IDの取得
-        NpadId npadId = SwitchManager.GetInstance().GetNpadId(_Index);
+        NpadId npadId = SwitchManager.GetInstance().GetNpadId(index);
         //スタイルの取得
         NpadStyle npadStyle = Npad.GetStyleSet(npadId);
         //デバイスの数を取得(0か1のみ取得する)
         int deviceCount = Vibration.GetDeviceHandles(
-            m_VibrationDeviceHandles, 1, npadId, npadStyle);
+            vibrationDeviceHandles, 1, npadId, npadStyle);
         //デバイスの数が1じゃない場合は何もしない
         if (deviceCount != 1) return;
         //パワーをセット
-        m_VibrationValue.amplitudeLow = _LowPow;
-        m_VibrationValue.amplitudeHigh = _HighPow;
+        vibrationValue.amplitudeLow = lowPow;
+        vibrationValue.amplitudeHigh = highPow;
         //デバイスの初期化
-        Vibration.InitializeDevice(m_VibrationDeviceHandles[0]);
+        Vibration.InitializeDevice(vibrationDeviceHandles[0]);
         //振動の値をセット
-        Vibration.SendValue(m_VibrationDeviceHandles[0], m_VibrationValue);
+        Vibration.SendValue(vibrationDeviceHandles[0], vibrationValue);
     }
 }
