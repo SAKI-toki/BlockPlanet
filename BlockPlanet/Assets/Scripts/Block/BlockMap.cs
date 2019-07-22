@@ -2,12 +2,12 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// ƒuƒƒbƒN‚ÌOŸŒ³”z—ñ
+/// ãƒ–ãƒ­ãƒƒã‚¯ã®ä¸‰æ¬¡å…ƒé…åˆ—
 /// </summary>
 public class BlockMap
 {
     /// <summary>
-    /// ƒuƒƒbƒN‚Ìî•ñ
+    /// ãƒ–ãƒ­ãƒƒã‚¯ã®æƒ…å ±
     /// </summary>
     protected class BlockInfo
     {
@@ -20,7 +20,7 @@ public class BlockMap
         public CombineInstance cmesh = new CombineInstance();
         public int materialNumber = 0;
     }
-    //ƒTƒCƒY•ª‚Ìƒ}ƒbƒv‚ğ—pˆÓ‚·‚é
+    //ã‚µã‚¤ã‚ºåˆ†ã®ãƒãƒƒãƒ—ã‚’ç”¨æ„ã™ã‚‹
     protected BlockInfo[,,] blockArray = new BlockInfo[BlockMapSize.LineN, BlockMapSize.RowN, BlockMapSize.HeightN];
     bool isInit = false;
     void Initialize()
@@ -39,7 +39,7 @@ public class BlockMap
     }
 
     /// <summary>
-    /// Renderer‚ÌXV
+    /// Rendererã®æ›´æ–°
     /// </summary>
     public void BlockRendererUpdate()
     {
@@ -49,7 +49,7 @@ public class BlockMap
             {
                 for (int k = 1; k < blockArray.GetLength(2) - 1; ++k)
                 {
-                    //ˆÍ‚Ü‚ê‚Ä‚¢‚½‚çRenderer‚ğOff‚É‚·‚é
+                    //å›²ã¾ã‚Œã¦ã„ãŸã‚‰Rendererã‚’Offã«ã™ã‚‹
                     if (IsSurround(i, j, k))
                     {
                         blockArray[i, j, k].renderer.enabled = false;
@@ -60,7 +60,7 @@ public class BlockMap
     }
 
     /// <summary>
-    /// Physics‚ğOff‚É‚·‚é
+    /// Physicsã‚’Offã«ã™ã‚‹
     /// </summary>
     public void BlockPhysicsOff()
     {
@@ -72,7 +72,7 @@ public class BlockMap
     }
 
     /// <summary>
-    /// renderer‚ğOff‚É‚·‚é
+    /// rendererã‚’Offã«ã™ã‚‹
     /// </summary>
     public void BlockRendererOff()
     {
@@ -84,23 +84,23 @@ public class BlockMap
     }
 
     /// <summary>
-    /// ƒuƒƒbƒN‚ÌƒZƒbƒg
+    /// ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚»ãƒƒãƒˆ
     /// </summary>
-    /// <param name="line">c</param>
-    /// <param name="row">‰¡</param>
-    /// <param name="height">‚‚³</param>
-    /// <param name="block">ƒuƒƒbƒN‚ÌƒIƒuƒWƒFƒNƒg</param>
+    /// <param name="line">ç¸¦</param>
+    /// <param name="row">æ¨ª</param>
+    /// <param name="height">é«˜ã•</param>
+    /// <param name="block">ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ</param>
     public void SetBlock(int line, int row, int height, GameObject block)
     {
         if (!isInit) Initialize();
-        //”ÍˆÍŠO‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚·‚é
+        //ç¯„å›²å¤–ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
         if (!RangeCheck(line, row, height))
         {
-            Debug.LogError("”ÍˆÍŠO");
+            Debug.LogError("ç¯„å›²å¤–");
             return;
         }
         if (block == null) return;
-        //Šeî•ñ‚ğƒNƒ‰ƒX‚ÉŠi”[
+        //å„æƒ…å ±ã‚’ã‚¯ãƒ©ã‚¹ã«æ ¼ç´
         blockArray[line, row, height].isEnable = true;
         blockArray[line, row, height].renderer = block.GetComponent<MeshRenderer>();
         blockArray[line, row, height].meshFilter = block.GetComponent<MeshFilter>();
@@ -114,9 +114,9 @@ public class BlockMap
     }
 
     /// <summary>
-    /// ƒuƒƒbƒN‚ª‰ó‚ê‚½‚Æ‚«‚ÉÀs‚·‚é
+    /// ãƒ–ãƒ­ãƒƒã‚¯ãŒå£Šã‚ŒãŸã¨ãã«å®Ÿè¡Œã™ã‚‹
     /// </summary>
-    /// <param name="blockNum">ƒuƒƒbƒN‚Ì”Ô†</param>
+    /// <param name="blockNum">ãƒ–ãƒ­ãƒƒã‚¯ã®ç•ªå·</param>
     public virtual void BreakBlock(BlockNumber blockNum)
     {
         blockArray[blockNum.line, blockNum.row, blockNum.height].isEnable = false;
@@ -159,15 +159,15 @@ public class BlockMap
     }
 
     /// <summary>
-    /// ˆÍ‚İ”»’è
+    /// å›²ã¿åˆ¤å®š
     /// </summary>
-    /// <param name="line">c</param>
-    /// <param name="row">‰¡</param>
-    /// <param name="height">‚‚³</param>
-    /// <returns>ˆÍ‚Ü‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©</returns>
+    /// <param name="line">ç¸¦</param>
+    /// <param name="row">æ¨ª</param>
+    /// <param name="height">é«˜ã•</param>
+    /// <returns>å›²ã¾ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹</returns>
     bool IsSurround(int line, int row, int height)
     {
-        //”ÍˆÍŠOƒ`ƒFƒbƒN
+        //ç¯„å›²å¤–ãƒã‚§ãƒƒã‚¯
         if (line == 0 || row == 0 || height == 0 ||
         line == blockArray.GetLength(0) - 1 ||
         row == blockArray.GetLength(1) - 1 ||

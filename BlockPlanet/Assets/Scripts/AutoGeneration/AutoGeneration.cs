@@ -1,22 +1,26 @@
 using UnityEngine;
 
 /// <summary>
-/// ©“®‚Åƒ}ƒbƒv‚ğ¶¬‚·‚é
+/// è‡ªå‹•ã§ãƒãƒƒãƒ—ã‚’ç”Ÿæˆã™ã‚‹
 /// </summary>
 static public class AutoGeneration
 {
+    //ãƒãƒƒãƒ—å…¨ä½“ã®é…åˆ—,Generateé–¢æ•°ã§è¿”ã™é…åˆ—
     static int[,] blockArray = new int[BlockMapSize.LineN, BlockMapSize.RowN];
+    //ä¸Šã®ãƒãƒƒãƒ—ã®4åˆ†ã®1ã®é…åˆ—
     static int[,] oneQuaterBlockArray = new int[BlockMapSize.LineN / 2, BlockMapSize.RowN / 2];
 
     /// <summary>
-    /// ©“®¶¬
+    /// è‡ªå‹•ç”Ÿæˆ
     /// </summary>
-    /// <param name="maxHeightDiff">Å‘å‚Ì’i·‚Ì·</param>
-    /// <param name="sameHeightPercent">“¯‚¶‚‚³‚É‚È‚éŠm—¦</param>
-    /// <returns>¶¬‚µ‚½”z—ñ</returns>
+    /// <param name="maxHeightDiff">æœ€å¤§ã®æ®µå·®ã®å·®</param>
+    /// <param name="sameHeightPercent">åŒã˜é«˜ã•ã«ãªã‚‹ç¢ºç‡</param>
+    /// <returns>ç”Ÿæˆã—ãŸé…åˆ—</returns>
     static public int[,] Generate(int maxHeightDiff, float sameHeightPercent)
     {
+        //ãƒ©ãƒ³ãƒ€ãƒ ã«è§’ã®é«˜ã•ã‚’æ±ºã‚ã‚‹
         int randomPlayerPositionRandomHeight = Random.Range(1, BlockMapSize.HeightN + 1);
+        //è§’ã«å€¤ã‚’ã‚»ãƒƒãƒˆ
         for (int i = 0; i < 3; ++i)
         {
             for (int j = 0; j < 3; ++j)
@@ -25,20 +29,18 @@ static public class AutoGeneration
             }
         }
 
-        //ƒvƒŒƒCƒ„[‚ÌˆÊ’u
-        oneQuaterBlockArray[1, 1] += 100;
-        //ƒ‰ƒ“ƒ_ƒ€‚ÉƒuƒƒbƒN‚ğ”z’u‚·‚é
+        //ãƒ©ãƒ³ãƒ€ãƒ ã«ãƒ–ãƒ­ãƒƒã‚¯ã‚’é…ç½®ã™ã‚‹
         for (int i = 0; i < oneQuaterBlockArray.GetLength(0); ++i)
         {
             for (int j = 0; j < oneQuaterBlockArray.GetLength(1); ++j)
             {
-                //‰Šú‚Éİ’è‚µ‚½‚Æ‚±‚ë‚Í‰½‚à‚µ‚È‚¢
+                //åˆæœŸã«è¨­å®šã—ãŸã¨ã“ã‚ã¯ä½•ã‚‚ã—ãªã„
                 if (i == 0 && (j == 0 || j == 1 || j == 2) ||
                 i == 1 && (j == 0 || j == 1 || j == 2) ||
                 i == 2 && (j == 0 || j == 1 || j == 2)) continue;
-                //‚‚³‚Ì‡Œv
+                //é«˜ã•ã®åˆè¨ˆ
                 int heightSum = 0;
-                //‰ó‚ê‚È‚¢ƒuƒƒbƒN‚Ì‡Œv
+                //å£Šã‚Œãªã„ãƒ–ãƒ­ãƒƒã‚¯ã®åˆè¨ˆ
                 int strongNum = 0;
                 int blockCount = 0;
                 if (i != 0)
@@ -68,39 +70,43 @@ static public class AutoGeneration
                     }
                     ++blockCount;
                 }
-                //•½‹Ï‚Ì‚‚³‚É‚·‚é
+                //å¹³å‡ã®é«˜ã•ã«ã™ã‚‹
                 if (Random.Range(0.0f, 1.0f) <= sameHeightPercent)
                 {
                     oneQuaterBlockArray[i, j] = Mathf.RoundToInt(1.0f * heightSum / blockCount);
                 }
-                //•½‹Ï‚Ì’l‚©‚çw’è‚Ì”ÍˆÍ“à‚Éû‚Ü‚é‚æ‚¤‚É‚‚³‚ğİ’è‚·‚é
+                //å¹³å‡ã®å€¤ã‹ã‚‰æŒ‡å®šã®ç¯„å›²å†…ã«åã¾ã‚‹ã‚ˆã†ã«é«˜ã•ã‚’è¨­å®šã™ã‚‹
                 else
                 {
                     oneQuaterBlockArray[i, j] = Mathf.Clamp(Random.Range(-maxHeightDiff, maxHeightDiff + 1) + heightSum / blockCount,
                         0, BlockMapSize.HeightN);
                 }
+                //çµæœãŒ0ãªã‚‰continue
                 if (oneQuaterBlockArray[i, j] == 0) continue;
-                //‰ó‚ê‚È‚¢ƒuƒƒbƒN
+                //å£Šã‚Œãªã„ãƒ–ãƒ­ãƒƒã‚¯
                 if (Random.Range(0.0f, 1.0f) < 0.1f + 0.4f * strongNum / blockCount)
                 {
                     oneQuaterBlockArray[i, j] += 10;
                 }
             }
         }
-        //l•ª‚Ìˆê‚ğƒRƒs[
+        //4åˆ†ã®1ã‚’æ®‹ã‚Šã®4åˆ†ã®3ã«ã‚³ãƒ”ãƒ¼
         for (int i = 0; i < oneQuaterBlockArray.GetLength(0); ++i)
         {
             for (int j = 0; j < oneQuaterBlockArray.GetLength(1); ++j)
             {
                 blockArray[i, j] = oneQuaterBlockArray[i, j];
-                blockArray[i, BlockMapSize.RowN - j - 1] =
-                    oneQuaterBlockArray[i, j] + ((oneQuaterBlockArray[i, j] > 100) ? 100 : 0);
-                blockArray[BlockMapSize.LineN - i - 1, j] =
-                    oneQuaterBlockArray[i, j] + ((oneQuaterBlockArray[i, j] > 100) ? 200 : 0);
-                blockArray[BlockMapSize.LineN - i - 1, BlockMapSize.RowN - j - 1] =
-                    oneQuaterBlockArray[i, j] + ((oneQuaterBlockArray[i, j] > 100) ? 300 : 0);
+                blockArray[i, BlockMapSize.RowN - j - 1] = oneQuaterBlockArray[i, j];
+                blockArray[BlockMapSize.LineN - i - 1, j] = oneQuaterBlockArray[i, j];
+                blockArray[BlockMapSize.LineN - i - 1, BlockMapSize.RowN - j - 1] = oneQuaterBlockArray[i, j];
             }
         }
+
+        //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®
+        blockArray[BlockMapSize.LineN - 2, 1] = 100;
+        blockArray[BlockMapSize.LineN - 2, BlockMapSize.RowN - 2] = 200;
+        blockArray[1, 1] = 300;
+        blockArray[1, BlockMapSize.RowN - 2] = 400;
 
         return blockArray;
     }

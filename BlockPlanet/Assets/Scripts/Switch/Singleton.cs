@@ -1,19 +1,19 @@
 using UnityEngine;
 
 /// <summary>
-/// Œp³‚·‚é‚¾‚¯‚ÅƒVƒ“ƒOƒ‹ƒgƒ“‰»‚·‚é
+/// ç¶™æ‰¿ã™ã‚‹ã ã‘ã§ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–ã™ã‚‹
 /// </summary>
-/// <typeparam name="T">ƒVƒ“ƒOƒ‹ƒgƒ“‰»‚·‚éƒNƒ‰ƒX‚ÌŒ^</typeparam>
+/// <typeparam name="T">ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³åŒ–ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®å‹</typeparam>
 public class Singleton<T> : MyMonoBehaviour where T : MyMonoBehaviour
 {
-    //ƒCƒ“ƒXƒ^ƒ“ƒX
+    //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
     static T instance = default(T);
-    //ƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒtƒ‰ƒO
+    //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ•ãƒ©ã‚°
     static bool isInstantiate = false;
 
     void Start()
     {
-        //ƒCƒ“ƒXƒ^ƒ“ƒX‰»‚Íˆê“x‚¾‚¯
+        //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ã¯ä¸€åº¦ã ã‘
         if (!isInstantiate) Instantiate();
     }
 
@@ -24,9 +24,9 @@ public class Singleton<T> : MyMonoBehaviour where T : MyMonoBehaviour
     }
 
     /// <summary>
-    /// ƒCƒ“ƒXƒ^ƒ“ƒX‚ÌƒQƒbƒ^
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ã‚²ãƒƒã‚¿
     /// </summary>
-    /// <returns>ƒCƒ“ƒXƒ^ƒ“ƒX</returns>
+    /// <returns>ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹</returns>
     public static T GetInstance()
     {
         if (!isInstantiate) Instantiate();
@@ -36,30 +36,30 @@ public class Singleton<T> : MyMonoBehaviour where T : MyMonoBehaviour
     static void Instantiate()
     {
         var instanceObjects = FindObjectsOfType(typeof(T));
-        //ˆê‚Â‚Ì‚İŒ©‚Â‚©‚Á‚½ê‡‚Í³í
+        //ä¸€ã¤ã®ã¿è¦‹ã¤ã‹ã£ãŸå ´åˆã¯æ­£å¸¸
         if (instanceObjects.Length == 1)
         {
-            //ƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒtƒ‰ƒO‚ğtrue‚É‚·‚é
+            //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ•ãƒ©ã‚°ã‚’trueã«ã™ã‚‹
             isInstantiate = true;
             instance = (T)instanceObjects[0];
             instance.MyStart();
         }
-        //•¡”Œ©‚Â‚©‚Á‚½ê‡‚ÍƒGƒ‰[‚ğo‚·
+        //è¤‡æ•°è¦‹ã¤ã‹ã£ãŸå ´åˆã¯ã‚¨ãƒ©ãƒ¼ã‚’å‡ºã™
         else if (instanceObjects.Length > 1)
         {
             Debug.LogError(instanceObjects[0].GetType().FullName +
-            "‚ğComponent‚µ‚Ä‚¢‚éƒIƒuƒWƒFƒNƒg‚ª•¡”‚ ‚è‚Ü‚·B\n" +
-            "ˆê‚Â‚É‚µ‚Ä‚­‚¾‚³‚¢");
+            "ã‚’Componentã—ã¦ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒè¤‡æ•°ã‚ã‚Šã¾ã™ã€‚\n" +
+            "ä¸€ã¤ã«ã—ã¦ãã ã•ã„");
         }
         else
         {
-            Debug.LogError("Singleton‚É‚Ä–¢’m‚ÌƒGƒ‰[:ƒCƒ“ƒXƒ^ƒ“ƒX‚ªˆê‚Â‚àŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogError("Singletonã«ã¦æœªçŸ¥ã®ã‚¨ãƒ©ãƒ¼:ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒä¸€ã¤ã‚‚è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
         }
     }
 }
 
 /// <summary>
-/// ƒI[ƒo[ƒ‰ƒCƒh‚·‚éƒNƒ‰ƒX
+/// ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã™ã‚‹ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class MyMonoBehaviour : MonoBehaviour
 {

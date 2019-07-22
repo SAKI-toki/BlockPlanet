@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// 自動生成のテスト用スクリプト
+/// </summary>
 public class TestCreater : MonoBehaviour
 {
     public FieldBlockMeshCombine blockMap = new FieldBlockMeshCombine();
