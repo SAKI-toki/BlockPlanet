@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// プレイヤーの番号を頭上に出す
+/// </summary>
 public class PlayerNumberUI : MonoBehaviour
 {
     [SerializeField]
@@ -8,12 +11,15 @@ public class PlayerNumberUI : MonoBehaviour
     Player player;
     Transform playerTransform;
     RectTransform rectTransform;
-    const float offsetY = 40.0f;
+    //Y軸のオフセット
+    const float offsetY = 55.0f;
     Image image;
     float timeCount = 0.0f;
     void Start()
     {
+        //自分の番号のプレイヤーを探す
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player" + number);
+        //プレイヤーがいなかったら破棄
         if (playerObject == null)
         {
             Destroy(gameObject);
@@ -27,13 +33,15 @@ public class PlayerNumberUI : MonoBehaviour
 
     void LateUpdate()
     {
+        //プレイヤーがいなくなったら破棄
         if (playerTransform == null)
         {
             Destroy(gameObject);
             return;
         }
         //L,Rを押すと再度表示される
-        if (SwitchInput.GetButtonDown(number - 1, SwitchButton.SR) || SwitchInput.GetButtonDown(number - 1, SwitchButton.SL))
+        if (SwitchInput.GetButtonDown(number - 1, SwitchButton.SR) ||
+            SwitchInput.GetButtonDown(number - 1, SwitchButton.SL))
         {
             timeCount = 0.0f;
         }
@@ -48,6 +56,7 @@ public class PlayerNumberUI : MonoBehaviour
             image.color = color;
             //追尾
             Vector2 position = RectTransformUtility.WorldToScreenPoint(Camera.main, playerTransform.position);
+            //オフセットを加算
             position.y += offsetY;
             rectTransform.position = position;
         }

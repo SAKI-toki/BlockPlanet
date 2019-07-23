@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// キーボード対応したため、どれがどのボタンかを表示する
+/// </summary>
 public class KeyBindForSwitch : MonoBehaviour
 {
 #if UNITY_EDITOR

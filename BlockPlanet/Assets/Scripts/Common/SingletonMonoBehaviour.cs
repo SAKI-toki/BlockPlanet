@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using System;
 
+/// <summary>
+/// シングルトン
+/// </summary>
 public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 {
-
+    static T instance;
     /// <summary>
-    /// シングルトン
+    /// インスタンスを取得するプロパティ
     /// </summary>
-
-    private static T instance;
+    /// <value>インスタンス</value>
     public static T Instance
     {
         get
@@ -27,13 +29,19 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBe
         }
     }
 
+    /// <summary>
+    ///  他のゲームオブジェクトにアタッチされているか調べる
+    ///  アタッチされている場合は破棄する。
+    /// </summary>
     virtual protected void Awake()
     {
-        // 他のゲームオブジェクトにアタッチされているか調べる
-        // アタッチされている場合は破棄する。
         CheckInstance();
     }
 
+    /// <summary>
+    /// インスタンスがあるかどうかチェックする
+    /// </summary>
+    /// <returns>インスタンスがない場合falseを返す</returns>
     protected bool CheckInstance()
     {
         if (instance == null)

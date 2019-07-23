@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 /// <summary>
 /// ブロックの三次元配列
@@ -11,18 +10,26 @@ public class BlockMap
     /// </summary>
     protected class BlockInfo
     {
+        //囲まれているかどうか
         public bool isSurround = false;
+        //存在するかどうか
         public bool isEnable = false;
         public MeshRenderer renderer = null;
         public MeshFilter meshFilter = null;
         public BoxCollider collider = null;
         public BlockNumber blockNumber = null;
         public CombineInstance cmesh = new CombineInstance();
+        //マテリアルの番号
         public int materialNumber = 0;
     }
     //サイズ分のマップを用意する
     protected BlockInfo[,,] blockArray = new BlockInfo[BlockMapSize.LineN, BlockMapSize.RowN, BlockMapSize.HeightN];
+    //初期化したかどうか
     bool isInit = false;
+
+    /// <summary>
+    /// 初期化
+    /// </summary>
     void Initialize()
     {
         for (int i = 0; i < blockArray.GetLength(0); ++i)
@@ -107,9 +114,11 @@ public class BlockMap
         blockArray[line, row, height].collider = block.GetComponent<BoxCollider>();
         blockArray[line, row, height].blockNumber = block.GetComponent<BlockNumber>();
         blockArray[line, row, height].cmesh.transform = block.transform.localToWorldMatrix;
+        //最適化したキューブをセット
         blockArray[line, row, height].cmesh.mesh = MakeOptimizeCube(blockArray[line, row, height].meshFilter, row);
         blockArray[line, row, height].materialNumber =
             BlockCreater.GetInstance().GetMaterialNumber(blockArray[line, row, height].renderer.sharedMaterial);
+        //ブロックの番号をセット
         blockArray[line, row, height].blockNumber.SetNum(line, row, height);
     }
 
@@ -119,7 +128,10 @@ public class BlockMap
     /// <param name="blockNum">ブロックの番号</param>
     public virtual void BreakBlock(BlockNumber blockNum)
     {
+        //壊れた場所はisEnableをfalse
         blockArray[blockNum.line, blockNum.row, blockNum.height].isEnable = false;
+
+        //上下左右前後のブロックのrendererをOnにする
 
         if (blockNum.line < blockArray.GetLength(0) - 1 &&
             blockArray[blockNum.line + 1, blockNum.row, blockNum.height].renderer)
@@ -168,10 +180,7 @@ public class BlockMap
     bool IsSurround(int line, int row, int height)
     {
         //範囲外チェック
-        if (line == 0 || row == 0 || height == 0 ||
-        line == blockArray.GetLength(0) - 1 ||
-        row == blockArray.GetLength(1) - 1 ||
-        height == blockArray.GetLength(2) - 1)
+        if (!RangeCheck(line, row, height))
         {
             return false;
         }
@@ -184,6 +193,13 @@ public class BlockMap
         blockArray[line, row, height - 1].isEnable;
     }
 
+    /// <summary>
+    /// 範囲チェック
+    /// </summary>
+    /// <param name="line">縦</param>
+    /// <param name="row">横</param>
+    /// <param name="height">高さ</param>
+    /// <returns>範囲内ならtrue,範囲外ならfalse</returns>
     bool RangeCheck(int line, int row, int height)
     {
         return line >= 0 && line < blockArray.GetLength(0) &&
@@ -191,6 +207,12 @@ public class BlockMap
         height >= 0 && height < blockArray.GetLength(2);
     }
 
+    /// <summary>
+    /// 最適化したキューブを生成し返す
+    /// </summary>
+    /// <param name="filter">メッシュを取り出すためのfilter</param>
+    /// <param name="row">横の位置によって返すキューブを返す</param>
+    /// <returns>最適化したキューブ</returns>
     protected virtual Mesh MakeOptimizeCube(MeshFilter filter, int row)
     {
         return filter.sharedMesh;

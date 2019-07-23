@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// 爆弾のエフェクトを破棄する
+/// </summary>
 public class BombEffect : MonoBehaviour
 {
     ParticleSystem ps;

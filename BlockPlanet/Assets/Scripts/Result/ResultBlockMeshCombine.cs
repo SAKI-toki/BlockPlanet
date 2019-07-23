@@ -43,16 +43,16 @@ public class ResultBlockMeshCombine : FieldBlockMeshCombine
     protected override Mesh MakeOptimizeCube(MeshFilter filter, int row)
     {
         if (optimizeCubeMesh == null)
-            CreateOptimizeCube(filter);
+            CreateOptimizeCube(filter.sharedMesh);
         return optimizeCubeMesh;
     }
-    protected override void CreateOptimizeCube(MeshFilter filter)
+    protected override void CreateOptimizeCube(Mesh cubeMesh)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
-        int[] indices = filter.sharedMesh.GetTriangles(0);
-        filter.sharedMesh.GetVertices(vertices);
-        filter.sharedMesh.GetUVs(0, uvs);
+        int[] indices = cubeMesh.GetTriangles(0);
+        cubeMesh.GetVertices(vertices);
+        cubeMesh.GetUVs(0, uvs);
         //最適化したIndexを格納する配列
         int[] optimizeIndices = new int[30];
         int index = 0;

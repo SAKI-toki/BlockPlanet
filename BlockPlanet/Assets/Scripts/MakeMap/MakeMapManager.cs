@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.IO;
 
+/// <summary>
+/// Unity上で簡単にマップを作れる
+/// </summary>
 public class MakeMapManager : MonoBehaviour
 {
 #if UNITY_EDITOR
@@ -8,7 +11,9 @@ public class MakeMapManager : MonoBehaviour
     GameObject[] cubes;
     [SerializeField]
     GameObject strongCube;
+    //ブロックの数
     int[,] blockArray = new int[BlockMapSize.LineN, BlockMapSize.RowN];
+    //壊れないブロックかどうか
     bool[,] isStrongArray = new bool[BlockMapSize.LineN, BlockMapSize.RowN];
     GameObject[,,] blockObjectArray = new GameObject[BlockMapSize.LineN, BlockMapSize.RowN, BlockMapSize.HeightN];
 

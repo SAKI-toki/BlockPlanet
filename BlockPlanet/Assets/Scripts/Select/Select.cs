@@ -39,11 +39,14 @@ public class Select : SingletonMonoBehaviour<Select>
     GameObject[] playerNumberUIs;
     delegate void StateType();
     StateType state;
+
     void Start()
     {
         descriptionUIparent.SetActive(false);
         foreach (var playerNumUi in playerNumberUIs) playerNumUi.SetActive(false);
+        //RadialBlurの強さを0にする
         postProcessMaterial.SetFloat("_Strength", 0);
+        //ポストプロセスをOffにする
         postProcess.enabled = false;
         //フェード
         Fade.Instance.FadeOut(1.0f);
@@ -82,6 +85,9 @@ public class Select : SingletonMonoBehaviour<Select>
         if (state != null) state();
     }
 
+    /// <summary>
+    /// マップを選択するステート
+    /// </summary>
     void SelectFieldState()
     {
         SelectUpdate();
@@ -114,10 +120,14 @@ public class Select : SingletonMonoBehaviour<Select>
         }
     }
 
+    /// <summary>
+    /// 説明を表示するステート
+    /// </summary>
     void DescriptState()
     {
         //説明を非表示
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) || SwitchInput.GetButtonDown(0, SwitchButton.Down))
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) ||
+            SwitchInput.GetButtonDown(0, SwitchButton.Down))
         {
             descriptionUIparent.SetActive(false);
             //プッシュの音を鳴らす
@@ -126,9 +136,13 @@ public class Select : SingletonMonoBehaviour<Select>
         }
     }
 
+    /// <summary>
+    /// プレイヤーの人数を選択するステート
+    /// </summary>
     void PlayerNumberChoiceState()
     {
         int maxPlayerNumber = BlockCreater.GetInstance().maxPlayerNumber;
+        //人数決定
         if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
         {
             //プッシュの音を鳴らす
@@ -136,7 +150,9 @@ public class Select : SingletonMonoBehaviour<Select>
             //ロード処理に入る
             StartCoroutine(LoadFieldScene());
             playerNumberUIs[maxPlayerNumber - 2].SetActive(false);
+            state = null;
         }
+        //マップ選択に戻る
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel))
         {
             //プッシュの音を鳴らす
@@ -145,6 +161,7 @@ public class Select : SingletonMonoBehaviour<Select>
             state = SelectFieldState;
             playerNumberUIs[maxPlayerNumber - 2].SetActive(false);
         }
+        //カーソル移動
         else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
         {
             ++maxPlayerNumber;
@@ -154,17 +171,20 @@ public class Select : SingletonMonoBehaviour<Select>
             --maxPlayerNumber;
         }
         maxPlayerNumber = Mathf.Clamp(maxPlayerNumber, 2, 4);
+        //選んでいるものが変わったら
         if (maxPlayerNumber != BlockCreater.GetInstance().maxPlayerNumber)
         {
             playerNumberUIs[BlockCreater.GetInstance().maxPlayerNumber - 2].SetActive(false);
             playerNumberUIs[maxPlayerNumber - 2].SetActive(true);
             //スティックの音
             SoundManager.Instance.Stick();
-
             BlockCreater.GetInstance().maxPlayerNumber = maxPlayerNumber;
         }
     }
 
+    /// <summary>
+    /// セレクトの更新
+    /// </summary>
     void SelectUpdate()
     {
         var prev = currentSelectChoice;
@@ -243,7 +263,8 @@ public class Select : SingletonMonoBehaviour<Select>
         while (instanceFieldList[stagenumber].transform.position != endPosition)
         {
             timeCount += Time.deltaTime;
-            instanceFieldList[stagenumber].transform.position = Vector3.Lerp(initPosition, endPosition, timeCount);
+            instanceFieldList[stagenumber].transform.position =
+                Vector3.Lerp(initPosition, endPosition, timeCount);
             yield return null;
         }
         //ステージに入り込むようなアニメーション
@@ -253,6 +274,7 @@ public class Select : SingletonMonoBehaviour<Select>
         endPosition.y += 10;
         Quaternion initRotation = cameraObject.transform.rotation;
         Quaternion endRotation = Quaternion.Euler(90, 0, 0);
+        //フェードのスピード
         const float FadeSpeed = 0.5f;
         //フェード
         Fade.Instance.FadeIn(1.0f / FadeSpeed);

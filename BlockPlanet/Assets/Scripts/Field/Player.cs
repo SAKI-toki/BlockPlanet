@@ -1,43 +1,42 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// プレイヤー
+/// </summary>
 public class Player : MonoBehaviour
 {
-
-    /// <summary>
-    /// プレイヤー
-    /// </summary>
     [SerializeField, Header("プレイヤーの番号")]
     int playerNumber = 0;
     //歩くスピード
-    private float walkSpeed = 15;
+    const float walkSpeed = 15;
     //投げる力
-    private float shootPow = 5.0f;
-    private float bodyScale = 1.0f;
+    float shootPow = 5.0f;
+    float bodyScale = 1.0f;
     float vibrationTimer = 0.5f;
     [SerializeField]
     public bool isGameStart = false;
 
     //プレイヤーの頭上
-    private Vector3 holdPosition;
-    private Rigidbody rb;
+    Vector3 holdPosition;
+    Rigidbody rb;
 
+    //爆弾
     [SerializeField]
-    //=====爆弾=====
     GameObject bombObject;
 
     //爆弾を持っている状態
-    private bool isHold = false;
+    bool isHold = false;
     float bombimpactVertical, bombimpactHorizontal;
 
     //投げる場所
-    private Vector3 bombTargetPosition;
+    Vector3 bombTargetPosition;
     //自分の位置
-    private Transform shootPoint = null;
+    Transform shootPoint = null;
     [System.NonSerialized]
     //投げる物
     public GameObject ShootObject = null;
 
-    private ParticleSystem chargeParticle;
+    ParticleSystem chargeParticle;
 
     GameObject throwBombObject = null;
 
@@ -50,7 +49,7 @@ public class Player : MonoBehaviour
         chargeParticle = transform.GetChild(0).GetComponent<ParticleSystem>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.tag == "DustBox")
         {
@@ -63,29 +62,33 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         SwitchVibration.LowVibration(playerNumber, 0.0f);
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        if (isGameStart && !FieldManeger.Instance.isPause && !FieldManeger.Instance.isGameOver)
+        //重力
+        rb.AddForce(Vector3.down * 60f);
+
+        if (!isGameStart || FieldManeger.Instance.isPause || FieldManeger.Instance.isGameOver)
+            return;
+        //スティックの入力を取得
+        float vertical = SwitchInput.GetVertical(playerNumber);
+        float horizontal = SwitchInput.GetHorizontal(playerNumber);
+
+        if (Mathf.Abs(vertical) >= 0.0f ||
+        Mathf.Abs(horizontal) >= 0.0f)
         {
-            float vertical = SwitchInput.GetVertical(playerNumber);
-            float horizontal = SwitchInput.GetHorizontal(playerNumber);
-            if (Mathf.Abs(vertical) >= 0.0f ||
-            Mathf.Abs(horizontal) >= 0.0f)
-            {
-                float sqrt = Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2));
-                //=====移動=====
-                this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime * sqrt);
-                //=====回転=====
-                this.transform.rotation = Quaternion.Slerp
-                    (this.transform.rotation,
-                     Quaternion.Euler(0, Mathf.Atan2(-vertical, horizontal) * Mathf.Rad2Deg + 90, 0),
-                      Mathf.Sqrt(sqrt) / 2);
-            }
+            float sqrt = Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2));
+            //=====移動=====
+            this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime * sqrt);
+            //=====回転=====
+            this.transform.rotation = Quaternion.Slerp
+                (this.transform.rotation,
+                 Quaternion.Euler(0, Mathf.Atan2(-vertical, horizontal) * Mathf.Rad2Deg + 90, 0),
+                  Mathf.Sqrt(sqrt) / 2);
         }
 
         if (IsHitBomb)
@@ -105,48 +108,48 @@ public class Player : MonoBehaviour
             CameraShake.Instance.Shake();
         }
 
-        //重力
-        rb.AddForce(Vector3.down * 60f);
     }
 
     void Update()
     {
         VibrationControl();
 
-        if (isGameStart && !FieldManeger.Instance.isPause && !FieldManeger.Instance.isGameOver)
+        if (!isGameStart || FieldManeger.Instance.isPause || FieldManeger.Instance.isGameOver)
+            return;
+
+        RaycastHit hit;
+
+        //下に向かってレイを飛ばす
+        if (SwitchInput.GetButtonDown(playerNumber, SwitchButton.Jump) &&
+        Physics.SphereCast(transform.position, 1.5f, Vector3.down, out hit, 1.7f))
         {
-            RaycastHit hit;
-
-            if (SwitchInput.GetButtonDown(playerNumber, SwitchButton.Jump) &&
-            //ジャンプ                 自分の中心　　　　　　　レイの幅　　　　　　　　　　方向　　　　長さ
-            Physics.SphereCast(transform.position, 1.5f, Vector3.down, out hit, 1.7f))
+            if (hit.collider.tag == "Cube" || hit.collider.tag == "StrongCube")
             {
-                if (hit.collider.tag == "Cube" || hit.collider.tag == "StrongCube")
-                {
-                    //力を加える
-                    rb.AddForce(Vector3.up * 1000f);
-                    //かかっている力をリセット
-                    rb.velocity = Vector3.zero;
-                    SoundManager.Instance.Jump();
-                }
+                //力を加える
+                rb.AddForce(Vector3.up * 1000f);
+                //かかっている力をリセット
+                rb.velocity = Vector3.zero;
+                SoundManager.Instance.Jump();
             }
-
-            //プレイヤーの頭上に移動
-            holdPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-
-            //===爆弾関連===
-            PlayerBomb();
         }
+
+        //プレイヤーの頭上に移動
+        holdPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+
+        //爆弾関連
+        PlayerBomb();
     }
 
-    //===プレイヤーが持つ爆弾関連===
+    /// <summary>
+    /// プレイヤーが持つ爆弾関連
+    /// </summary>
     void PlayerBomb()
     {
         //体を縮める
         transform.GetChild(1).transform.localScale = new Vector3(bodyScale, 1.0f, 1.0f);
 
         //爆弾を生成
-        if (SwitchInput.GetButton(playerNumber, SwitchButton.Bomb) && !Namecheck() && !isHold)
+        if (SwitchInput.GetButton(playerNumber, SwitchButton.Bomb) && !BombCheck() && !isHold)
             isHold = true;
 
         if (isHold)
@@ -180,12 +183,18 @@ public class Player : MonoBehaviour
         }
     }
 
-    //爆弾が存在するかのチェック
-    bool Namecheck()
+    /// <summary>
+    /// 爆弾が存在するかのチェック
+    /// </summary>
+    /// <returns>爆弾が存在するならtrue,存在しないならfalse</returns>
+    bool BombCheck()
     {
         return throwBombObject != null;
     }
 
+    /// <summary>
+    /// 振動の制御
+    /// </summary>
     void VibrationControl()
     {
         if (vibrationTimer == 0) return;
@@ -197,13 +206,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Shoot(Vector3 TargetPosition)
+    /// <summary>
+    /// 指定した位置に向かって爆弾を投げる
+    /// </summary>
+    /// <param name="TargetPosition">指定する位置</param>
+    void Shoot(Vector3 TargetPosition)
     {
         //投げる場所,角度
         ShootFixedAngle(TargetPosition, 45.0f);
     }
 
-    private void ShootFixedAngle(Vector3 TargetPosition, float angle)
+    void ShootFixedAngle(Vector3 TargetPosition, float angle)
     {
         //投げる場所,角度
         float speedVec = ComputeVectorFromAngle(TargetPosition, angle);
@@ -219,7 +232,7 @@ public class Player : MonoBehaviour
         InstantiateShootObject(vec);
     }
 
-    private float ComputeVectorFromAngle(Vector3 TargetPosition, float angle)
+    float ComputeVectorFromAngle(Vector3 TargetPosition, float angle)
     {
         //自分の位置
         shootPoint = ShootObject.transform;
@@ -258,7 +271,7 @@ public class Player : MonoBehaviour
     }
 
     //対象との距離,角度(60度),投げる場所
-    private Vector3 ConvertVectorToVector3(float iv0, float angle, Vector3 iTargetPosition)
+    Vector3 ConvertVectorToVector3(float iv0, float angle, Vector3 iTargetPosition)
     {
 
         //投げる場所
@@ -279,7 +292,7 @@ public class Player : MonoBehaviour
         return vec;
     }
 
-    private void InstantiateShootObject(Vector3 iShootVector)
+    void InstantiateShootObject(Vector3 iShootVector)
     {
         //投げる物に付いているrigidbody取得
         var rigidbody = ShootObject.GetComponent<Rigidbody>();
@@ -291,6 +304,10 @@ public class Player : MonoBehaviour
         rigidbody.AddForce(force, ForceMode.Impulse);
     }
 
+    /// <summary>
+    /// 爆弾が当たったときの処理
+    /// </summary>
+    /// <param name="position">爆弾の位置</param>
     public void HitBomb(Vector3 position)
     {
         bombPosition = position;

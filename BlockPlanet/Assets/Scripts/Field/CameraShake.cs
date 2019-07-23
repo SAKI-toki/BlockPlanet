@@ -6,6 +6,7 @@
 public class CameraShake : SingletonMonoBehaviour<CameraShake>
 {
     Transform cameraTransform;
+    //初期位置
     Vector3 initPosition;
     float timeCount = 0.0f;
     [SerializeField]
@@ -20,6 +21,7 @@ public class CameraShake : SingletonMonoBehaviour<CameraShake>
 
     void Update()
     {
+        //揺れる
         if (timeCount < shakeTime)
         {
             timeCount += Time.deltaTime;
@@ -34,6 +36,9 @@ public class CameraShake : SingletonMonoBehaviour<CameraShake>
         }
     }
 
+    /// <summary>
+    /// 揺らす
+    /// </summary>
     public void Shake()
     {
         timeCount = 0.0f;

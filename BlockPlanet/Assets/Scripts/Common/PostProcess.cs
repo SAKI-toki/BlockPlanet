@@ -1,4 +1,8 @@
 ﻿using UnityEngine;
+
+/// <summary>
+/// ポストプロセスを適応するクラス
+/// </summary>
 [ExecuteInEditMode]
 public class PostProcess : MonoBehaviour
 {

@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 
+/// <summary>
+/// フィールド用に各関数をオーバーライド
+/// </summary>
 public class FieldBlockMeshCombine : BlockMap
 {
     Mesh mesh;
+    /// <summary>
+    /// メッシュを統合するのに必要な情報
+    /// </summary>
     class CombineMeshInfo
     {
         public GameObject obj = null;
@@ -12,13 +17,9 @@ public class FieldBlockMeshCombine : BlockMap
         public MeshRenderer renderer = null;
     }
     CombineMeshInfo[] combineMeshs = new CombineMeshInfo[8];
-    class meshInfo
-    {
-        public List<Vector3> vertices = new List<Vector3>();
-        public List<int> indices = new List<int>();
-        public List<Vector2> uvs = new List<Vector2>();
-    }
+    //メッシュを更新するかのフラグ
     protected bool updateMeshFlg = false;
+    //最適化された普通のキューブ
     protected Mesh optimizeCubeMesh = null;
     Mesh optimizeCubeMeshRight = null;
     Mesh optimizeCubeMeshLeft = null;
@@ -84,11 +85,18 @@ public class FieldBlockMeshCombine : BlockMap
         combineMeshInfo.renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
+    /// <summary>
+    /// ブロックが壊れたときに実行する関数
+    /// </summary>
+    /// <param name="blockNum">ブロックの番号</param>
     public override void BreakBlock(BlockNumber blockNum)
     {
+        //ブロックが壊れたらメッシュを更新するためflgを立てる
         updateMeshFlg = true;
         blockArray[blockNum.line, blockNum.row, blockNum.height].isEnable = false;
         --blockNums[blockNum.line, blockNum.row];
+
+        //左右、下、奥のブロックの囲んでる判定をoffにする
 
         if (blockNum.line < blockArray.GetLength(0) - 1)
         {
@@ -111,6 +119,9 @@ public class FieldBlockMeshCombine : BlockMap
         }
     }
 
+    /// <summary>
+    /// ブロックが囲まれているかどうかの更新
+    /// </summary>
     public virtual void BlockIsSurroundUpdate()
     {
         for (int i = 1; i < blockArray.GetLength(0); ++i)
@@ -151,9 +162,10 @@ public class FieldBlockMeshCombine : BlockMap
     /// <returns>最適化されたキューブ</returns>
     protected override Mesh MakeOptimizeCube(MeshFilter filter, int row)
     {
+        //真ん中からどこまでを左右両方ついているキューブにするか
         const int CenterRange = 2;
         if (optimizeCubeMesh == null)
-            CreateOptimizeCube(filter);
+            CreateOptimizeCube(filter.sharedMesh);
         if (row < BlockMapSize.RowN / 2 - CenterRange)
         {
             return optimizeCubeMeshLeft;
@@ -168,14 +180,14 @@ public class FieldBlockMeshCombine : BlockMap
     /// <summary>
     /// 奥と下のポリゴンを消去したCubeMeshを生成
     /// </summary>
-    /// <param name="filter"></param>
-    protected virtual void CreateOptimizeCube(MeshFilter filter)
+    /// <param name="cubeMesh">キューブのメッシュ</param>
+    protected virtual void CreateOptimizeCube(Mesh cubeMesh)
     {
         List<Vector3> vertices = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
-        int[] indices = filter.sharedMesh.GetIndices(0);
-        filter.sharedMesh.GetVertices(vertices);
-        filter.sharedMesh.GetUVs(0, uvs);
+        int[] indices = cubeMesh.GetIndices(0);
+        cubeMesh.GetVertices(vertices);
+        cubeMesh.GetUVs(0, uvs);
         Vector3[] optimizeVertices = new Vector3[16];
         Vector3[] optimizeVerticesRight = new Vector3[12];
         Vector3[] optimizeVerticesLeft = new Vector3[12];
@@ -204,38 +216,36 @@ public class FieldBlockMeshCombine : BlockMap
         for (int i = 0; i < 6; ++i)
         {
             //奥と下の場合は追加しない
-            if (!((vertices[i * 4 + 0].y < 0 &&
-            vertices[i * 4 + 1].y < 0 &&
-            vertices[i * 4 + 2].y < 0 &&
-            vertices[i * 4 + 3].y < 0) ||
-            (vertices[i * 4 + 0].z > 0 &&
-            vertices[i * 4 + 1].z > 0 &&
-            vertices[i * 4 + 2].z > 0 &&
-            vertices[i * 4 + 3].z > 0)))
+            if (!((vertices[i * 4 + 0].y < 0 && vertices[i * 4 + 1].y < 0 &&
+            vertices[i * 4 + 2].y < 0 && vertices[i * 4 + 3].y < 0) ||
+            (vertices[i * 4 + 0].z > 0 && vertices[i * 4 + 1].z > 0 &&
+            vertices[i * 4 + 2].z > 0 && vertices[i * 4 + 3].z > 0)))
             {
+                //頂点,UVのセット
                 for (int j = 0; j < 4; ++j)
                 {
                     optimizeVertices[index] = vertices[i * 4 + j];
                     optimizeUvs[index] = uvs[i * 4 + j];
                     ++index;
                 }
+                //インデックスのセット
                 for (int j = 0; j < 6; ++j)
                 {
                     optimizeIndices[indicesIndex] = indices[i * 6 + j] - skipCount * 4;
                     ++indicesIndex;
                 }
                 //右なし
-                if (!(vertices[i * 4 + 0].x > 0 &&
-                vertices[i * 4 + 1].x > 0 &&
-                vertices[i * 4 + 2].x > 0 &&
-                vertices[i * 4 + 3].x > 0))
+                if (!(vertices[i * 4 + 0].x > 0 && vertices[i * 4 + 1].x > 0 &&
+                vertices[i * 4 + 2].x > 0 && vertices[i * 4 + 3].x > 0))
                 {
+                    //頂点,UVのセット
                     for (int j = 0; j < 4; ++j)
                     {
                         optimizeVerticesRight[rightIndex] = vertices[i * 4 + j];
                         optimizeUvsRight[rightIndex] = uvs[i * 4 + j];
                         ++rightIndex;
                     }
+                    //インデックスのセット
                     for (int j = 0; j < 6; ++j)
                     {
                         optimizeIndicesRight[rightIndicesIndex] = indices[i * 6 + j] - skipCountRight * 4;
@@ -247,17 +257,17 @@ public class FieldBlockMeshCombine : BlockMap
                     ++skipCountRight;
                 }
                 //左なし
-                if (!(vertices[i * 4 + 0].x < 0 &&
-                vertices[i * 4 + 1].x < 0 &&
-                vertices[i * 4 + 2].x < 0 &&
-                vertices[i * 4 + 3].x < 0))
+                if (!(vertices[i * 4 + 0].x < 0 && vertices[i * 4 + 1].x < 0 &&
+                vertices[i * 4 + 2].x < 0 && vertices[i * 4 + 3].x < 0))
                 {
+                    //頂点,UVのセット
                     for (int j = 0; j < 4; ++j)
                     {
                         optimizeVerticesLeft[leftIndex] = vertices[i * 4 + j];
                         optimizeUvsLeft[leftIndex] = uvs[i * 4 + j];
                         ++leftIndex;
                     }
+                    //インデックスのセット
                     for (int j = 0; j < 6; ++j)
                     {
                         optimizeIndicesLeft[leftIndicesIndex] = indices[i * 6 + j] - skipCountLeft * 4;
@@ -280,15 +290,19 @@ public class FieldBlockMeshCombine : BlockMap
         optimizeCubeMesh = new Mesh();
         optimizeCubeMeshRight = new Mesh();
         optimizeCubeMeshLeft = new Mesh();
+        //頂点のセット
         optimizeCubeMesh.vertices = optimizeVertices;
         optimizeCubeMeshRight.vertices = optimizeVerticesRight;
         optimizeCubeMeshLeft.vertices = optimizeVerticesLeft;
+        //uvのセット
         optimizeCubeMesh.uv = optimizeUvs;
         optimizeCubeMeshRight.uv = optimizeUvsRight;
         optimizeCubeMeshLeft.uv = optimizeUvsLeft;
+        //インデックスのセット
         optimizeCubeMesh.triangles = optimizeIndices;
         optimizeCubeMeshRight.triangles = optimizeIndicesRight;
         optimizeCubeMeshLeft.triangles = optimizeIndicesLeft;
+        //法線の再計算
         optimizeCubeMesh.RecalculateNormals();
         optimizeCubeMeshRight.RecalculateNormals();
         optimizeCubeMeshLeft.RecalculateNormals();

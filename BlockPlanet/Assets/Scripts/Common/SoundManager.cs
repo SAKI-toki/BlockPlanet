@@ -16,37 +16,51 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
         sounds = gameObject.GetComponent<AudioSource>();
     }
 
-    //スティックの音
+    /// <summary>
+    /// スティックの音
+    /// </summary>
     public void Stick()
     {
         sounds.PlayOneShot(audioClip[0]);
     }
-    //決定音
+    /// <summary>
+    /// 決定音
+    /// </summary>
     public void Push()
     {
         sounds.PlayOneShot(audioClip[1]);
     }
-    //ゲームスタートの音
+    /// <summary>
+    /// ゲームスタートの音
+    /// </summary>
     public void GameStart()
     {
         sounds.PlayOneShot(audioClip[2]);
     }
-    //ゲームオーバーの音
+    /// <summary>
+    /// ゲームオーバーの音
+    /// </summary>
     public void GameOver()
     {
         sounds.PlayOneShot(audioClip[3]);
     }
-    //爆弾を発射する音
+    /// <summary>
+    /// 爆弾を発射する音
+    /// </summary>
     public void BombThrow()
     {
         sounds.PlayOneShot(audioClip[4]);
     }
-    //爆弾が爆発する音
+    /// <summary>
+    /// 爆弾が爆発する音
+    /// </summary>
     public void Bomb()
     {
         sounds.PlayOneShot(audioClip[5]);
     }
-    //ジャンプの音
+    /// <summary>
+    /// ジャンプの音
+    /// </summary>
     public void Jump()
     {
         sounds.PlayOneShot(audioClip[6]);

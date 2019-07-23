@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// リザルト画面に出てくる爆弾
 /// </summary>
 public class ResultBomb : MonoBehaviour
 {
-    //デストロイ
-    private bool destroyFlg = false;
     //爆発のパーティクル、子オブジェクト
     private ParticleSystem boomParticle;
     //collision
@@ -45,13 +44,9 @@ public class ResultBomb : MonoBehaviour
         rb.AddForce(Vector3.down * 25.0f);
     }
 
-    void Update()
-    {
-        if (destroyFlg && !boomParticle.isPlaying)
-            Destroy(gameObject);
-    }
-
-    //=====爆破処理=====
+    /// <summary>
+    /// =爆破処理
+    /// </summary>
     void Explosion()
     {
         SoundManager.Instance.Bomb();
@@ -63,7 +58,15 @@ public class ResultBomb : MonoBehaviour
         boomParticle.Play();
         //爆破の判定を出す
         bombColl[1].enabled = true;
-        //デストロイするためのフラグ
-        destroyFlg = true;
+        StartCoroutine(DestroyCoroutine());
+    }
+
+    /// <summary>
+    /// 破棄するコルーチン
+    /// </summary>
+    IEnumerator DestroyCoroutine()
+    {
+        while (boomParticle.isPlaying) yield return null;
+        Destroy(gameObject);
     }
 }

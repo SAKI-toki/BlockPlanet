@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// 爆弾
 /// </summary>
 public class Bomb : MonoBehaviour
 {
-    //デストロイ
-    private bool destroyFlg = false;
     //プレイヤーに持たれているかどうか
     private bool hold = false;
 
@@ -16,8 +15,7 @@ public class Bomb : MonoBehaviour
     Rigidbody rb = null;
 
     BlockMap blockMap = null;
-    const float bombInterval = 0.2f;
-    float destroyCount = 0.0f;
+    const float BombInterval = 0.2f;
 
     string collisionOtherTag;
 
@@ -113,17 +111,10 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (destroyFlg)
-        {
-            destroyCount += Time.deltaTime;
-            if (destroyCount >= bombInterval)
-                Destroy(gameObject);
-        }
-    }
 
-    //=====爆破処理=====
+    /// <summary>
+    /// 爆破処理
+    /// </summary>
     void Explosion()
     {
         collisionPosition = transform.position;
@@ -139,7 +130,15 @@ public class Bomb : MonoBehaviour
         //爆破の判定を出す
         bombColl[0].enabled = false;
         bombColl[1].enabled = true;
-        //デストロイするためのフラグ
-        destroyFlg = true;
+        StartCoroutine(DestroyCoroutine());
+    }
+
+    /// <summary>
+    /// 破棄するコルーチン
+    /// </summary>
+    IEnumerator DestroyCoroutine()
+    {
+        yield return new WaitForSeconds(BombInterval);
+        Destroy(gameObject);
     }
 }

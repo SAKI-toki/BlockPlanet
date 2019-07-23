@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Profiling;
 
 /// <summary>
 /// FPSを表示する
@@ -28,6 +27,7 @@ public class DebugProfiling : MonoBehaviour
     {
         timeCount += Time.unscaledDeltaTime;
         ++count;
+        //FPSの更新
         if (timeCount > updateInterval)
         {
             fps = count / timeCount;
@@ -43,6 +43,7 @@ public class DebugProfiling : MonoBehaviour
     {
         GUI.skin.label.fontSize = charSize;
         GUI.color = charColor;
+        //小数点以下二桁まで表示
         GUI.Label(renderRect,
         "FPS:" + fps.ToString("#.##"));
     }

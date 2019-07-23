@@ -2938,11 +2938,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf8b72801f31763419bf1cd52f02ea74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image:
-  - {fileID: 1850642164}
+  countDownImage:
   - {fileID: 1776323638}
   - {fileID: 136209811}
   - {fileID: 1244778188}
+  gameSetImage: {fileID: 1850642164}
   pauseObject: {fileID: 350281229}
   uiRectTransforms:
   - {fileID: 1580009764}

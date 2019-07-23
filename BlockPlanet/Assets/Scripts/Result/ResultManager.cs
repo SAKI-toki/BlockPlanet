@@ -197,6 +197,10 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         isEndResultAnimation = true;
     }
 
+    /// <summary>
+    /// 爆弾が降ってくるアニメーション
+    /// </summary>
+    /// <param name="index">降らせるプレイヤーのインデックス</param>
     IEnumerator BombAnimation(int index)
     {
         Vector3 pos = players[index].transform.position;
