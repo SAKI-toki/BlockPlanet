@@ -21,8 +21,15 @@ public class Title : SingletonMonoBehaviour<Title>
     [SerializeField]
     AudioSource fallSound = null;
 
+    delegate void StateType();
+    StateType state;
+
+    [SerializeField]
+    SelectChoice currentSelectChoice;
+
     private void Start()
     {
+        state = BombFallState;
         //フェード
         Fade.Instance.FadeOut(1.0f);
         //BGM
@@ -34,45 +41,120 @@ public class Title : SingletonMonoBehaviour<Title>
     void Update()
     {
         if (!Fade.Instance.IsEnd) return;
-        //爆弾が爆発後
-        if (titleBomb == null)
-        {
-            if (creditParent.activeSelf)
-            {
-                uiParent.SetActive(false);
-                //クレジットの非表示
-                if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) || SwitchInput.GetButtonDown(0, SwitchButton.Down))
-                {
-                    SoundManager.Instance.Push();
-                    creditParent.SetActive(false);
-                }
-            }
-            else
-            {
-                uiParent.SetActive(true);
-                //シーン遷移
-                if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
-                {
-                    SoundManager.Instance.Push();
-                    StartCoroutine(Loadscene());
-                }
-                //クレジットの表示
-                else if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
-                {
-                    SoundManager.Instance.Push();
-                    creditParent.SetActive(true);
-                }
-            }
-        }
-        //特定のブロックと爆弾を消す
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
+        if (state != null) state();
+    }
+
+    /// <summary>
+    /// 爆弾が落ちるステート
+    /// </summary>
+    void BombFallState()
+    {
+        //アニメーションの終了
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
         {
             BombExplosion();
             Destroy(titleBomb);
             fallSound.Stop();
             bgmSound.Play();
         }
+        if (titleBomb == null)
+        {
+            uiParent.SetActive(true);
+            state = PushButtonState;
+        }
     }
+
+    /// <summary>
+    /// ボタンを押させるステート
+    /// </summary>
+    void PushButtonState()
+    {
+        //シーン遷移
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
+        {
+            SoundManager.Instance.Push();
+            uiParent.SetActive(false);
+            currentSelectChoice.gameObject.SetActive(true);
+            state = PlayerNumSelect;
+        }
+        //クレジットの表示
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
+        {
+            SoundManager.Instance.Push();
+            uiParent.SetActive(false);
+            creditParent.SetActive(true);
+            state = CreditState;
+        }
+    }
+
+    /// <summary>
+    /// クレジットステート
+    /// </summary>
+    void CreditState()
+    {
+        //クレジットの非表示
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) ||
+            SwitchInput.GetButtonDown(0, SwitchButton.Down))
+        {
+            SoundManager.Instance.Push();
+            creditParent.SetActive(false);
+            uiParent.SetActive(true);
+            state = PushButtonState;
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーの人数を選択するステート
+    /// </summary>
+    void PlayerNumSelect()
+    {
+        var prev = currentSelectChoice;
+        //人数決定&シーン遷移
+        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
+        {
+            BlockCreater.GetInstance().maxPlayerNumber = currentSelectChoice.number;
+            StartCoroutine(Loadscene());
+        }
+        //カーソル移動
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickRight))
+        {
+            if (currentSelectChoice.Right)
+            {
+                currentSelectChoice = currentSelectChoice.Right;
+            }
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickLeft))
+        {
+            if (currentSelectChoice.Left)
+            {
+                currentSelectChoice = currentSelectChoice.Left;
+            }
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
+        {
+            if (currentSelectChoice.Down)
+            {
+                currentSelectChoice = currentSelectChoice.Down;
+            }
+        }
+        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
+        {
+            if (currentSelectChoice.Up)
+            {
+                currentSelectChoice = currentSelectChoice.Up;
+            }
+        }
+        //カーソルが移動したら
+        if (prev != currentSelectChoice)
+        {
+            prev.gameObject.SetActive(false);
+            //スティックの音
+            SoundManager.Instance.Stick();
+            //アクティブにするフィールドの変更
+            currentSelectChoice.gameObject.SetActive(true);
+        }
+    }
+
     //セレクト画面に遷移
     private IEnumerator Loadscene()
     {

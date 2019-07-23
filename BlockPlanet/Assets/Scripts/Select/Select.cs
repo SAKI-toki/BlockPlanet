@@ -35,15 +35,12 @@ public class Select : SingletonMonoBehaviour<Select>
     Material[] mats;
     [SerializeField]
     GameObject descriptionUIparent;
-    [SerializeField]
-    GameObject[] playerNumberUIs;
     delegate void StateType();
     StateType state;
 
     void Start()
     {
         descriptionUIparent.SetActive(false);
-        foreach (var playerNumUi in playerNumberUIs) playerNumUi.SetActive(false);
         //RadialBlurの強さを0にする
         postProcessMaterial.SetFloat("_Strength", 0);
         //ポストプロセスをOffにする
@@ -97,9 +94,9 @@ public class Select : SingletonMonoBehaviour<Select>
             ui.SetActive(false);
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
-            state = PlayerNumberChoiceState;
-            BlockCreater.GetInstance().maxPlayerNumber = 2;
-            playerNumberUIs[BlockCreater.GetInstance().maxPlayerNumber - 2].SetActive(true);
+            //ロード処理に入る
+            StartCoroutine(LoadFieldScene());
+            state = null;
         }
         //タイトルに戻る
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel))
@@ -133,52 +130,6 @@ public class Select : SingletonMonoBehaviour<Select>
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
             state = SelectFieldState;
-        }
-    }
-
-    /// <summary>
-    /// プレイヤーの人数を選択するステート
-    /// </summary>
-    void PlayerNumberChoiceState()
-    {
-        int maxPlayerNumber = BlockCreater.GetInstance().maxPlayerNumber;
-        //人数決定
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
-        {
-            //プッシュの音を鳴らす
-            SoundManager.Instance.Push();
-            //ロード処理に入る
-            StartCoroutine(LoadFieldScene());
-            playerNumberUIs[maxPlayerNumber - 2].SetActive(false);
-            state = null;
-        }
-        //マップ選択に戻る
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel))
-        {
-            //プッシュの音を鳴らす
-            SoundManager.Instance.Push();
-            ui.SetActive(true);
-            state = SelectFieldState;
-            playerNumberUIs[maxPlayerNumber - 2].SetActive(false);
-        }
-        //カーソル移動
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
-        {
-            ++maxPlayerNumber;
-        }
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
-        {
-            --maxPlayerNumber;
-        }
-        maxPlayerNumber = Mathf.Clamp(maxPlayerNumber, 2, 4);
-        //選んでいるものが変わったら
-        if (maxPlayerNumber != BlockCreater.GetInstance().maxPlayerNumber)
-        {
-            playerNumberUIs[BlockCreater.GetInstance().maxPlayerNumber - 2].SetActive(false);
-            playerNumberUIs[maxPlayerNumber - 2].SetActive(true);
-            //スティックの音
-            SoundManager.Instance.Stick();
-            BlockCreater.GetInstance().maxPlayerNumber = maxPlayerNumber;
         }
     }
 
