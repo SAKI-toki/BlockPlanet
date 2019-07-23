@@ -11,8 +11,7 @@ public class PlayerNumberUI : MonoBehaviour
     Player player;
     Transform playerTransform;
     RectTransform rectTransform;
-    //Y軸のオフセット
-    const float offsetY = 55.0f;
+    const float offsetY = 5.0f;
     Image image;
     float timeCount = 0.0f;
     void Start()
@@ -55,10 +54,9 @@ public class PlayerNumberUI : MonoBehaviour
             color.a = Mathf.Clamp(DisplayTime - timeCount, 0.0f, 1.0f);
             image.color = color;
             //追尾
-            Vector2 position = RectTransformUtility.WorldToScreenPoint(Camera.main, playerTransform.position);
-            //オフセットを加算
-            position.y += offsetY;
-            rectTransform.position = position;
+            rectTransform.position = RectTransformUtility.WorldToScreenPoint(
+                Camera.main, playerTransform.position +
+                Vector3.Cross(Camera.main.transform.forward, Camera.main.transform.right) * offsetY);
         }
     }
 }
