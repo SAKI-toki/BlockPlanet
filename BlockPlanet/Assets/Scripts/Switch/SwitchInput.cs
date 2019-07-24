@@ -167,7 +167,7 @@ static public class SwitchInput
 #if UNITY_EDITOR
         return ConvertSwitchHorizontalToXboxHorizontal(index);
 #else
-        return stickInfos[index].m_Horizontal;
+        return stickInfos[index].horizontal;
 #endif
     }
 
