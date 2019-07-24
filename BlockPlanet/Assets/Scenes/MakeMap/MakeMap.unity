@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1661fb162676552448b46a4499c1d1a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cubes:
+  cubes:
   - {fileID: 1626818043717834, guid: 835257f30c6c333448b250f9c6d2d315, type: 3}
   - {fileID: 1763899405082200, guid: 1461742e459a446458e07f0578a7bbb7, type: 3}
   - {fileID: 1438546579819188, guid: ab241e24599044c40aed5054c752f991, type: 3}
@@ -232,16 +232,16 @@ MonoBehaviour:
   - {fileID: 1467979413378186, guid: e1610ee3a6a4bc3429f796084eb6ddef, type: 3}
   - {fileID: 1549535125379728, guid: 287bad5b14314fd48ba95ceaf38f6039, type: 3}
   - {fileID: 1790320502531378, guid: b4f8839004f725e44a594a3ca4e791e7, type: 3}
-  StrongCube: {fileID: 1301499139755918, guid: 568d7b8bd377e32419180767e4ed77db, type: 3}
-  CursorTransform: {fileID: 8147614121392955055}
-  Players:
+  strongCube: {fileID: 1301499139755918, guid: 568d7b8bd377e32419180767e4ed77db, type: 3}
+  cursorTransform: {fileID: 8147614121392955055}
+  players:
   - {fileID: 4810848304237892686}
   - {fileID: 2669177593867573033}
   - {fileID: 5403356706041343445}
   - {fileID: 130070332929736016}
-  CameraObject: {fileID: 812217407}
-  ScrollSpeed: 2
-  CsvAsset: {fileID: 4900000, guid: 40d6862a327741443af649071b25a055, type: 3}
+  cameraObject: {fileID: 812217407}
+  scrollSpeed: 2
+  csvAsset: {fileID: 0}
 --- !u!4 &1528172435
 Transform:
   m_ObjectHideFlags: 0
