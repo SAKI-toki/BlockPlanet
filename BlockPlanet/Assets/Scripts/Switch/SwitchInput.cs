@@ -167,7 +167,7 @@ static public class SwitchInput
 #if UNITY_EDITOR
         return ConvertSwitchHorizontalToXboxHorizontal(index);
 #else
-        return stickInfos[index].m_Horizontal;
+        return stickInfos[index].horizontal;
 #endif
     }
 
@@ -275,37 +275,37 @@ static public class SwitchInput
         {
             case XboxInput.Up:
                 return Input.GetKey(KeyCode.Joystick1Button3 + index * AddNum) ||
-                Input.GetKey(KeyCode.UpArrow);
+                (index == 0 && Input.GetKey(KeyCode.UpArrow));
             case XboxInput.Down:
                 return Input.GetKey(KeyCode.Joystick1Button0 + index * AddNum) ||
-                Input.GetKey(KeyCode.DownArrow);
+                (index == 0 && Input.GetKey(KeyCode.DownArrow));
             case XboxInput.Right:
                 return Input.GetKey(KeyCode.Joystick1Button1 + index * AddNum) ||
-                Input.GetKey(KeyCode.RightArrow);
+                (index == 0 && Input.GetKey(KeyCode.RightArrow));
             case XboxInput.Left:
                 return Input.GetKey(KeyCode.Joystick1Button2 + index * AddNum) ||
-                Input.GetKey(KeyCode.LeftArrow);
+                (index == 0 && Input.GetKey(KeyCode.LeftArrow));
             case XboxInput.SR:
                 return Input.GetKey(KeyCode.Joystick1Button5 + index * AddNum) ||
-                Input.GetKey(KeyCode.E);
+                (index == 0 && Input.GetKey(KeyCode.E));
             case XboxInput.SL:
                 return Input.GetKey(KeyCode.Joystick1Button4 + index * AddNum) ||
-                Input.GetKey(KeyCode.Q);
+                (index == 0 && Input.GetKey(KeyCode.Q));
             case XboxInput.StickUp:
                 return Input.GetAxisRaw("Vertical" + (index + 1).ToString()) > DeadZone ||
-                Input.GetKey(KeyCode.W);
+                (index == 0 && Input.GetKey(KeyCode.W));
             case XboxInput.StickDown:
                 return Input.GetAxisRaw("Vertical" + (index + 1).ToString()) < -DeadZone ||
-                Input.GetKey(KeyCode.S);
+                (index == 0 && Input.GetKey(KeyCode.S));
             case XboxInput.StickRight:
                 return Input.GetAxisRaw("Horizontal" + (index + 1).ToString()) > DeadZone ||
-                Input.GetKey(KeyCode.D);
+                (index == 0 && Input.GetKey(KeyCode.D));
             case XboxInput.StickLeft:
                 return Input.GetAxisRaw("Horizontal" + (index + 1).ToString()) < -DeadZone ||
-                Input.GetKey(KeyCode.A);
+                (index == 0 && Input.GetKey(KeyCode.A));
             case XboxInput.Pause:
                 return Input.GetKey(KeyCode.Joystick1Button7 + index * AddNum) ||
-                Input.GetKey(KeyCode.Alpha1);
+                (index == 0 && Input.GetKey(KeyCode.Alpha1));
             default:
                 return false;
         }

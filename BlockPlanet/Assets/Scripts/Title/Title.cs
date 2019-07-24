@@ -24,24 +24,32 @@ public class Title : SingletonMonoBehaviour<Title>
     delegate void StateType();
     StateType state;
 
-    [SerializeField]
-    SelectChoice currentSelectChoice;
-
     private void Start()
     {
-        state = BombFallState;
+        state = BombFallInitState;
         //フェード
         Fade.Instance.FadeOut(1.0f);
         //BGM
         bgmSound = GetComponent<AudioSource>();
         uiParent.SetActive(false);
         creditParent.SetActive(false);
+        titleBomb.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     void Update()
     {
         if (!Fade.Instance.IsEnd) return;
         if (state != null) state();
+    }
+
+    /// <summary>
+    /// 爆弾が落ちるときの初期化
+    /// </summary>
+    void BombFallInitState()
+    {
+        fallSound.Play();
+        titleBomb.GetComponent<Rigidbody>().isKinematic = false;
+        state = BombFallState;
     }
 
     /// <summary>
@@ -74,8 +82,8 @@ public class Title : SingletonMonoBehaviour<Title>
         {
             SoundManager.Instance.Push();
             uiParent.SetActive(false);
-            currentSelectChoice.gameObject.SetActive(true);
-            state = PlayerNumSelect;
+            StartCoroutine(TransitionNextScene());
+            state = null;
         }
         //クレジットの表示
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
@@ -104,66 +112,16 @@ public class Title : SingletonMonoBehaviour<Title>
     }
 
     /// <summary>
-    /// プレイヤーの人数を選択するステート
+    /// 次のシーンに遷移
     /// </summary>
-    void PlayerNumSelect()
-    {
-        var prev = currentSelectChoice;
-        //人数決定&シーン遷移
-        if (SwitchInput.GetButtonDown(0, SwitchButton.Ok))
-        {
-            BlockCreater.GetInstance().maxPlayerNumber = currentSelectChoice.number;
-            StartCoroutine(Loadscene());
-        }
-        //カーソル移動
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickRight))
-        {
-            if (currentSelectChoice.Right)
-            {
-                currentSelectChoice = currentSelectChoice.Right;
-            }
-        }
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickLeft))
-        {
-            if (currentSelectChoice.Left)
-            {
-                currentSelectChoice = currentSelectChoice.Left;
-            }
-        }
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickDown))
-        {
-            if (currentSelectChoice.Down)
-            {
-                currentSelectChoice = currentSelectChoice.Down;
-            }
-        }
-        else if (SwitchInput.GetButtonDown(0, SwitchButton.StickUp))
-        {
-            if (currentSelectChoice.Up)
-            {
-                currentSelectChoice = currentSelectChoice.Up;
-            }
-        }
-        //カーソルが移動したら
-        if (prev != currentSelectChoice)
-        {
-            prev.gameObject.SetActive(false);
-            //スティックの音
-            SoundManager.Instance.Stick();
-            //アクティブにするフィールドの変更
-            currentSelectChoice.gameObject.SetActive(true);
-        }
-    }
-
-    //セレクト画面に遷移
-    private IEnumerator Loadscene()
+    private IEnumerator TransitionNextScene()
     {
         //フェード
         Fade.Instance.FadeIn(1.0f);
         //少し待つ
         while (!Fade.Instance.IsEnd) yield return null;
         //シーン遷移
-        SceneManager.LoadScene("Select");
+        SceneManager.LoadScene("PlayerNumberSelect");
     }
 
     public void BombExplosion()

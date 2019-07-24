@@ -19,9 +19,8 @@ public class BlockCreater : Singleton<BlockCreater>
     [SerializeField]
     public Material[] mats = new Material[8];
 
-    //プレイ人数
-    [System.NonSerialized]
-    public int maxPlayerNumber = 4;
+    //プレイするかどうか
+    public bool[] isPlays = new bool[4];
 
 
     /// <summary>
@@ -78,10 +77,7 @@ public class BlockCreater : Singleton<BlockCreater>
     /// <param name="lookatObject">注視オブジェクト</param>
     void GeneratePlayer(int playerNumber, SceneEnum scene, GameObject lookatObject)
     {
-        if (maxPlayerNumber - 1 < playerNumber)
-        {
-            return;
-        }
+        if (!isPlays[playerNumber]) return;
         GameObject player = Instantiate(players[playerNumber], settingPosition, Quaternion.identity);
         //ゲームならマップの中心を向かせる
         if (scene == SceneEnum.Game)
