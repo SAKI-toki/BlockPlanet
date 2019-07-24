@@ -100,13 +100,13 @@ public class Select : SingletonMonoBehaviour<Select>
             StartCoroutine(LoadFieldScene());
             state = null;
         }
-        //タイトルに戻る
+        //前のシーンに戻る
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Cancel))
         {
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
             //ロード処理に入る
-            StartCoroutine(LoadTitleScene());
+            StartCoroutine(LoadPrevScene());
             state = null;
         }
         //説明を表示
@@ -198,14 +198,13 @@ public class Select : SingletonMonoBehaviour<Select>
     }
 
     /// <summary>
-    /// タイトルシーンの読み込み
+    /// 前のシーンの読み込み
     /// </summary>
-    /// <returns></returns>
-    IEnumerator LoadTitleScene()
+    IEnumerator LoadPrevScene()
     {
         Fade.Instance.FadeIn(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
-        SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("PlayerNumberSelect");
     }
 
     IEnumerator LoadFieldScene()

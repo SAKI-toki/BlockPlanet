@@ -28,8 +28,6 @@ public class MakeMapManager : MonoBehaviour
     //プレイヤーの位置
     Vector2Int[] playerPositions = new Vector2Int[4];
 
-    //生成したcsvのパス
-    const string Path = "Assets/Resources/csv/MakeMap";
     delegate void StateType();
     StateType state;
     string stateName;
@@ -51,7 +49,8 @@ public class MakeMapManager : MonoBehaviour
     TextAsset csvAsset;
     bool isTracking = false;
     float trackingDistance = 0.0f;
-
+    [SerializeField]
+    bool makeMiddleAsset = false;
     void Start()
     {
         cameraInitPosition = cameraObject.transform.position;
@@ -73,6 +72,11 @@ public class MakeMapManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M)) displayUI = !displayUI;
         CursorMove();
         state();
+        if (makeMiddleAsset)
+        {
+            MakeMiddle();
+            makeMiddleAsset = false;
+        }
     }
 
     void LateUpdate()
@@ -154,6 +158,9 @@ public class MakeMapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// カーソルの移動
+    /// </summary>
     void CursorMove()
     {
         Vector3 position = cursorTransform.position;
@@ -284,6 +291,10 @@ public class MakeMapManager : MonoBehaviour
         cursorTransform.position = position;
     }
 
+    /// <summary>
+    /// ブロックの追加
+    /// </summary>
+    /// <param name="position">位置</param>
     void AddBlock(Vector2Int position)
     {
         //既に最大なら何もしない
@@ -299,6 +310,10 @@ public class MakeMapManager : MonoBehaviour
             new Vector3(position.x, blockArray[position.y, position.x], position.y);
     }
 
+    /// <summary>
+    /// ブロックの削除
+    /// </summary>
+    /// <param name="position">位置</param>
     void SubBlock(Vector2Int position)
     {
         //既に0なら何もしない
@@ -313,6 +328,11 @@ public class MakeMapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ブロックを指定数にする
+    /// </summary>
+    /// <param name="blockNum">数</param>
+    /// <param name="position">位置</param>
     void SetBlock(int blockNum, Vector2Int position)
     {
         int blockNumber = blockArray[position.y, position.x];
@@ -331,6 +351,11 @@ public class MakeMapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 壊れる、壊れないブロックの切り替え
+    /// </summary>
+    /// <param name="isToStrong">壊れないブロックにするかどうか</param>
+    /// <param name="position">位置</param>
     void SwitchStrong(bool isToStrong, Vector2Int position)
     {
         if (isStrongArray[position.y, position.x] == isToStrong) return;
@@ -403,6 +428,8 @@ public class MakeMapManager : MonoBehaviour
 
     void MakeCsv()
     {
+        //生成したcsvのパス
+        const string Path = "Assets/Resources/csv/MakeMap";
         //フォルダの作成
         Directory.CreateDirectory(Path);
         string csvString = "";
@@ -441,6 +468,42 @@ public class MakeMapManager : MonoBehaviour
         }
         int number = Directory.GetFiles(Path, "*").Length / 2;
         StreamWriter sw = new StreamWriter(Path + "/MapData" + number.ToString() + ".csv", false);
+        sw.Write(csvString);
+        sw.Flush();
+        sw.Close();
+    }
+
+    void MakeMiddle()
+    {
+        const string Path = "Assets/Resources/csv/MakeMap/Middle";
+        //フォルダの作成
+        Directory.CreateDirectory(Path);
+        string csvString = "";
+        for (int i = 0; i < BlockMapSize.LineN; ++i)
+        {
+            bool first = true;
+            for (int j = 0; j < BlockMapSize.RowN; ++j)
+            {
+                //最初以外','をつける
+                if (!first)
+                {
+                    csvString += ",";
+                }
+                first = false;
+                //ブロックの数を取得
+                int blockNumber = blockArray[i, j];
+                if (blockNumber != 0)
+                {
+                    //壊れないブロックなら+10
+                    blockNumber += isStrongArray[i, j] ? 10 : 0;
+                }
+                //stringに追加
+                csvString += blockNumber.ToString();
+            }
+            csvString += "\n";
+        }
+        int number = Directory.GetFiles(Path, "*").Length / 2;
+        StreamWriter sw = new StreamWriter(Path + "/MiddleMapData" + number.ToString() + ".csv", false);
         sw.Write(csvString);
         sw.Flush();
         sw.Close();

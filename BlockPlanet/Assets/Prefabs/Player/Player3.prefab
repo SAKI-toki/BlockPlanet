@@ -1147,7 +1147,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1730401732968482, guid: a57f9a624cdc2794097ae5ebc269f16b, type: 3}
       propertyPath: m_Name
-      value: Particle System
+      value: ChargeEffect
       objectReference: {fileID: 0}
     - target: {fileID: 1730401732968482, guid: a57f9a624cdc2794097ae5ebc269f16b, type: 3}
       propertyPath: m_Layer

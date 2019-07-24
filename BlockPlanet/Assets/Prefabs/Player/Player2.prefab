@@ -1146,7 +1146,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1730401732968482, guid: a57f9a624cdc2794097ae5ebc269f16b, type: 3}
       propertyPath: m_Name
-      value: Particle System
+      value: ChargeEffect
       objectReference: {fileID: 0}
     - target: {fileID: 4801644015451024, guid: a57f9a624cdc2794097ae5ebc269f16b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1194,6 +1194,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4801644015451024, guid: a57f9a624cdc2794097ae5ebc269f16b, type: 3}
       propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199957279805678012, guid: a57f9a624cdc2794097ae5ebc269f16b,
+        type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198477510475439372, guid: a57f9a624cdc2794097ae5ebc269f16b,
@@ -1395,11 +1400,6 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.angle
       value: 16.633818
-      objectReference: {fileID: 0}
-    - target: {fileID: 199957279805678012, guid: a57f9a624cdc2794097ae5ebc269f16b,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a57f9a624cdc2794097ae5ebc269f16b, type: 3}

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
 {
     [System.NonSerialized]
-    public bool[] playerGameOvers;
+    public bool[] playerGameOvers = new bool[4];
     //プレイヤーのポイント。スタティックにしないといけない
     static public int[] playerPoints = new int[4];
     //勝利ポイント
@@ -43,7 +43,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     Vector3 maxScale = new Vector3();
     float scaleTime = 0.0f;
     [System.NonSerialized]
-    public Player[] players;
+    public Player[] players = new Player[4];
 
     [SerializeField]
     GameObject onTheWayObject;
@@ -65,12 +65,10 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     AudioSource hornSound;
     void Start()
     {
-        //プレイ人数分要素を確保
-        players = new Player[BlockCreater.GetInstance().maxPlayerNumber];
-        playerGameOvers = new bool[BlockCreater.GetInstance().maxPlayerNumber];
         //プレイしないプレイヤーの途中経過の画像を差し替える
-        for (int i = BlockCreater.GetInstance().maxPlayerNumber; i < playerImages.Length; ++i)
+        for (int i = 0; i < playerImages.Length; ++i)
         {
+            if (BlockCreater.GetInstance().isPlays[i]) continue;
             playerImages[i].sprite = stopSprite;
             playerImages[i].SetNativeSize();
         }
@@ -89,6 +87,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //生き残っているプレイヤーの数を計算
         for (int i = 0; i < playerGameOvers.Length; ++i)
         {
+            if (!BlockCreater.GetInstance().isPlays[i]) continue;
             if (!playerGameOvers[i])
             {
                 winPlayerNumber = i;
@@ -156,6 +155,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //プレイヤーを動けるようにする
         for (int i = 0; i < players.Length; ++i)
         {
+            if (!BlockCreater.GetInstance().isPlays[i]) continue;
             players[i] = GameObject.Find("Player" + (i + 1) + "(Clone)").GetComponent<Player>();
             players[i].isGameStart = true;
         }
