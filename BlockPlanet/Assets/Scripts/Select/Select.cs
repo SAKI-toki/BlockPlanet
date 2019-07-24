@@ -34,6 +34,8 @@ public class Select : SingletonMonoBehaviour<Select>
     [SerializeField]
     Material[] mats;
     [SerializeField]
+    GameObject selectUIparent;
+    [SerializeField]
     GameObject descriptionUIparent;
     delegate void StateType();
     StateType state;
@@ -110,6 +112,8 @@ public class Select : SingletonMonoBehaviour<Select>
         //説明を表示
         else if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
         {
+            selectUIparent.SetActive(false);
+            instanceFieldList[stagenumber].SetActive(false);
             descriptionUIparent.SetActive(true);
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
@@ -126,6 +130,8 @@ public class Select : SingletonMonoBehaviour<Select>
         if (SwitchInput.GetButtonDown(0, SwitchButton.Pause) ||
             SwitchInput.GetButtonDown(0, SwitchButton.Down))
         {
+            selectUIparent.SetActive(true);
+            instanceFieldList[stagenumber].SetActive(true);
             descriptionUIparent.SetActive(false);
             //プッシュの音を鳴らす
             SoundManager.Instance.Push();
