@@ -14,7 +14,7 @@ public class PlayerNumberSelectManager : MonoBehaviour
     StateType state;
 
     [SerializeField]
-    GameObject[] playObject;
+    PlayerNumberSelectUIController[] uiControllers;
 
 #if UNITY_EDITOR
     [SerializeField, Range(0, 3)]
@@ -30,7 +30,7 @@ public class PlayerNumberSelectManager : MonoBehaviour
         state = PushButtonPlayer;
         //フェード
         Fade.Instance.FadeOut(1.0f);
-        foreach (var obj in playObject) obj.SetActive(false);
+        foreach (var uiController in uiControllers) uiController.SetOnOff(false);
     }
 
     void Update()
@@ -78,7 +78,7 @@ public class PlayerNumberSelectManager : MonoBehaviour
             {
                 SoundManager.Instance.Push();
                 isPlays[i] = isPlay;
-                playObject[i].SetActive(isPlay);
+                uiControllers[i].SetOnOff(isPlay);
             }
             //プレイ人数の加算
             if (isPlays[i]) ++playNumCount;
