@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
@@ -15,6 +16,9 @@ public class PlayerNumberSelectManager : MonoBehaviour
 
     [SerializeField]
     PlayerNumberSelectUIController[] uiControllers;
+    [SerializeField]
+    Image[] stageSelectUIs;
+    float stageSelectUIalpha;
 
 #if UNITY_EDITOR
     [SerializeField, Range(0, 3)]
@@ -31,6 +35,7 @@ public class PlayerNumberSelectManager : MonoBehaviour
         //フェード
         Fade.Instance.FadeOut(1.0f);
         foreach (var uiController in uiControllers) uiController.SetOnOff(false);
+        StageSelectUIAlphaUpdate(0.0f);
     }
 
     void Update()
@@ -83,13 +88,35 @@ public class PlayerNumberSelectManager : MonoBehaviour
             //プレイ人数の加算
             if (isPlays[i]) ++playNumCount;
         }
-        //二人以上参加しているときにポーズを押すとプレイヤー人数の選択を終了
-        if (playNumCount >= 2 && SwitchInput.GetButtonDown(0, SwitchButton.Pause))
+        //二人以上参加しているとき
+        if (playNumCount >= 2)
         {
-            SoundManager.Instance.Push();
-            BlockCreater.GetInstance().isPlays = isPlays;
-            StartCoroutine(TranslationNextScene());
-            state = null;
+            const float MinAlpha = 0.3f;
+            stageSelectUIalpha += Time.deltaTime * 6;
+            StageSelectUIAlphaUpdate((Mathf.Sin(stageSelectUIalpha) + 1) / 2 * (1 - MinAlpha) + MinAlpha);
+            //ポーズを押すとプレイヤー人数の選択を終了
+            if (SwitchInput.GetButtonDown(0, SwitchButton.Pause))
+            {
+                SoundManager.Instance.Push();
+                BlockCreater.GetInstance().isPlays = isPlays;
+                StartCoroutine(TranslationNextScene());
+                state = null;
+            }
+        }
+        else
+        {
+            StageSelectUIAlphaUpdate(0.0f);
+            stageSelectUIalpha = 1.0f;
+        }
+    }
+
+    void StageSelectUIAlphaUpdate(float alpha)
+    {
+        foreach (var stageSelectUI in stageSelectUIs)
+        {
+            Color color = stageSelectUI.color;
+            color.a = alpha;
+            stageSelectUI.color = color;
         }
     }
 

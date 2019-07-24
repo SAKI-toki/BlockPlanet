@@ -15,6 +15,8 @@ public class PlayerNumberSelectUIController : MonoBehaviour
     [SerializeField]
     Image shutterImage;
 
+    const float ShutterSpeed = 2.0f;
+
 
     /// <summary>
     /// 参加か不参加か
@@ -42,7 +44,7 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         float amount = shutterImage.fillAmount;
         while (amount > 0.0f)
         {
-            amount -= Time.deltaTime;
+            amount -= Time.deltaTime * ShutterSpeed;
             shutterImage.fillAmount = amount;
             yield return null;
         }
@@ -53,7 +55,7 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         float amount = shutterImage.fillAmount;
         while (amount < 1.0f)
         {
-            amount += Time.deltaTime;
+            amount += Time.deltaTime * ShutterSpeed;
             shutterImage.fillAmount = amount;
             yield return null;
         }
