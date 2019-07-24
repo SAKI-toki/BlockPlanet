@@ -369,6 +369,11 @@ public class MakeMapManager : MonoBehaviour
             AddBlock(position);
     }
 
+    /// <summary>
+    /// プレイヤーのセット
+    /// </summary>
+    /// <param name="number">プレイヤーの番号</param>
+    /// <param name="position">位置</param>
     void SetPlayer(int number, Vector2Int position)
     {
         //プレイヤー同士の距離の制限
@@ -391,6 +396,9 @@ public class MakeMapManager : MonoBehaviour
             new Vector3(BlockMapSize.RowN / 2.0f, players[number - 1].transform.position.y, BlockMapSize.LineN / 2.0f));
     }
 
+    /// <summary>
+    /// カメラの制御
+    /// </summary>
     void CameraControl()
     {
         //追尾モード
@@ -426,6 +434,9 @@ public class MakeMapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// csvの作成
+    /// </summary>
     void MakeCsv()
     {
         //生成したcsvのパス
@@ -473,6 +484,9 @@ public class MakeMapManager : MonoBehaviour
         sw.Close();
     }
 
+    /// <summary>
+    /// 中間データの作成
+    /// </summary>
     void MakeMiddle()
     {
         const string Path = "Assets/Resources/csv/MakeMap/Middle";
@@ -509,6 +523,10 @@ public class MakeMapManager : MonoBehaviour
         sw.Close();
     }
 
+    /// <summary>
+    /// CSVの読み込み
+    /// </summary>
+    /// <param name="textAsset">csv</param>
     void LoadCsv(TextAsset textAsset)
     {
         //改行ごとに格納
@@ -532,13 +550,16 @@ public class MakeMapManager : MonoBehaviour
                 }
                 if (number != 0)
                 {
-                    SwitchStrong(number >= 10, position);
                     SetBlock(number % 10, position);
+                    SwitchStrong(number >= 10, position);
                 }
             }
         }
     }
 
+    /// <summary>
+    /// マップ情報をクリア
+    /// </summary>
     void Clear()
     {
         cursorTransform.position = Vector3.zero;

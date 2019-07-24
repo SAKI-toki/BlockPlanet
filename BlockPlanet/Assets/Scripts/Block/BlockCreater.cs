@@ -34,6 +34,18 @@ public class BlockCreater : Singleton<BlockCreater>
     public void CreateField(string csvName, Transform parent, BlockMap blockMap,
     GameObject lookatObject, SceneEnum currentScene = SceneEnum.Other)
     {
+        int playCount = 0;
+        foreach (var isPlay in isPlays)
+        {
+            if (isPlay) ++playCount;
+        }
+        if (playCount < 2)
+        {
+            for (int i = 0; i < 4; ++i)
+            {
+                isPlays[i] = true;
+            }
+        }
         //csvの読み込み
         TextAsset csvfile = Resources.Load("csv/" + csvName) as TextAsset;
         //改行ごとに格納
