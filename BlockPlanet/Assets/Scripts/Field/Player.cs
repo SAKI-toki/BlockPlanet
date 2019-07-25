@@ -43,6 +43,9 @@ public class Player : MonoBehaviour
     bool IsHitBomb = false;
     Vector3 bombPosition = new Vector3();
 
+    [SerializeField]
+    ParticleSystem trajectoryParticle;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -60,6 +63,10 @@ public class Player : MonoBehaviour
             Destroy(ShootObject);
             Destroy(gameObject);
         }
+        if (other.tag == "Cube" || other.tag == "StrongCube")
+        {
+            trajectoryParticle.Stop();
+        }
     }
 
     void OnDestroy()
@@ -71,7 +78,6 @@ public class Player : MonoBehaviour
     {
         //重力
         rb.AddForce(Vector3.down * 60f);
-
         if (!isGameStart || FieldManeger.Instance.isPause || FieldManeger.Instance.isGameOver)
             return;
         //スティックの入力を取得
@@ -90,7 +96,6 @@ public class Player : MonoBehaviour
                  Quaternion.Euler(0, Mathf.Atan2(-vertical, horizontal) * Mathf.Rad2Deg + 90, 0),
                   Mathf.Sqrt(sqrt) / 2);
         }
-
         if (IsHitBomb)
         {
             IsHitBomb = false;
@@ -106,8 +111,8 @@ public class Player : MonoBehaviour
             vibrationTimer = 0.5f;
             SwitchVibration.LowVibration(playerNumber, 0.3f);
             CameraShake.Instance.Shake();
+            trajectoryParticle.Play();
         }
-
     }
 
     void Update()
