@@ -283,6 +283,25 @@ public class MakeMapManager : MonoBehaviour
         {
             cursorMoveTime[7] = moveTimeLimit;
         }
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (Mathf.Abs(scroll) > 0)
+        {
+            if (scroll > 0)
+            {
+                if (Input.GetMouseButton(1))
+                    ++position.x;
+                else
+                    ++position.z;
+            }
+            else if (scroll < 0)
+            {
+                if (Input.GetMouseButton(1))
+                    --position.x;
+                else
+                    --position.z;
+            }
+        }
+
         //位置の調整
         position.Set(Mathf.Clamp(position.x, 0, blockArray.GetLength(1) - 1),
                     blockArray[(int)cursorTransform.position.z, (int)cursorTransform.position.x] + 1,

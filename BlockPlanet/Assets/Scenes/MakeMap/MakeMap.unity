@@ -242,6 +242,7 @@ MonoBehaviour:
   cameraObject: {fileID: 812217407}
   scrollSpeed: 2
   csvAsset: {fileID: 0}
+  makeMiddleAsset: 0
 --- !u!4 &1528172435
 Transform:
   m_ObjectHideFlags: 0
