@@ -532,8 +532,8 @@ public class MakeMapManager : MonoBehaviour
                 }
                 if (number != 0)
                 {
-                    SwitchStrong(number >= 10, position);
                     SetBlock(number % 10, position);
+                    SwitchStrong(number >= 10, position);
                 }
             }
         }
