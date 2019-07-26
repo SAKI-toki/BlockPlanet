@@ -91,6 +91,7 @@ public class Bomb : MonoBehaviour
         bool holdFlg = false;
         foreach (var player in FieldManeger.Instance.players)
         {
+            if (player == null) continue;
             if (gameObject == player.ShootObject)
             {
                 holdFlg = true;
