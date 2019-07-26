@@ -7,11 +7,6 @@ public class InAdvanceCreateField : MonoBehaviour
     [SerializeField, Range(1, 8)]
     int stageNumber = 1;
 
-    void Start()
-    {
-        CreateSelectField(stageNumber);
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
@@ -37,6 +32,7 @@ public class InAdvanceCreateField : MonoBehaviour
 
     void CreateSelectField(int num)
     {
+        Debug.Log("Stage" + num + ":CreateStart");
         GameObject field = new GameObject("field" + num);
         BlockMap blockMap = new BlockMap();
         //マップ生成
@@ -49,6 +45,7 @@ public class InAdvanceCreateField : MonoBehaviour
         Destroy(field);
         CreateAsset("Assets/Models/SelectField/Field" + num, "Assets/Prefabs/SelectField", combineField, num);
         Destroy(combineField);
+        Debug.Log("Stage" + num + ":CreateEnd");
     }
 
     void CreateAsset(string modelPath, string prefabPath, GameObject obj, int num)
