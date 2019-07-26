@@ -337,7 +337,7 @@ MonoBehaviour:
   - {fileID: 1521650807132195540, guid: 5a8be4eaee61e284f86a5c6e24c999c4, type: 3}
   - {fileID: 4425155555737408373, guid: 5f3761a8b9ec0494ea54e39e1b197ea7, type: 3}
   - {fileID: 8748700601083945990, guid: 995333391a347a049bc5028ddf26c4d9, type: 3}
-  - {fileID: 7469879677398172141, guid: 69a02e78ec50db54e8a503769d53f49b, type: 3}
+  - {fileID: 3828453051120282460, guid: 69a02e78ec50db54e8a503769d53f49b, type: 3}
   cameraObject: {fileID: 1429951023}
   ui: {fileID: 2046592428}
   postProcessMaterial: {fileID: 2100000, guid: 6af9397cd7f0f7540b908a70c12a7061, type: 2}
