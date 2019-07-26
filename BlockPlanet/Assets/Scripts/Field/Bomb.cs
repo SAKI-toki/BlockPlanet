@@ -81,7 +81,7 @@ public class Bomb : MonoBehaviour
         }
 
         //フィールド外に落ちた場合
-        if (collisionOtherTag == "DustBox")
+        if (collisionOtherTag == "DustBox" || collisionOtherTag == "BombDustBox")
             Destroy(gameObject);
     }
 

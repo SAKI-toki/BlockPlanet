@@ -14,6 +14,7 @@ TagManager:
   - Star
   - Player3
   - Player4
+  - BombDustBox
   layers:
   - Default
   - TransparentFX

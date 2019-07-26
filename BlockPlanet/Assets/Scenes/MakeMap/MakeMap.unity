@@ -241,7 +241,7 @@ MonoBehaviour:
   - {fileID: 130070332929736016}
   cameraObject: {fileID: 812217407}
   scrollSpeed: 2
-  csvAsset: {fileID: 0}
+  csvAsset: {fileID: 4900000, guid: 40d6862a327741443af649071b25a055, type: 3}
   makeMiddleAsset: 0
 --- !u!4 &1528172435
 Transform:
