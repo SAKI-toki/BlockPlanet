@@ -16,8 +16,8 @@ public class PlayerNumberSelectUIController : MonoBehaviour
     Image shutterImage;
     [SerializeField]
     AudioSource aud;
-    const float ShutterSpeed = 2.0f;
-
+    [SerializeField]
+    float shutterSpeed = 1.6f;
 
     /// <summary>
     /// 参加か不参加か
@@ -47,9 +47,9 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         float amount = shutterImage.fillAmount;
         while (amount > 0.0f)
         {
-            aud.volume = amount;
-            amount -= Time.deltaTime * ShutterSpeed;
+            amount -= Time.deltaTime * shutterSpeed;
             shutterImage.fillAmount = amount;
+            aud.volume = 1.0f - Mathf.Pow(2, 2) * Mathf.Pow(amount - 0.5f, 2);
             yield return null;
         }
     }
@@ -59,9 +59,9 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         float amount = shutterImage.fillAmount;
         while (amount < 1.0f)
         {
-            aud.volume = 1.0f - amount;
-            amount += Time.deltaTime * ShutterSpeed;
+            amount += Time.deltaTime * shutterSpeed;
             shutterImage.fillAmount = amount;
+            aud.volume = 1.0f - Mathf.Pow(2, 2) * Mathf.Pow(amount - 0.5f, 2);
             yield return null;
         }
     }

@@ -34,7 +34,6 @@ public class PlayerNumberSelectManager : MonoBehaviour
         state = PushButtonPlayer;
         //フェード
         Fade.Instance.FadeOut(1.0f);
-        foreach (var uiController in uiControllers) uiController.SetOnOff(false);
         StageSelectUIAlphaUpdate(0.0f);
     }
 
@@ -81,7 +80,6 @@ public class PlayerNumberSelectManager : MonoBehaviour
             //選択したものが変わったかどうか
             if (isPlay != isPlays[i])
             {
-                SoundManager.Instance.Push();
                 isPlays[i] = isPlay;
                 uiControllers[i].SetOnOff(isPlay);
             }

@@ -248,6 +248,7 @@ MonoBehaviour:
   - {fileID: 1925401239}
   shutterImage: {fileID: 884686476}
   aud: {fileID: 48463456}
+  shutterSpeed: 1.3
 --- !u!4 &48463455
 Transform:
   m_ObjectHideFlags: 0
@@ -273,8 +274,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: d1fbb608da187bb4bb4c59194fa3b576, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -719,6 +720,7 @@ MonoBehaviour:
   - {fileID: 1395708959}
   shutterImage: {fileID: 1673545309}
   aud: {fileID: 151917578}
+  shutterSpeed: 1.3
 --- !u!4 &151917577
 Transform:
   m_ObjectHideFlags: 0
@@ -744,8 +746,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: d1fbb608da187bb4bb4c59194fa3b576, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -2090,6 +2092,7 @@ MonoBehaviour:
   - {fileID: 676889754}
   shutterImage: {fileID: 781494080}
   aud: {fileID: 909973359}
+  shutterSpeed: 1.3
 --- !u!4 &909973358
 Transform:
   m_ObjectHideFlags: 0
@@ -2115,8 +2118,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: d1fbb608da187bb4bb4c59194fa3b576, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -2807,6 +2810,7 @@ MonoBehaviour:
   - {fileID: 1970747212}
   shutterImage: {fileID: 1293623924}
   aud: {fileID: 1102898130}
+  shutterSpeed: 1.3
 --- !u!4 &1102898129
 Transform:
   m_ObjectHideFlags: 0
@@ -2832,8 +2836,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: d1fbb608da187bb4bb4c59194fa3b576, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
