@@ -29238,7 +29238,7 @@ MonoBehaviour:
   cameraObject: {fileID: 733741564}
   playerEndTransform: {fileID: 1576180763}
   aud: {fileID: 2008232420}
-  drumRollSound: {fileID: 8300000, guid: a235286624447ca4d8eec4c1fa41b47a, type: 3}
+  drumRollSound: {fileID: 8300000, guid: c4b0272c854dad149aa8faf3811611cb, type: 3}
   winnerSound: {fileID: 8300000, guid: c05ff90056eb22d40a6afb749d2ba89e, type: 3}
   isDebug: 1
   winPlayerDebug: 3
