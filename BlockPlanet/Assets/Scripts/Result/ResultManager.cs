@@ -150,7 +150,6 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         Fade.Instance.FadeOut(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
         aud.clip = drumRollSound;
-        aud.loop = true;
         aud.Play();
         bool[] isEnd = new bool[4];
         int playerNum = 0;
@@ -192,7 +191,6 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
         fieldObjectParent.SetActive(false);
         aud.Stop();
-        aud.loop = false;
         aud.clip = winnerSound;
         aud.Play();
         //勝ったプレイヤーのアニメーション
