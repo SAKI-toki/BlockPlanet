@@ -33,7 +33,12 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     GameObject cameraObject = null;
     [SerializeField]
     Transform playerEndTransform = null;
-
+    [SerializeField]
+    AudioSource aud;
+    [SerializeField]
+    AudioClip drumRollSound;
+    [SerializeField]
+    AudioClip winnerSound;
 #if UNITY_EDITOR
     [SerializeField]
     bool isDebug = false;
@@ -144,6 +149,9 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         //フェード
         Fade.Instance.FadeOut(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
+        aud.clip = drumRollSound;
+        aud.loop = true;
+        aud.Play();
         bool[] isEnd = new bool[4];
         int playerNum = 0;
         for (int i = 0; i < isEnd.Length; ++i)
@@ -183,6 +191,10 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         }
         var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
         fieldObjectParent.SetActive(false);
+        aud.Stop();
+        aud.loop = false;
+        aud.clip = winnerSound;
+        aud.Play();
         //勝ったプレイヤーのアニメーション
         yield return StartCoroutine(resultWinPlayerAnimation.WinPlayerAnimation(winPlayerNumber));
         float time = 0;

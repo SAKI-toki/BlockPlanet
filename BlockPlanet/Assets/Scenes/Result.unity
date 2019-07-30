@@ -29237,7 +29237,10 @@ MonoBehaviour:
   - {fileID: 1094548055}
   cameraObject: {fileID: 733741564}
   playerEndTransform: {fileID: 1576180763}
-  isDebug: 0
+  aud: {fileID: 2008232420}
+  drumRollSound: {fileID: 8300000, guid: a235286624447ca4d8eec4c1fa41b47a, type: 3}
+  winnerSound: {fileID: 8300000, guid: c05ff90056eb22d40a6afb749d2ba89e, type: 3}
+  isDebug: 1
   winPlayerDebug: 3
 --- !u!4 &2008232419
 Transform:
@@ -29263,8 +29266,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c05ff90056eb22d40a6afb749d2ba89e, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

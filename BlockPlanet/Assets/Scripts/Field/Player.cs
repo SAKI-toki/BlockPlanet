@@ -63,10 +63,6 @@ public class Player : MonoBehaviour
             Destroy(ShootObject);
             Destroy(gameObject);
         }
-        if (other.tag == "Cube" || other.tag == "StrongCube")
-        {
-            trajectoryParticle.Stop();
-        }
     }
 
     void OnDestroy()
@@ -80,6 +76,10 @@ public class Player : MonoBehaviour
         rb.AddForce(Vector3.down * 60f);
         if (!isGameStart || FieldManeger.Instance.isPause || FieldManeger.Instance.isGameOver)
             return;
+        if (trajectoryParticle.isPlaying && rb.velocity.magnitude < 5.0f)
+        {
+            trajectoryParticle.Stop();
+        }
         //スティックの入力を取得
         float vertical = SwitchInput.GetVertical(playerNumber);
         float horizontal = SwitchInput.GetHorizontal(playerNumber);
