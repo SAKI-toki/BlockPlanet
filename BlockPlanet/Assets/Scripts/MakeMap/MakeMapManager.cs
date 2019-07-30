@@ -35,7 +35,7 @@ public class MakeMapManager : MonoBehaviour
 
     const string BlockStateName = "ブロックセット";
     const string PlayerStateName = "プレイヤーセット";
-
+    //UIを表示するかどうか
     bool displayUI = true;
 
     Vector3 cameraInitPosition;
@@ -47,6 +47,7 @@ public class MakeMapManager : MonoBehaviour
 
     [SerializeField]
     TextAsset csvAsset;
+    //追尾するかどうか
     bool isTracking = false;
     float trackingDistance = 0.0f;
     [SerializeField]
@@ -84,6 +85,9 @@ public class MakeMapManager : MonoBehaviour
         CameraControl();
     }
 
+    /// <summary>
+    /// ブロック設置ステート
+    /// </summary>
     void BlockState()
     {
         stateName = BlockStateName;
@@ -123,6 +127,9 @@ public class MakeMapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// プレイヤー設置ステート
+    /// </summary>
     void PlayerState()
     {
         stateName = PlayerStateName;
