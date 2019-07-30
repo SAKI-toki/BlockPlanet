@@ -14,7 +14,8 @@ public class PlayerNumberSelectUIController : MonoBehaviour
 
     [SerializeField]
     Image shutterImage;
-
+    [SerializeField]
+    AudioSource aud;
     const float ShutterSpeed = 2.0f;
 
 
@@ -34,6 +35,8 @@ public class PlayerNumberSelectUIController : MonoBehaviour
     /// <param name="isOn">参加かどうか</param>
     void ShutterAnimation(bool isOn)
     {
+        aud.Stop();
+        aud.Play();
         StopAllCoroutines();
         if (isOn) StartCoroutine(ShutterOpen());
         else StartCoroutine(ShutterClose());
@@ -44,6 +47,7 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         float amount = shutterImage.fillAmount;
         while (amount > 0.0f)
         {
+            aud.volume = amount;
             amount -= Time.deltaTime * ShutterSpeed;
             shutterImage.fillAmount = amount;
             yield return null;
@@ -55,6 +59,7 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         float amount = shutterImage.fillAmount;
         while (amount < 1.0f)
         {
+            aud.volume = 1.0f - amount;
             amount += Time.deltaTime * ShutterSpeed;
             shutterImage.fillAmount = amount;
             yield return null;
