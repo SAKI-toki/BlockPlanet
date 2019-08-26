@@ -71,6 +71,9 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             if (BlockCreater.GetInstance().isPlays[i]) continue;
             playerImages[i].sprite = stopSprite;
             playerImages[i].SetNativeSize();
+            var scale = playerImages[i].rectTransform.localScale;
+            scale *= 0.7f;
+            playerImages[i].rectTransform.localScale = scale;
         }
         //ゲームスタート時
         StartCoroutine(Gamestart());
@@ -263,7 +266,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             yield return null;
         }
         //移動速度
-        float moveSpeed = playerWinRectTransforms[playerPoints[winPlayerNumber]].position.x -
+        float speed = playerWinRectTransforms[playerPoints[winPlayerNumber]].position.x -
                             playerRectTransforms[winPlayerNumber].position.x;
         //時間を測る変数
         float timeCount = 0.0f;
@@ -280,9 +283,9 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
             }
             //移動処理
             timeCount += Time.deltaTime;
-            pos.x += moveSpeed * Time.deltaTime / 3;
+            pos.x += speed * Time.deltaTime;
             playerRectTransforms[winPlayerNumber].position = pos;
-            playerRectTransforms[winPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount * 2) * Mathf.Rad2Deg / 4);
+            playerRectTransforms[winPlayerNumber].rotation = Quaternion.Euler(0, 0, Mathf.Sin(timeCount) * Mathf.Rad2Deg / 4);
             yield return null;
         }
         //回転を中途半端に止めず、0にする

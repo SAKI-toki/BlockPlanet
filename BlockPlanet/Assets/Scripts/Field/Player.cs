@@ -88,13 +88,13 @@ public class Player : MonoBehaviour
         Mathf.Abs(horizontal) >= 0.0f)
         {
             float sqrt = Mathf.Sqrt(Mathf.Pow(vertical, 2) + Mathf.Pow(horizontal, 2));
-            //=====移動=====
-            this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime * sqrt);
             //=====回転=====
             this.transform.rotation = Quaternion.Slerp
                 (this.transform.rotation,
                  Quaternion.Euler(0, Mathf.Atan2(-vertical, horizontal) * Mathf.Rad2Deg + 90, 0),
                   Mathf.Sqrt(sqrt) / 2);
+            //=====移動=====
+            this.transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime * sqrt);
         }
         if (IsHitBomb)
         {
