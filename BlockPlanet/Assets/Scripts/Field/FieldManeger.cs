@@ -63,6 +63,9 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     Sprite stopSprite;
     [SerializeField]
     AudioSource hornSound;
+    [SerializeField]
+    AudioSource onthewayMoveSound;
+
     void Start()
     {
         //プレイしないプレイヤーの途中経過の画像を差し替える
@@ -271,14 +274,14 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //時間を測る変数
         float timeCount = 0.0f;
         pos = playerRectTransforms[winPlayerNumber].position;
+        onthewayMoveSound.Play();
         //勝ったプレイヤーの移動
         while (playerRectTransforms[winPlayerNumber].position.x <
         playerWinRectTransforms[playerPoints[winPlayerNumber]].position.x)
         {
             //煽りのクラクション
-            if (SwitchInput.GetButtonDown(winPlayerNumber, SwitchButton.Horn))
+            if (SwitchInput.GetButtonDown(winPlayerNumber, SwitchButton.Horn) && !hornSound.isPlaying)
             {
-                if (hornSound.isPlaying) hornSound.Stop();
                 hornSound.Play();
             }
             //移動処理
