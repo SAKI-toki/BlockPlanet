@@ -24,8 +24,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     //ポーズの表示非表示を管理
     [System.NonSerialized]
     public bool isPause = false;
-    //BGM
-    AudioSource bgmSound = null;
     //カウントダウン
     [SerializeField]
     List<GameObject> countDownImage = new List<GameObject>();
@@ -80,8 +78,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         }
         //ゲームスタート時
         StartCoroutine(Gamestart());
-        //BGM
-        bgmSound = GetComponent<AudioSource>();
+        BgmManager.Instance.Stop();
         initScale = uiRectTransforms[0].localScale;
     }
 
@@ -171,7 +168,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //少し待つ
         yield return new WaitForSeconds(1.0f);
         //BGMを再生する
-        bgmSound.Play();
+        BgmManager.Instance.Play(BgmEnum.BATTLE);
     }
 
     /// <summary>
@@ -181,7 +178,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     IEnumerator Restart(bool isDraw = false)
     {
         //BGMを停止する
-        bgmSound.Stop();
+        BgmManager.Instance.Stop();
         //ゲーム終了のSE
         SoundManager.Instance.GameOver();
         //少し待つ
@@ -208,7 +205,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         //表示
         gameSetImage.SetActive(true);
         //BGMを停止する
-        bgmSound.Stop();
+        BgmManager.Instance.Stop();
         //ゲーム終了のSE
         SoundManager.Instance.GameOver();
         //少し待つ

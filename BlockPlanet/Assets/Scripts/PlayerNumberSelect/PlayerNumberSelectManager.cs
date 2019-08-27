@@ -35,6 +35,8 @@ public class PlayerNumberSelectManager : MonoBehaviour
         //フェード
         Fade.Instance.FadeOut(1.0f);
         StageSelectUIAlphaUpdate(0.0f);
+
+        BgmManager.Instance.Play(BgmEnum.PLAYER_SELECT);
     }
 
     void Update()

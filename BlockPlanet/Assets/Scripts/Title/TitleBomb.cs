@@ -50,7 +50,7 @@ public class TitleBomb : MonoBehaviour
     {
         if (destroyFlg && !boomParticle.isPlaying)
         {
-            Title.Instance.bgmSound.Play();
+            BgmManager.Instance.Play(BgmEnum.TITLE);
             Destroy(gameObject);
         }
     }

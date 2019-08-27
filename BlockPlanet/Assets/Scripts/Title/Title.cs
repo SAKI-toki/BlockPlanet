@@ -9,9 +9,6 @@ public class Title : SingletonMonoBehaviour<Title>
     GameObject uiParent = null;
     [SerializeField]
     GameObject creditParent;
-    //BGM
-    [System.NonSerialized]
-    public AudioSource bgmSound = null;
     //タイトルの虹色のマテリアル
     [SerializeField]
     Material rainbowMat = null;
@@ -29,8 +26,7 @@ public class Title : SingletonMonoBehaviour<Title>
         state = BombFallInitState;
         //フェード
         Fade.Instance.FadeOut(1.0f);
-        //BGM
-        bgmSound = GetComponent<AudioSource>();
+        BgmManager.Instance.Stop();
         uiParent.SetActive(false);
         creditParent.SetActive(false);
         titleBomb.GetComponent<Rigidbody>().isKinematic = true;
@@ -63,7 +59,7 @@ public class Title : SingletonMonoBehaviour<Title>
             BombExplosion();
             Destroy(titleBomb);
             fallSound.Stop();
-            bgmSound.Play();
+            BgmManager.Instance.Play(BgmEnum.TITLE);
         }
         if (titleBomb == null)
         {

@@ -42,6 +42,7 @@ public class Select : SingletonMonoBehaviour<Select>
 
     void Start()
     {
+        BgmManager.Instance.Play(BgmEnum.STAGE_SELECT);
         descriptionUIparent.SetActive(false);
         //RadialBlurの強さを0にする
         postProcessMaterial.SetFloat("_Strength", 0);
