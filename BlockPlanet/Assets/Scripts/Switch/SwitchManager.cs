@@ -1,4 +1,4 @@
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
 using nn.hid;
 #endif
 
@@ -7,7 +7,7 @@ using nn.hid;
 /// </summary>
 public class SwitchManager : Singleton<SwitchManager>
 {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
     //使用するID
     NpadId[] npadIds = { NpadId.No1, NpadId.No2, NpadId.No3, NpadId.No4 };
 
@@ -19,7 +19,7 @@ public class SwitchManager : Singleton<SwitchManager>
 
     public override void MyStart()
     {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         //コントローラーの初期化
         Npad.Initialize();
         //サポートするタイプをセット
@@ -40,7 +40,7 @@ public class SwitchManager : Singleton<SwitchManager>
     public override void MyUpdate()
     {
         for (int i = 0; i <
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         npadIds.Length
 #else
         4
@@ -51,7 +51,7 @@ public class SwitchManager : Singleton<SwitchManager>
             ConnectUpdate(i);
             //入力情報の更新
             SwitchInput.InputUpdate(i
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
             , npadIds[i]
 #endif
             );
@@ -66,7 +66,7 @@ public class SwitchManager : Singleton<SwitchManager>
     void ConnectUpdate(int index)
     {
         //スタイルがNoneならfalse
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         isConnect[index] = (Npad.GetStyleSet(npadIds[index]) != NpadStyle.None);
 #else
         isConnect[index] = UnityEngine.Input.GetJoystickNames().Length >= index + 1;
@@ -80,10 +80,13 @@ public class SwitchManager : Singleton<SwitchManager>
     /// <returns>接続されていたらtrue</returns>
     public bool IsConnect(int index)
     {
+#if UNITY_EDITOR
+        if (index == 0) return true;
+#endif
         return isConnect[index];
     }
 
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
     /// <summary>
     /// NpadIdのゲッタ
     /// </summary>

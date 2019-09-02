@@ -14,7 +14,7 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     //プレイヤーのポイント。スタティックにしないといけない
     static public int[] playerPoints = new int[4];
     //勝利ポイント
-    const int WinPoint = 3;
+    public const int WinPoint = 3;
     int winPlayerNumber = 0;
     //ゲームオーバーに一回だけ通る
     [System.NonSerialized]

@@ -1,4 +1,4 @@
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
 using nn.hid;
 #endif
 
@@ -7,7 +7,7 @@ using nn.hid;
 /// </summary>
 static public class SwitchVibration
 {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
     //デバイスのハンドラ
     static VibrationDeviceHandle[] vibrationDeviceHandles = new VibrationDeviceHandle[1];
     //振動の値
@@ -53,7 +53,7 @@ static public class SwitchVibration
     /// <param name="highPow">高周波の振動の強さ</param>
     static void VibrationImpl(int index, float lowPow, float highPow)
     {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         //未接続なら何もしない
         if (!SwitchManager.GetInstance().IsConnect(index)) return;
         //IDの取得

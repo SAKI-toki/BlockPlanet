@@ -1,7 +1,7 @@
-﻿//#define AUTO_EXECUTE_DEBUG
+﻿#define AUTO_EXECUTE_DEBUG
 
 using UnityEngine;
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
 using nn.hid;
 #endif
 
@@ -22,7 +22,7 @@ static public class SwitchInput
     }
     //スティックの水平
     static StickInfo[] stickInfos;
-#if UNITY_SWITCH
+#if UNITY_SWITCH && !(UNITY_EDITOR)
     //コントローラーの状態
     static NpadState npadState = new NpadState();
 #endif
@@ -36,7 +36,7 @@ static public class SwitchInput
         prevButtons = new long[npadIdsLength];
         currentButtons = new long[npadIdsLength];
         stickInfos = new StickInfo[npadIdsLength];
-#if !(UNITY_SWITCH)
+#if UNITY_EDITOR
         xboxCurrentButtons = new bool[npadIdsLength, (int)XboxInput.None];
         xboxPrevButtons = new bool[npadIdsLength, (int)XboxInput.None];
 #endif
@@ -48,12 +48,12 @@ static public class SwitchInput
     /// <param name="index">コントローラーの番号</param>
     /// <param name="npadId">パッドのID</param>
     static public void InputUpdate(int index
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
 , NpadId npadId
 #endif
 )
     {
-#if !(UNITY_SWITCH)
+#if UNITY_EDITOR || !(UNITY_SWITCH)
         for (int i = 0; i < (int)XboxInput.None; ++i)
         {
             xboxPrevButtons[index, i] = xboxCurrentButtons[index, i];
@@ -64,7 +64,7 @@ static public class SwitchInput
         //未接続
         if (!SwitchManager.GetInstance().IsConnect(index)) return;
 
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         //スタイルを取得
         NpadStyle npadStyle = Npad.GetStyleSet(npadId);
         //スタイルが合うかどうか
@@ -138,6 +138,7 @@ static public class SwitchInput
     {
 #if AUTO_EXECUTE_DEBUG
         if (index == 0 && button == SwitchButton.Ok) return true;
+        if (index == 0 && button == SwitchButton.StickRight) return true;
 #endif
         //未接続ならfalse
         if (!SwitchManager.GetInstance().IsConnect(index)) return false;
@@ -182,7 +183,7 @@ static public class SwitchInput
 #endif
         //未接続なら0.0f
         if (!SwitchManager.GetInstance().IsConnect(index)) return 0.0f;
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         return stickInfos[index].horizontal;
 #else
         return ConvertSwitchHorizontalToXboxHorizontal(index);
@@ -198,7 +199,7 @@ static public class SwitchInput
     {
         //未接続なら0.0f
         if (!SwitchManager.GetInstance().IsConnect(index)) return 0.0f;
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         return stickInfos[index].vertical;
 #else
         return ConvertSwitchVerticalToXboxVertical(index);
@@ -213,7 +214,7 @@ static public class SwitchInput
     /// <returns>押しているならtrueを返す</returns>
     static bool IsPrevButton(int index, SwitchButton button)
     {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         return (prevButtons[index] & (long)button) != 0;
 #else
         return xboxPrevButtons[index, (int)SwitchConvertXbox(button)];
@@ -228,14 +229,14 @@ static public class SwitchInput
     /// <returns>押しているならtrueを返す</returns>
     static bool IsCurrentButton(int index, SwitchButton button)
     {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         return (currentButtons[index] & (long)button) != 0;
 #else
         return xboxCurrentButtons[index, (int)SwitchConvertXbox(button)];
 #endif
     }
 
-#if !(UNITY_SWITCH)
+#if UNITY_EDITOR || !(UNITY_SWITCH)
 
     static bool[,] xboxCurrentButtons;
     static bool[,] xboxPrevButtons;
@@ -389,7 +390,7 @@ static public class SwitchInput
 /// </summary>
 public enum SwitchButton : long
 {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
     Up = NpadButton.Y | NpadButton.Right,
     Down = NpadButton.A | NpadButton.Left,
     Right = NpadButton.X | NpadButton.Down,

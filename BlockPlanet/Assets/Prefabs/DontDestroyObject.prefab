@@ -636,7 +636,7 @@ MonoBehaviour:
   stageSelect: {fileID: 8300000, guid: 85f30e54a86fe4e42a3a0e66c87b3d7d, type: 3}
   battle: {fileID: 8300000, guid: a235286624447ca4d8eec4c1fa41b47a, type: 3}
   drum_roll: {fileID: 8300000, guid: 711eab3132a09804c9961b944bdffa29, type: 3}
-  result: {fileID: 8300000, guid: c05ff90056eb22d40a6afb749d2ba89e, type: 3}
+  result: {fileID: 8300000, guid: dc6f4ea3379f9d54982f23f32e674670, type: 3}
 --- !u!1001 &3857737381699178598
 PrefabInstance:
   m_ObjectHideFlags: 0

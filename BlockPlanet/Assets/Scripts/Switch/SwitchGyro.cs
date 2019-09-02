@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
 using nn.hid;
 #endif
 
@@ -8,7 +8,7 @@ using nn.hid;
 /// </summary>
 static public class SwitchGyro
 {
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
     //ジャイロのハンドラ
     static SixAxisSensorHandle[] gyroHandles = new SixAxisSensorHandle[1];
     //ジャイロの状態
@@ -36,7 +36,7 @@ static public class SwitchGyro
     static public float GetGyroX(int index)
     {
 
-#if UNITY_SWITCH
+#if UNITY_SWITCH  && !(UNITY_EDITOR)
         //未接続なら0.0f
         if (!SwitchManager.GetInstance().IsConnect(index)) return 0.0f;
         //キーがない場合は追加しておく

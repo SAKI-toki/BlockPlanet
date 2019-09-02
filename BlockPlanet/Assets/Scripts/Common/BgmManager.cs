@@ -21,9 +21,10 @@ public class BgmManager : SingletonMonoBehaviour<BgmManager>
 
     BgmEnum currentBgm = BgmEnum.NONE;
 
-    public void Play(BgmEnum bgm, bool is_loop = true)
+    public void Play(BgmEnum bgm, bool is_loop = true, float volume = 1.0f)
     {
         GetAudioSource();
+        aud.volume = volume;
         aud.loop = is_loop;
         if (currentBgm != bgm)
         {

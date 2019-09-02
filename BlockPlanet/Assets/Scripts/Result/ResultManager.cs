@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -154,6 +155,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
             //プレイ人数の加算
             if (BlockCreater.GetInstance().isPlays[i]) ++playerNum;
         }
+        List<int> bombPlayerNumbers = new List<int>();
         //負けたプレイヤーを順位の低い順番に爆弾で落としていく
         for (int i = 0; i < playerNum - 1; ++i)
         {
@@ -170,8 +172,10 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
                 }
             }
             isEnd[minPlayer] = true;
-            yield return StartCoroutine(BombAnimation(minPlayer));
+            bombPlayerNumbers.Add(minPlayer);
+            //yield return StartCoroutine(BombAnimation(minPlayer));
         }
+        yield return StartCoroutine(BombAnimation(bombPlayerNumbers));
         int winPlayerNumber = 0;
         //勝ったプレイヤーの番号を探す
         for (int i = 0; i < isEnd.Length; ++i)
@@ -184,7 +188,8 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         }
         var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
         fieldObjectParent.SetActive(false);
-        BgmManager.Instance.Play(BgmEnum.RESULT, false);
+        BgmManager.Instance.Play(BgmEnum.RESULT, true, 0.0f);
+        StartCoroutine(BgmVolumeGradation(0.01f));
         //勝ったプレイヤーのアニメーション
         yield return StartCoroutine(resultWinPlayerAnimation.WinPlayerAnimation(winPlayerNumber));
         float time = 0;
@@ -214,13 +219,52 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
     /// 爆弾が降ってくるアニメーション
     /// </summary>
     /// <param name="index">降らせるプレイヤーのインデックス</param>
-    IEnumerator BombAnimation(int index)
+    IEnumerator BombAnimation(List<int> indexs)
     {
-        Vector3 pos = players[index].transform.position;
-        //爆弾の高さ
-        pos.y = 20;
-        GameObject bomb = Instantiate(resultBombObject, pos, Quaternion.identity);
-        while (bomb != null) yield return null;
-        Destroy(players[index], 3);
+        float volume = BgmManager.Instance.GetVolume();
+        while (volume > 0.5f)
+        {
+            volume -= 0.01f;
+            BgmManager.Instance.SetVolume(volume);
+            yield return null;
+        }
+        List<GameObject> bombs = new List<GameObject>();
+        foreach (var index in indexs)
+        {
+            Vector3 pos = players[index].transform.position;
+            //爆弾の高さ
+            pos.y = 20;
+            bombs.Add(Instantiate(resultBombObject, pos, Quaternion.identity));
+            //while (bomb != null) yield return null;
+            Destroy(players[index], 3);
+        }
+        bool allBombDestroy = false;
+        while (!allBombDestroy)
+        {
+            volume -= 0.01f;
+            BgmManager.Instance.SetVolume(volume);
+            allBombDestroy = true;
+            foreach (var bomb in bombs)
+            {
+                if (bomb != null)
+                {
+                    allBombDestroy = false;
+                    break;
+                }
+            }
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
+    }
+
+    IEnumerator BgmVolumeGradation(float gradationSpeed)
+    {
+        float volume = BgmManager.Instance.GetVolume();
+        while (volume < 0.8f)
+        {
+            volume += gradationSpeed;
+            BgmManager.Instance.SetVolume(volume);
+            yield return null;
+        }
     }
 }
