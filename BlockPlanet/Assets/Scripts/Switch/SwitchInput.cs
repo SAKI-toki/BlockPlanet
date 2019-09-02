@@ -1,4 +1,4 @@
-﻿#define AUTO_EXECUTE_DEBUG
+﻿//#define AUTO_EXECUTE_DEBUG
 
 using UnityEngine;
 #if UNITY_SWITCH  && !(UNITY_EDITOR)
