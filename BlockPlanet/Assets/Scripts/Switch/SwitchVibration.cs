@@ -1,14 +1,18 @@
+#if UNITY_SWITCH
 using nn.hid;
+#endif
 
 /// <summary>
 /// スイッチの振動
 /// </summary>
 static public class SwitchVibration
 {
+#if UNITY_SWITCH
     //デバイスのハンドラ
     static VibrationDeviceHandle[] vibrationDeviceHandles = new VibrationDeviceHandle[1];
     //振動の値
     static VibrationValue vibrationValue = VibrationValue.Make();
+#endif
 
     /// <summary>
     /// 低周波の振動
@@ -49,6 +53,7 @@ static public class SwitchVibration
     /// <param name="highPow">高周波の振動の強さ</param>
     static void VibrationImpl(int index, float lowPow, float highPow)
     {
+#if UNITY_SWITCH
         //未接続なら何もしない
         if (!SwitchManager.GetInstance().IsConnect(index)) return;
         //IDの取得
@@ -67,5 +72,6 @@ static public class SwitchVibration
         Vibration.InitializeDevice(vibrationDeviceHandles[0]);
         //振動の値をセット
         Vibration.SendValue(vibrationDeviceHandles[0], vibrationValue);
+#endif
     }
 }

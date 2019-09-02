@@ -1,15 +1,19 @@
 ﻿using System.Collections.Generic;
+#if UNITY_SWITCH
 using nn.hid;
+#endif
 
 /// <summary>
 /// Switchのジャイロ
 /// </summary>
 static public class SwitchGyro
 {
+#if UNITY_SWITCH
     //ジャイロのハンドラ
     static SixAxisSensorHandle[] gyroHandles = new SixAxisSensorHandle[1];
     //ジャイロの状態
     static SixAxisSensorState gyroState = new SixAxisSensorState();
+#endif
     //ジャイロの基準を保持
     static Dictionary<int, float> baseGyro = new Dictionary<int, float>();
 
@@ -31,6 +35,8 @@ static public class SwitchGyro
     /// <returns>ジャイロの回転(使用するx軸のみ)</returns>
     static public float GetGyroX(int index)
     {
+
+#if UNITY_SWITCH
         //未接続なら0.0f
         if (!SwitchManager.GetInstance().IsConnect(index)) return 0.0f;
         //キーがない場合は追加しておく
@@ -56,5 +62,8 @@ static public class SwitchGyro
         {
             return gyroState.angle.x % 1 * -360 - baseGyro[index];
         }
+#else
+        return 0.0f;
+#endif
     }
 }

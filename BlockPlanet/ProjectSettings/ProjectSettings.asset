@@ -325,7 +325,7 @@ PlayerSettings:
   switchSocketConcurrencyLimit: 14
   switchScreenResolutionBehavior: 2
   switchUseCPUProfiler: 0
-  switchApplicationID: 0x01004b9000490000
+  switchApplicationID: 0x01004b9000490002
   switchNSODependencies: 
   switchTitleNames_0: 
   switchTitleNames_1: 

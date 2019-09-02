@@ -144,7 +144,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         //フェード
         Fade.Instance.FadeOut(1.0f);
         while (!Fade.Instance.IsEnd) yield return null;
-        BgmManager.Instance.Play(BgmEnum.DRUM_ROLL);
+        BgmManager.Instance.Play(BgmEnum.DRUM_ROLL, false);
         bool[] isEnd = new bool[4];
         int playerNum = 0;
         for (int i = 0; i < isEnd.Length; ++i)
@@ -184,7 +184,7 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         }
         var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
         fieldObjectParent.SetActive(false);
-        BgmManager.Instance.Play(BgmEnum.RESULT);
+        BgmManager.Instance.Play(BgmEnum.RESULT, false);
         //勝ったプレイヤーのアニメーション
         yield return StartCoroutine(resultWinPlayerAnimation.WinPlayerAnimation(winPlayerNumber));
         float time = 0;

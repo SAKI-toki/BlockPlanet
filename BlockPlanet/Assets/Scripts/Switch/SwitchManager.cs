@@ -1,21 +1,25 @@
+#if UNITY_SWITCH
 using nn.hid;
+#endif
 
 /// <summary>
 /// スイッチ関係を管理する
 /// </summary>
 public class SwitchManager : Singleton<SwitchManager>
 {
+#if UNITY_SWITCH
     //使用するID
     NpadId[] npadIds = { NpadId.No1, NpadId.No2, NpadId.No3, NpadId.No4 };
 
     //使用するコントローラーのスタイル
     NpadStyle npadStyles = NpadStyle.JoyLeft | NpadStyle.JoyRight;
-
+#endif
     //接続されているかどうか
     static bool[] isConnect;
 
     public override void MyStart()
     {
+#if UNITY_SWITCH
         //コントローラーの初期化
         Npad.Initialize();
         //サポートするタイプをセット
@@ -26,16 +30,31 @@ public class SwitchManager : Singleton<SwitchManager>
         isConnect = new bool[npadIds.Length];
         //入力の初期化
         SwitchInput.InputInit(npadIds.Length);
+#endif
+        //配列の要素確保
+        isConnect = new bool[4];
+        //入力の初期化
+        SwitchInput.InputInit(4);
     }
 
     public override void MyUpdate()
     {
-        for (int i = 0; i < npadIds.Length; ++i)
+        for (int i = 0; i <
+#if UNITY_SWITCH
+        npadIds.Length
+#else
+        4
+#endif
+        ; ++i)
         {
             //接続状態の更新
             ConnectUpdate(i);
             //入力情報の更新
-            SwitchInput.InputUpdate(i, npadIds[i]);
+            SwitchInput.InputUpdate(i
+#if UNITY_SWITCH
+            , npadIds[i]
+#endif
+            );
         }
     }
 
@@ -47,7 +66,11 @@ public class SwitchManager : Singleton<SwitchManager>
     void ConnectUpdate(int index)
     {
         //スタイルがNoneならfalse
+#if UNITY_SWITCH
         isConnect[index] = (Npad.GetStyleSet(npadIds[index]) != NpadStyle.None);
+#else
+        isConnect[index] = UnityEngine.Input.GetJoystickNames().Length >= index + 1;
+#endif
     }
 
     /// <summary>
@@ -57,13 +80,10 @@ public class SwitchManager : Singleton<SwitchManager>
     /// <returns>接続されていたらtrue</returns>
     public bool IsConnect(int index)
     {
-#if UNITY_EDITOR
-        return UnityEngine.Input.GetJoystickNames().Length >= index + 1 || index == 0;
-#else
         return isConnect[index];
-#endif
     }
 
+#if UNITY_SWITCH
     /// <summary>
     /// NpadIdのゲッタ
     /// </summary>
@@ -82,4 +102,5 @@ public class SwitchManager : Singleton<SwitchManager>
     {
         return npadStyles;
     }
+#endif
 }
