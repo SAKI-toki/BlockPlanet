@@ -188,8 +188,8 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>
         }
         var resultWinPlayerAnimation = players[winPlayerNumber].AddComponent<ResultWinPlayerAnimation>();
         fieldObjectParent.SetActive(false);
-        BgmManager.Instance.Play(BgmEnum.RESULT, true, 0.0f);
-        StartCoroutine(BgmVolumeGradation(0.01f));
+        BgmManager.Instance.Play(BgmEnum.RESULT, true, 0.1f);
+        StartCoroutine(BgmVolumeGradation(0.02f));
         //勝ったプレイヤーのアニメーション
         yield return StartCoroutine(resultWinPlayerAnimation.WinPlayerAnimation(winPlayerNumber));
         float time = 0;

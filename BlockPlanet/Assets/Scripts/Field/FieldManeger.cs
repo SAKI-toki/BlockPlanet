@@ -60,8 +60,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
     [SerializeField]
     Sprite stopSprite;
     [SerializeField]
-    AudioSource hornSound;
-    [SerializeField]
     AudioSource onthewayMoveSound;
 
     void Start()
@@ -276,11 +274,6 @@ public class FieldManeger : SingletonMonoBehaviour<FieldManeger>
         while (playerRectTransforms[winPlayerNumber].position.x <
         playerWinRectTransforms[playerPoints[winPlayerNumber]].position.x)
         {
-            //煽りのクラクション
-            if (SwitchInput.GetButtonDown(winPlayerNumber, SwitchButton.Horn) && !hornSound.isPlaying)
-            {
-                hornSound.Play();
-            }
             //移動処理
             timeCount += Time.deltaTime;
             pos.x += speed * Time.deltaTime;

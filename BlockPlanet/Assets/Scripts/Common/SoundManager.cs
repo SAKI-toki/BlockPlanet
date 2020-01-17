@@ -10,6 +10,8 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
 
     [SerializeField]
     List<AudioClip> audioClip = new List<AudioClip>();
+    [SerializeField]
+    List<float> audioVolume = new List<float>();
 
     void Start()
     {
@@ -21,48 +23,53 @@ public class SoundManager : SingletonMonoBehaviour<SoundManager>
     /// </summary>
     public void Stick()
     {
-        sounds.PlayOneShot(audioClip[0]);
+        SoundPlayerOneShot(0);
     }
     /// <summary>
     /// 決定音
     /// </summary>
     public void Push()
     {
-        sounds.PlayOneShot(audioClip[1]);
+        SoundPlayerOneShot(1);
     }
     /// <summary>
     /// ゲームスタートの音
     /// </summary>
     public void GameStart()
     {
-        sounds.PlayOneShot(audioClip[2]);
+        SoundPlayerOneShot(2);
     }
     /// <summary>
     /// ゲームオーバーの音
     /// </summary>
     public void GameOver()
     {
-        sounds.PlayOneShot(audioClip[3]);
+        SoundPlayerOneShot(3);
     }
     /// <summary>
     /// 爆弾を発射する音
     /// </summary>
     public void BombThrow()
     {
-        sounds.PlayOneShot(audioClip[4]);
+        SoundPlayerOneShot(4);
     }
     /// <summary>
     /// 爆弾が爆発する音
     /// </summary>
     public void Bomb()
     {
-        sounds.PlayOneShot(audioClip[5]);
+        SoundPlayerOneShot(5);
     }
     /// <summary>
     /// ジャンプの音
     /// </summary>
     public void Jump()
     {
-        sounds.PlayOneShot(audioClip[6]);
+        SoundPlayerOneShot(6);
+    }
+
+    void SoundPlayerOneShot(int index)
+    {
+        sounds.PlayOneShot(audioClip[index], audioVolume[index]);
     }
 }

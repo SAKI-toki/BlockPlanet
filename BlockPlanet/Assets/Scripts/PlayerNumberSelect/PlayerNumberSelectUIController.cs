@@ -49,7 +49,6 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         {
             amount -= Time.deltaTime * shutterSpeed;
             shutterImage.fillAmount = amount;
-            aud.volume = 1.0f - Mathf.Pow(2, 2) * Mathf.Pow(amount - 0.5f, 2);
             yield return null;
         }
     }
@@ -61,7 +60,6 @@ public class PlayerNumberSelectUIController : MonoBehaviour
         {
             amount += Time.deltaTime * shutterSpeed;
             shutterImage.fillAmount = amount;
-            aud.volume = 1.0f - Mathf.Pow(2, 2) * Mathf.Pow(amount - 0.5f, 2);
             yield return null;
         }
     }
